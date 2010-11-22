@@ -4,6 +4,7 @@ import sys, os
 version = '1.0'
 shortdesc = 'Autocomplete Widget for YAFOWIL - Yet Another Form Widget Library (Python, Web)'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
+tests_require = ['interlude', 'lxml']
 
 setup(name='yafowil.widget.autocomplete',
       version=version,
@@ -30,11 +31,11 @@ setup(name='yafowil.widget.autocomplete',
           'setuptools',
           'yafowil',
       ],
-      extras_require = dict(),
-      tests_require=[
-          'interlude',
-      ],
-      test_suite="yafowil.widget.dict.tests.test_suite",
+      tests_require=tests_require,
+      test_suite="yafowil.widget.autocomplete.tests.test_suite",
+      extras_require = dict(
+          test=tests_require,
+      ),
       entry_points = """\
       """        
       )
