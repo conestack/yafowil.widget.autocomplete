@@ -43,7 +43,10 @@ def application(environ, start_response):
     ywa = tag('script', ' ',
               src='%sywa.js' % url,
               type='text/javascript')
-    head = tag('head', jq, jqui, ywa)
+    css = tag('style',
+              '.hiddenStructure { display: none; }', 
+              type='text/css')
+    head = tag('head', jq, jqui, ywa, css)
     h1 = tag('h1', 'YAFOWIL Widget Autocomplete Example')
     form = factory(u'form', name='yqaexample', props={
         'action': url})
@@ -51,10 +54,6 @@ def application(environ, start_response):
         'label': 'Enter some text (local)',
         'value': '',
         'source': ['foo', 'bar', 'baz']})
-#    form['local'] = factory('field:label:error:autocomplete', props={
-#        'label': 'Enter some text (remote)',
-#        'value': '',
-#        'required': True})
     form['submit'] = factory('field:submit', props={        
         'label': 'submit',
         'action': 'save',
