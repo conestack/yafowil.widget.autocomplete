@@ -18,7 +18,7 @@ def next(request):
 
 def javascript_response(environ, start_response, response):
     dir = os.path.dirname(__file__)
-    with open(os.path.join(dir, '..', 'resources', 'widget.js')) as js:
+    with open(os.path.join(dir, 'resources', 'widget.js')) as js:
         response.write(js.read())
     response.content_type = 'text/javascript'
     return response(environ, start_response)
@@ -62,8 +62,6 @@ def application(environ, start_response):
     controller = Controller(form, request)
     body = tag('body', h1, controller.rendered)
     html = tag('html', head, body)
-    from yafowil.widget.autocomplete.tests import prettyxml
-    print prettyxml(html)
     response.write(html)
     return response(environ, start_response)
     
