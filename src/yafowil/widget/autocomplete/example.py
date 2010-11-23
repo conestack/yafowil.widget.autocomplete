@@ -43,7 +43,10 @@ def application(environ, start_response):
     ywa = tag('script', ' ',
               src='%sywa.js' % url,
               type='text/javascript')
-    css = tag('style',
+    css = tag("style",
+              "@import url(https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/base/jquery-ui.css)",
+              type='text/css')
+    css += tag('style',
               '.hiddenStructure { display: none; }', 
               type='text/css')
     head = tag('head', jq, jqui, ywa, css)
