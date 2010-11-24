@@ -1,39 +1,45 @@
 import os
+from simplejson import dumps
 from yafowil import loader
 import yafowil.webob
 from yafowil.base import factory
 from yafowil.utils import tag
 from yafowil.controller import Controller
 import yafowil.widget.autocomplete
+from yafowil.widget.autocomplete.tests import prettyxml
 from webob import Request, Response
 
-address, port = '127.0.0.1', 8080 
-url = 'http://%s:%s/' % (address, port)
+lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do 
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim 
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+sunt in culpa qui officia deserunt mollit anim id est laborum."""
+lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
 
-def store(widget, data):
-    pass 
-    
-def next(request):
-    return url
-
-def javascript_response(environ, start_response, response):
+def javascript_response(environ, start_response):
+    response = Response(content_type='text/javascript')
     dir = os.path.dirname(__file__)
     with open(os.path.join(dir, 'resources', 'widget.js')) as js:
         response.write(js.read())
-    response.content_type = 'text/javascript'
     return response(environ, start_response)
 
-def json_response(environ, start_response, response):
-    response.write('JSON')
+def json_response(environ, start_response):
+    data = os.listdir('.')
+    if environ['QUERY_STRING'].startswith('term='):
+        data = [_ for _ in data if _.startswith(environ['QUERY_STRING'][5:])]
+    response = Response(content_type='application/json', body=dumps(data))
     return response(environ, start_response)
 
-def application(environ, start_response):
-    request = Request(environ)
-    response = Response()
+def app(environ, start_response):
+    url = 'http://%s/' % environ['HTTP_HOST']
     if environ['PATH_INFO'] == '/ywa.js':
-        return javascript_response(environ, start_response, response)
-    if environ['PATH_INFO'] == '/ywa.json':
-        return json_response(environ, start_response, response)
+        return javascript_response(environ, start_response)
+    elif environ['PATH_INFO'] == '/ywa.json':
+        return json_response(environ, start_response)
+    elif environ['PATH_INFO'] != '/':
+        response = Response(status=404)
+        return response(environ, start_response)
     jq = tag('script', ' ',
              src='https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js',
              type='text/javascript')
@@ -54,24 +60,20 @@ def application(environ, start_response):
     form = factory(u'form', name='yqaexample', props={
         'action': url})
     form['local'] = factory('field:label:error:autocomplete', props={
-        'label': 'Enter some text (local)',
+        'label': 'Enter some text (local, lorem ipsum)',
         'value': '',
-        'source': ['foo', 'bar', 'baz']})
+        'source': lipsum})
+    form['remote'] = factory('field:label:error:autocomplete', props={
+        'label': 'Enter some text (remote listdir)',
+        'value': '',
+        'source': '%sywa.json' % url,
+        'minLength': 1})
     form['submit'] = factory('field:submit', props={        
         'label': 'submit',
         'action': 'save',
-        'handler': store,
-        'next': next})
-    controller = Controller(form, request)
+        'handler': lambda widget, data: None,
+        'next': lambda widget, data: url})
+    controller = Controller(form, Request(environ))
     body = tag('body', h1, controller.rendered)
-    html = tag('html', head, body)
-    response.write(html)
+    response = Response(body=prettyxml(tag('html', head, body)))
     return response(environ, start_response)
-    
-def run():
-    from wsgiref.simple_server import make_server
-    server = make_server(address, port, application)
-    server.serve_forever()
-    
-if __name__ == '__main__':                                   
-    run()                  
