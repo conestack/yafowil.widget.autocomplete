@@ -9,7 +9,7 @@ Render plain widget, source is string.
 ::
     >>> widget = factory('autocomplete', name='root', 
     ...                  props={'source': 'http://www.foo.bar/baz'})
-    >>> print prettyxml(widget())
+    >>> pxml(widget())
     <div class="yafowil-widget-autocomplete">
       <input id="input-root" name="root" type="text"/>
       <div class="autocomplete-source hiddenStructure">http://www.foo.bar/baz</div>
@@ -21,7 +21,7 @@ Render plain widget, source is list.
 ::
     >>> widget = factory('autocomplete', name='root', 
     ...                  props={'source': ['foo', 'bar']})
-    >>> print prettyxml(widget())
+    >>> pxml(widget())
     <div class="yafowil-widget-autocomplete">
       <input id="input-root" name="root" type="text"/>
       <div class="autocomplete-source hiddenStructure">foo|bar</div>
@@ -36,7 +36,7 @@ Render plain widget, source is callable.
     ...     return 'http://from.callable/'
     >>> widget = factory('autocomplete', name='root', 
     ...                  props={'source': test_source})
-    >>> print prettyxml(widget())
+    >>> pxml(widget())
     <div class="yafowil-widget-autocomplete">
       <input id="input-root" name="root" type="text"/>
       <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
