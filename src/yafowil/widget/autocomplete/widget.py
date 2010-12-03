@@ -3,9 +3,9 @@ from yafowil.base import (
     factory,
 )
 from yafowil.common import input_generic_renderer
-from yafowil.utils import tag
 
 def autocomplete_renderer(widget, data):
+    tag = data.tag
     data.attrs['input_field_type'] = 'text'
     result = input_generic_renderer(widget, data)
     source = widget.attrs['source']
