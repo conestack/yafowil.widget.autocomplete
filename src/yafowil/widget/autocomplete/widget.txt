@@ -11,19 +11,19 @@ Render plain widget, source is string.
     ...                  props={'source': 'http://www.foo.bar/baz'})
     >>> pxml(widget())
     <div class="yafowil-widget-autocomplete">
-      <input id="input-root" name="root" type="text"/>
+      <input class="autocomplete" id="input-root" name="root" type="text"/>
       <div class="autocomplete-source hiddenStructure">http://www.foo.bar/baz</div>
       <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
     </div>
     <BLANKLINE>
-        
+            
 Render plain widget, source is list.
 ::
     >>> widget = factory('autocomplete', name='root', 
     ...                  props={'source': ['foo', 'bar']})
     >>> pxml(widget())
     <div class="yafowil-widget-autocomplete">
-      <input id="input-root" name="root" type="text"/>
+      <input class="autocomplete" id="input-root" name="root" type="text"/>
       <div class="autocomplete-source hiddenStructure">foo|bar</div>
       <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,local</div>
     </div>
@@ -38,7 +38,7 @@ Render plain widget, source is callable.
     ...                  props={'source': test_source})
     >>> pxml(widget())
     <div class="yafowil-widget-autocomplete">
-      <input id="input-root" name="root" type="text"/>
+      <input class="autocomplete" id="input-root" name="root" type="text"/>
       <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
       <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
     </div>

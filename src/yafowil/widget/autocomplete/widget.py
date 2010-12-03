@@ -33,6 +33,7 @@ def autocomplete_extractor(widget, data):
 factory.register('autocomplete', 
                  [autocomplete_extractor], 
                  [autocomplete_renderer])
+factory.defaults['autocomplete.class'] = 'autocomplete'
 factory.defaults['autocomplete.required_class'] = 'required'
 factory.defaults['autocomplete.delay'] = '300' #ms
 factory.defaults['autocomplete.minLength'] = '1' #characters
