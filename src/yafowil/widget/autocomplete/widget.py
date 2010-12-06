@@ -2,7 +2,10 @@ from yafowil.base import (
     ExtractionError,
     factory,
 )
-from yafowil.common import input_generic_renderer
+from yafowil.common import (
+    generic_extractor,
+    input_generic_renderer,
+)
 
 def autocomplete_renderer(widget, data):
     tag = data.tag
@@ -27,11 +30,11 @@ def autocomplete_renderer(widget, data):
     return tag('div', result, **{'class': 'yafowil-widget-autocomplete'})
 
 def autocomplete_extractor(widget, data):
-    #TODO
+    
     return data.extracted
 
 factory.register('autocomplete', 
-                 [autocomplete_extractor], 
+                 [generic_extractor, autocomplete_extractor], 
                  [autocomplete_renderer])
 factory.defaults['autocomplete.class'] = 'autocomplete'
 factory.defaults['autocomplete.required_class'] = 'required'
