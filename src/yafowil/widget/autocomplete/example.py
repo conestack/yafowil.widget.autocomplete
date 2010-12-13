@@ -3,10 +3,9 @@ from simplejson import dumps
 from yafowil import loader
 import yafowil.webob
 from yafowil.base import factory
-from yafowil.utils import tag
 from yafowil.controller import Controller
 import yafowil.widget.autocomplete
-from yafowil.widget.autocomplete.tests import prettyxml
+from yafowil.tests import fxml
 from webob import Request, Response
 
 lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do 
@@ -40,6 +39,24 @@ def app(environ, start_response):
     elif environ['PATH_INFO'] != '/':
         response = Response(status=404)
         return response(environ, start_response)
+    form = factory(u'form', name='yqaexample', props={
+        'action': url})
+    form['local'] = factory('field:label:error:autocomplete', props={
+        'label': 'Enter some text (local, lorem ipsum)',
+        'value': '',
+        'source': lipsum})
+    form['remote'] = factory('field:label:error:autocomplete', props={
+        'label': 'Enter some text (remote listdir)',
+        'value': '',
+        'source': '%sywa.json' % url,
+        'minLength': 1})
+    form['submit'] = factory('field:submit', props={        
+        'label': 'submit',
+        'action': 'save',
+        'handler': lambda widget, data: None,
+        'next': lambda request: url})
+    controller = Controller(form, Request(environ))
+    tag = controller.data.tag
     jq = tag('script', ' ',
              src='https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js',
              type='text/javascript')
@@ -57,23 +74,6 @@ def app(environ, start_response):
               type='text/css')
     head = tag('head', jq, jqui, ywa, css)
     h1 = tag('h1', 'YAFOWIL Widget Autocomplete Example')
-    form = factory(u'form', name='yqaexample', props={
-        'action': url})
-    form['local'] = factory('field:label:error:autocomplete', props={
-        'label': 'Enter some text (local, lorem ipsum)',
-        'value': '',
-        'source': lipsum})
-    form['remote'] = factory('field:label:error:autocomplete', props={
-        'label': 'Enter some text (remote listdir)',
-        'value': '',
-        'source': '%sywa.json' % url,
-        'minLength': 1})
-    form['submit'] = factory('field:submit', props={        
-        'label': 'submit',
-        'action': 'save',
-        'handler': lambda widget, data: None,
-        'next': lambda widget, data: url})
-    controller = Controller(form, Request(environ))
     body = tag('body', h1, controller.rendered)
-    response = Response(body=prettyxml(tag('html', head, body)))
+    response = Response(body=fxml(tag('html', head, body)))
     return response(environ, start_response)
