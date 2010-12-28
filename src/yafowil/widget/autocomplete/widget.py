@@ -6,11 +6,14 @@ from yafowil.common import (
     generic_extractor,
     input_generic_renderer,
 )
+from yafowil.utils import (
+    managedprops
+)
 
+@managedprops('source', 'delay', 'minLength')
 def autocomplete_renderer(widget, data):
+    result = data.rendered
     tag = data.tag
-    data.attrs['input_field_type'] = 'text'
-    result = input_generic_renderer(widget, data)
     source = widget.attrs['source']
     if callable(source):
         source = source(widget, data)
@@ -29,14 +32,23 @@ def autocomplete_renderer(widget, data):
                   **{'class': 'autocomplete-params hiddenStructure'})
     return tag('div', result, **{'class': 'yafowil-widget-autocomplete'})
 
-def autocomplete_extractor(widget, data):
-    
+def autocomplete_extractor(widget, data):    
     return data.extracted
 
-factory.register('autocomplete', 
-                 [generic_extractor, autocomplete_extractor], 
-                 [autocomplete_renderer])
+factory.doc['widget']['autocomplete'] = \
+"""Add-on widget `yafowil.widget.autocomplete 
+<http://github.com/bluedynamics/yafowil.widget.autocomplete/>`_ utilizing 
+``jquery.ui.autocomplete`` to offer the user a selection based on the input 
+given so far.
+"""
+
+factory.defaults['autocomplete.type'] = 'text'
 factory.defaults['autocomplete.class'] = 'autocomplete'
 factory.defaults['autocomplete.required_class'] = 'required'
 factory.defaults['autocomplete.delay'] = '300' #ms
 factory.defaults['autocomplete.minLength'] = '1' #characters
+factory.defaults['autocomplete.disabled'] = False 
+factory.defaults['autocomplete.size'] = None 
+factory.register('autocomplete', 
+                 [generic_extractor, autocomplete_extractor], 
+                 [input_generic_renderer, autocomplete_renderer])

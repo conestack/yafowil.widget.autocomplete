@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.0'
+version = '1.0-beta'
 shortdesc = 'Autocomplete Widget for YAFOWIL - Yet Another Form Widget Library (Python, Web)'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
@@ -13,17 +13,18 @@ setup(name='yafowil.widget.autocomplete',
       description=shortdesc,
       long_description=longdesc,
       classifiers=[
-            'Development Status :: 3 - Alpha',
-            'Environment :: Web Environment',
+            #'Development Status :: 5 - Production/Stable',
+            'Development Status :: 4 - Beta',
             'Operating System :: OS Independent',
-            'Programming Language :: Python', 
-            'Topic :: Internet :: WWW/HTTP :: Dynamic Content',        
+            'Programming Language :: Python',
+            'Topic :: Software Development',
+            'Topic :: Internet :: WWW/HTTP :: Dynamic Content', 
             'License :: OSI Approved :: BSD License',            
       ],
-      keywords='',
+      keywords='jquery jquery.ui.autocomplete widget yafowil',
       author='BlueDynamics Alliance',
       author_email='dev@bluedynamics.com',
-      url=u'http://github.com/bluedynamics/yafowil.widget.autocomplete',
+      url=u'http://pypi.python.org/pypi/yafowil.widget.autocomplete',
       license='Simplified BSD',
       packages=find_packages('src'),
       package_dir = {'': 'src'},
