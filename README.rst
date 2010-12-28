@@ -1,8 +1,12 @@
 =========================================
-jquery.ui.autocomplete widget for YAFOWIL
+ widget for YAFOWIL
 =========================================
+This is a **autocomplete widget for for `YAFOWIL 
+<http://pypi.python.org/pypi/yafowil>`_** - Yet Another Form WIdget Library.
 
-A widget for YAFOWIL providing an autocomplete function on a text input.
+It utilizes/integrates `jquery.ui.autocomplete 
+<http://docs.jquery.com/UI/Autocomplete>'_ for/in YAFOWIL providing an 
+autocomplete function on a text input.
 
 Usage
 =====
@@ -61,7 +65,14 @@ and connect with your webbrowser to ``http://localhost:8000/``
 Run the tests with::
 
     ./bin/tests
+    
+Source Code
+===========
 
+The sources are in a GIT DVCS with its main branches at 
+`github <http://github.com/bluedynamics/yafowil.widget.autocomplete>`_.
+
+We'd be happy to see many forks and pull-requests to make YAFOWIL even better.
 
 Contributors
 ============
