@@ -1,6 +1,3 @@
-=========================================
- widget for YAFOWIL
-=========================================
 This is a **autocomplete widget for for `YAFOWIL 
 <http://pypi.python.org/pypi/yafowil>`_** - Yet Another Form WIdget Library.
 

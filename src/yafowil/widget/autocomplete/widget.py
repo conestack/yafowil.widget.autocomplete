@@ -48,6 +48,7 @@ factory.defaults['autocomplete.required_class'] = 'required'
 factory.defaults['autocomplete.delay'] = '300' #ms
 factory.defaults['autocomplete.minLength'] = '1' #characters
 factory.defaults['autocomplete.disabled'] = False 
+factory.defaults['autocomplete.disabled'] = None 
 factory.register('autocomplete', 
                  [generic_extractor, autocomplete_extractor], 
                  [input_generic_renderer, autocomplete_renderer])
