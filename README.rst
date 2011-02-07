@@ -5,6 +5,7 @@ It utilizes/integrates `jquery.ui.autocomplete
 <http://docs.jquery.com/UI/Autocomplete>`_ for/in YAFOWIL providing an 
 autocomplete function on a text input.
 
+
 Usage
 =====
 
@@ -31,6 +32,7 @@ Example::
         'source': ['foo', 'bar', 'baz'],
         'minLength': 3,
         'delay': 500})
+
 
 Example Application
 ===================
@@ -62,7 +64,8 @@ and connect with your webbrowser to ``http://localhost:8000/``
 Run the tests with::
 
     ./bin/tests
-    
+
+
 Source Code
 ===========
 
@@ -70,6 +73,7 @@ The sources are in a GIT DVCS with its main branches at
 `github <http://github.com/bluedynamics/yafowil.widget.autocomplete>`_.
 
 We'd be happy to see many forks and pull-requests to make YAFOWIL even better.
+
 
 Contributors
 ============
