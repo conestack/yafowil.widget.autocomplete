@@ -10,6 +10,7 @@ from yafowil.utils import (
     managedprops
 )
 
+
 @managedprops('source', 'delay', 'minLength')
 def autocomplete_renderer(widget, data):
     result = data.rendered
@@ -31,6 +32,7 @@ def autocomplete_renderer(widget, data):
     result += tag('div', '|'.join(params), 
                   **{'class': 'autocomplete-params hiddenStructure'})
     return tag('div', result, **{'class': 'yafowil-widget-autocomplete'})
+
 
 def autocomplete_extractor(widget, data):    
     return data.extracted
