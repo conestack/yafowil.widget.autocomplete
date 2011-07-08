@@ -37,6 +37,12 @@ def autocomplete_renderer(widget, data):
 def autocomplete_extractor(widget, data):    
     return data.extracted
 
+
+factory.register(
+    'autocomplete', 
+    extractors=[generic_extractor, autocomplete_extractor], 
+    edit_renderers=[input_generic_renderer, autocomplete_renderer])
+
 factory.doc['widget']['autocomplete'] = \
 """Add-on widget `yafowil.widget.autocomplete 
 <http://github.com/bluedynamics/yafowil.widget.autocomplete/>`_ utilizing 
@@ -45,12 +51,15 @@ given so far.
 """
 
 factory.defaults['autocomplete.type'] = 'text'
+
 factory.defaults['autocomplete.class'] = 'autocomplete'
+
 factory.defaults['autocomplete.required_class'] = 'required'
+
 factory.defaults['autocomplete.delay'] = '300' #ms
+
 factory.defaults['autocomplete.minLength'] = '1' #characters
+
 factory.defaults['autocomplete.disabled'] = False 
+
 factory.defaults['autocomplete.size'] = None 
-factory.register('autocomplete', 
-                 [generic_extractor, autocomplete_extractor], 
-                 [input_generic_renderer, autocomplete_renderer])
