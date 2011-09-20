@@ -14,7 +14,7 @@
 	<!-- Plone specific -->
 	
 	<browser:resourceDirectory
-	    zcml:condition="installed Products.CMFPlone"
+	    zcml:condition="installed Zope2"
         name="yafowil.widget.autocomplete"
         directory="resources"
     />

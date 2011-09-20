@@ -43,7 +43,7 @@ factory.register(
     extractors=[generic_extractor, autocomplete_extractor], 
     edit_renderers=[input_generic_renderer, autocomplete_renderer])
 
-factory.doc['widget']['autocomplete'] = \
+factory.doc['blueprint']['autocomplete'] = \
 """Add-on widget `yafowil.widget.autocomplete 
 <http://github.com/bluedynamics/yafowil.widget.autocomplete/>`_ utilizing 
 ``jquery.ui.autocomplete`` to offer the user a selection based on the input 

@@ -4,7 +4,7 @@ Import requirements::
     >>> import yafowil.widget.autocomplete
     >>> from yafowil.base import factory
 
-Render plain widget, source is string::
+Render plain, source is string::
 
     >>> widget = factory('autocomplete', name='root', 
     ...                  props={'source': 'http://www.foo.bar/baz'})
@@ -16,7 +16,7 @@ Render plain widget, source is string::
     </div>
     <BLANKLINE>
             
-Render plain widget, source is list::
+Render plain, source is list::
 
     >>> widget = factory('autocomplete', name='root', 
     ...                  props={'source': ['foo', 'bar']})
@@ -28,7 +28,7 @@ Render plain widget, source is list::
     </div>
     <BLANKLINE>
 
-Render plain widget, source is callable::
+Render plain, source is callable::
 
     >>> def test_source(widget, data):
     ...     return 'http://from.callable/'
@@ -42,13 +42,13 @@ Render plain widget, source is callable::
     </div>
     <BLANKLINE>
 
-Widget extraction::
+Extraction::
 
     >>> data = widget.extract({'root': 'abc'})
     >>> data.printtree()
     <RuntimeData root, value=<UNSET>, extracted='abc' at ...>
 
-Render widget, invalid source type::
+Render, invalid source type::
 
     >>> widget = factory('autocomplete', name='root', 
     ...                  props={'source': None})

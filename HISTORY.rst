@@ -2,6 +2,15 @@
 History
 =======
 
+1.2
+---
+
+- adopt to yafowil 1.2
+  [jensens, 2011-09-20]
+
+- resource available in plain Zope2
+  [jensens, 2011-09-20]
+
 1.1
 ---
 
