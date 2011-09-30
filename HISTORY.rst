@@ -2,6 +2,12 @@
 History
 =======
 
+1.3
+---
+
+- register plan and depend on yafowil 1.3
+  [jensens, 2011-09-30]
+
 1.2
 ---
 

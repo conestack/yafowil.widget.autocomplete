@@ -44,7 +44,7 @@ factory.register(
     edit_renderers=[input_generic_renderer, autocomplete_renderer])
 
 factory.doc['blueprint']['autocomplete'] = \
-"""Add-on widget `yafowil.widget.autocomplete 
+"""Add-on blueprint `yafowil.widget.autocomplete 
 <http://github.com/bluedynamics/yafowil.widget.autocomplete/>`_ utilizing 
 ``jquery.ui.autocomplete`` to offer the user a selection based on the input 
 given so far.
@@ -63,3 +63,5 @@ factory.defaults['autocomplete.minLength'] = '1' #characters
 factory.defaults['autocomplete.disabled'] = False 
 
 factory.defaults['autocomplete.size'] = None 
+
+factory.register_plan('autocompletefield', 'field:label:error:text')

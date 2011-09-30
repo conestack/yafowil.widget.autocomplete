@@ -56,3 +56,9 @@ Render, invalid source type::
     Traceback (most recent call last):
     ...
     ValueError: resulting source must be tuple/list or string
+
+Fetch as plan::
+
+    >>> widget = factory('#autocompletefield', name='root')
+    >>> widget.blueprints
+    ['field', 'label', 'error', 'text']

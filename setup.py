@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.2'
+version = '1.3'
 shortdesc = 'Autocomplete Widget for YAFOWIL - Yet Another Form Widget Library (Python, Web)'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
@@ -31,13 +31,17 @@ setup(name='yafowil.widget.autocomplete',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'yafowil',
+          'yafowil>=1.3dev',
       ],
       tests_require=tests_require,
       test_suite="yafowil.widget.autocomplete.tests.test_suite",
       extras_require = dict(
           test=tests_require,
       ),
-      entry_points = """\
-      """        
+      entry_points="""
+      # plone specific, ignore if not available
+      [z3c.autoinclude.plugin]
+      target = plone
+      """,       
+      
       )
