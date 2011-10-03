@@ -2,8 +2,11 @@
 History
 =======
 
-1.3
----
+1.3dev
+------
+
+- register autocomplete binder in ``yafowil.array.binders`` if installed
+  [rnix, 2011-10-03]
 
 - register plan and depend on yafowil 1.3
   [jensens, 2011-09-30]

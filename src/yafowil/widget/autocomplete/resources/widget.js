@@ -19,6 +19,13 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                 autocomplete_binder: yafowil.autocomplete.binder
             });
         }
+        
+        // add binder to yafowil.widget.array binders
+        if (typeof(window.yafowil['array']) != "undefined") {
+            $.extend(yafowil.array.binders, {
+                autocomplete_binder: yafowil.autocomplete.binder
+            });
+        }
     });
     
     $.extend(yafowil, {
