@@ -52,8 +52,26 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                         } else {
                             params[key] = value;
                         };                
-                    };        
-                    params['source'] = elem.find('.autocomplete-source').text();
+                    };
+                    var source = elem.find('.autocomplete-source').text();
+                    if (source.indexOf('javascript:') == 0) {
+                        source = source.substring(11, source.length);
+                        source = source.split('.');
+                        if (!source.length) {
+                            throw "No source path found.";
+                        }
+                        var ctx = window;
+                        var name;
+                        for (var idx in source) {
+                            name = source[idx];
+                            if (typeof(ctx[name]) == "undefined") {
+                                throw "'" + name + "' not found.";
+                            }
+                            ctx = ctx[name];
+                        }
+                        source = ctx;
+                    }
+                    params['source'] = source;
                     if (sourcetype=='local') {
                         params['source'] = params['source'].split('|');
                     };            

@@ -5,6 +5,9 @@ History
 1.3dev
 ------
 
+- Support JavaScript callback functions in source attribute
+  [rnix, 2011-10-03]
+
 - register autocomplete binder in ``yafowil.array.binders`` if installed
   [rnix, 2011-10-03]
 

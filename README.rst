@@ -19,17 +19,32 @@ delay
     default=300.
 
 source
-    Data to be uses for autocomplete. Either a list of strings or an url
-    (string) to be used to get a JSON response from. JSON response is expected
-    to be either a list of strings or a list of dicts with keys ``id`` and
-    ``label``. ``id`` is used for the complete and as value while ``label`` is
-    shown in the dropdown.
+    Data to be uses for autocomplete. Either a list of strings, a url
+    (string) to be used to get a JSON response from or a JavaScript callback
+    function. JSON response is expected to be either a list of strings or a
+    list of dicts with keys ``id`` and ``label``. ``id`` is used for the
+    complete and as value while ``label`` is shown in the dropdown. If
+    JavaScript callback desired, prefix source property with ``javascript:``,
+    it will be resolved to callback function.
 
-Example::
+
+Examples::
 
     form['mycomplete'] = factory('autocomplete', props={
         'value': '',
         'source': ['foo', 'bar', 'baz'],
+        'minLength': 3,
+        'delay': 500})
+    
+    form['mycomplete'] = factory('autocomplete', props={
+        'value': '',
+        'source': 'http://example.com/source_url',
+        'minLength': 3,
+        'delay': 500})
+    
+    form['mycomplete'] = factory('autocomplete', props={
+        'value': '',
+        'source': 'javascript:myfancyjs.callback',
         'minLength': 3,
         'delay': 500})
 
