@@ -20,7 +20,7 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
             });
         }
         
-        // add binder to yafowil.widget.array binders
+        // add binder to yafowil.widget.array hooks
         if (typeof(window.yafowil['array']) != "undefined") {
             $.extend(yafowil.array.hooks.add, {
                 autocomplete_binder: yafowil.autocomplete.binder

@@ -8,7 +8,7 @@ History
 - Support JavaScript callback functions in source attribute
   [rnix, 2011-10-03]
 
-- register autocomplete binder in ``yafowil.array.binders`` if installed
+- register autocomplete binder in ``yafowil.widget.array`` hooks if installed
   [rnix, 2011-10-03]
 
 - register plan and depend on yafowil 1.3
