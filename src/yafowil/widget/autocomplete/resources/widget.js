@@ -40,19 +40,25 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                         .text()
                         .split('|');
                     var params = new Array();
-                    for (var idx=0; idx<rawparams.length; idx++) {
+                    for (var idx=0; idx < rawparams.length; idx++) {
                         var pair = rawparams[idx].split(',');
                         var value = pair[1].replace(/^\s+|\s+$/g, "");
-                        if (!isNaN(value)) { value = parseInt(value); };
-                        if (value=='True') { value = true; };
-                        if (value=='False') { value = false; };
+                        if (!isNaN(value)) {
+                            value = parseInt(value);
+                        }
+                        if (value == 'True') {
+                            value = true;
+                        }
+                        if (value == 'False') {
+                            value = false;
+                        }
                         key = pair[0].replace(/^\s+|\s+$/g, "");
                         if (key == 'type') {
                             sourcetype = value; 
                         } else {
                             params[key] = value;
-                        };                
-                    };
+                        }
+                    }
                     var source = elem.find('.autocomplete-source').text();
                     if (source.indexOf('javascript:') == 0) {
                         source = source.substring(11, source.length);
@@ -72,9 +78,9 @@ if (typeof(window['yafowil']) == "undefined") yafowil = {};
                         source = ctx;
                     }
                     params['source'] = source;
-                    if (sourcetype=='local') {
+                    if (sourcetype == 'local') {
                         params['source'] = params['source'].split('|');
-                    };            
+                    }
                     elem.find("input").autocomplete(params);
                 });
             }
