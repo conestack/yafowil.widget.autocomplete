@@ -1,10 +1,9 @@
 import os
 from simplejson import dumps
 from yafowil import loader
-import yafowil.webob
 from yafowil.base import factory
+import yafowil.webob
 from yafowil.controller import Controller
-import yafowil.widget.autocomplete
 from yafowil.tests import fxml
 from webob import Request, Response
 

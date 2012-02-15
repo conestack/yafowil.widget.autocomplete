@@ -42,6 +42,10 @@ setup(name='yafowil.widget.autocomplete',
       # plone specific, ignore if not available
       [z3c.autoinclude.plugin]
       target = plone
-      """,       
       
+      [yafowil.plugin]
+      register = yafowil.widget.autocomplete:register
+      resourcedir = yafowil.widget.autocomplete:get_resource_dir
+      javascripts = yafowil.widget.autocomplete:get_js
+      """,
       )
