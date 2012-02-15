@@ -1,7 +1,6 @@
 Import requirements::
 
     >>> import yafowil.loader
-    >>> import yafowil.widget.autocomplete
     >>> from yafowil.base import factory
 
 Render plain, source is string::
