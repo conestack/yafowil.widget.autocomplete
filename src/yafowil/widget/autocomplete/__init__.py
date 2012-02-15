@@ -6,5 +6,5 @@ def register():
 def get_resource_dir():
     return os.path.join(os.path.dirname(__file__), 'resources')
     
-def get_js():
+def get_js(thirdparty=True):
     return ['widget.js']

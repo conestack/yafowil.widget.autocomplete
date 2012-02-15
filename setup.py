@@ -39,10 +39,6 @@ setup(name='yafowil.widget.autocomplete',
           test=tests_require,
       ),
       entry_points="""
-      # plone specific, ignore if not available
-      [z3c.autoinclude.plugin]
-      target = plone
-      
       [yafowil.plugin]
       register = yafowil.widget.autocomplete:register
       resourcedir = yafowil.widget.autocomplete:get_resource_dir
