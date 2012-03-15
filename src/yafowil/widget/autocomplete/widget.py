@@ -64,4 +64,5 @@ factory.defaults['autocomplete.disabled'] = False
 
 factory.defaults['autocomplete.size'] = None 
 
-factory.register_plan('autocompletefield', 'field:label:error:text')
+factory.register_plan('autocompletefield',
+                      ['field', 'label', 'error', 'autocomplete'])
