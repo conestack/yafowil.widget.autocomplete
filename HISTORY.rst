@@ -2,7 +2,7 @@
 History
 =======
 
-1.3dev
+1.3
 ------
 
 - Support JavaScript callback functions in source attribute

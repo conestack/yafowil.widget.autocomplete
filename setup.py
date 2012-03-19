@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.3dev'
-shortdesc = 'Autocomplete Widget for YAFOWIL - Yet Another Form Widget Library (Python, Web)'
+version = '1.3'
+shortdesc = 'Autocomplete Widget for YAFOWIL'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
@@ -31,7 +31,7 @@ setup(name='yafowil.widget.autocomplete',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'yafowil>=1.3dev',
+          'yafowil>=1.3',
       ],
       tests_require=tests_require,
       test_suite="yafowil.widget.autocomplete.tests.test_suite",
