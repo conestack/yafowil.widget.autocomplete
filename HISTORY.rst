@@ -3,7 +3,7 @@ History
 =======
 
 1.3
-------
+---
 
 - Support JavaScript callback functions in source attribute
   [rnix, 2011-10-03]
