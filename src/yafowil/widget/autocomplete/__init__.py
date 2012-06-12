@@ -26,4 +26,8 @@ def get_css():
         'resource': 'jquery-ui-1.8.18.autocomplete.css',
         'thirdparty': True,
         'order': 20,
+    }, {
+        'resource': 'widget.css',
+        'thirdparty': False,
+        'order': 21,
     }]
