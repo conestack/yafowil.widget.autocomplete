@@ -7,8 +7,8 @@ from yafowil.controller import Controller
 from yafowil.tests import fxml
 from webob import Request, Response
 
-lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do 
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim 
+lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
 veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
@@ -33,10 +33,5 @@ def get_example():
         'value': '',
         'source': 'yafowil.widget.autocomplete.json',
         'minLength': 1})
-    root['submit'] = factory('field:submit', props={
-        'label': 'submit',
-        'action': 'save',
-        'handler': lambda widget, data: None,
-        'next': lambda request: url})
     routes = {'yafowil.widget.autocomplete.json': json_response}
     return {'widget': root, 'routes': routes}
