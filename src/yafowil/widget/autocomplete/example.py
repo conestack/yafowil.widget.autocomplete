@@ -1,11 +1,7 @@
 import os
 import json
-from yafowil import loader
 from yafowil.base import factory
-import yafowil.webob
-from yafowil.controller import Controller
-from yafowil.tests import fxml
-from webob import Request, Response
+from webob import Response
 
 lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
