@@ -23,15 +23,15 @@ def json_response(environ, start_response):
     return response(environ, start_response)
 
 def get_example():
-    root = factory(u'fieldset', name='yafowilwidgetautocomplete')
-    root['local'] = factory('field:label:error:autocomplete', props={
+    part = factory(u'fieldset', name='yafowilwidgetautocomplete')
+    part['local'] = factory('field:label:error:autocomplete', props={
         'label': 'Enter some text (local, lorem ipsum)',
         'value': '',
         'source': lipsum})
-    root['remote'] = factory('field:label:error:autocomplete', props={
+    part['remote'] = factory('field:label:error:autocomplete', props={
         'label': 'Enter some text (remote listdir)',
         'value': '',
         'source': 'yafowil.widget.autocomplete.json',
         'minLength': 1})
     routes = {'yafowil.widget.autocomplete.json': json_response}
-    return {'widget': root, 'routes': routes}
+    return {'widget': part, 'routes': routes}
