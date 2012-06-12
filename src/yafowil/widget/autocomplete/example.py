@@ -1,5 +1,5 @@
 import os
-from simplejson import dumps
+import json
 from yafowil import loader
 from yafowil.base import factory
 import yafowil.webob
@@ -19,7 +19,7 @@ def json_response(environ, start_response):
     data = os.listdir('.')
     if environ['QUERY_STRING'].startswith('term='):
         data = [_ for _ in data if _.startswith(environ['QUERY_STRING'][5:])]
-    response = Response(content_type='application/json', body=dumps(data))
+    response = Response(content_type='application/json', body=json.dumps(data))
     return response(environ, start_response)
 
 def get_example():
