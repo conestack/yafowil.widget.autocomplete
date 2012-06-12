@@ -18,16 +18,35 @@ def json_response(environ, start_response):
     response = Response(content_type='application/json', body=json.dumps(data))
     return response(environ, start_response)
 
+DOC_PART1 = """\
+Autocomplete with static vocabulary
+-----------------------------------
+
+<pre>write me</pre>
+"""
+
+DOC_PART2 = """\
+Autocomplete with dynamic json vocabulary
+-----------------------------------------
+
+<pre>write me</pre>
+"""
+
 def get_example():
-    part = factory(u'fieldset', name='yafowilwidgetautocomplete')
-    part['local'] = factory('field:label:error:autocomplete', props={
-        'label': 'Enter some text (local, lorem ipsum)',
-        'value': '',
-        'source': lipsum})
-    part['remote'] = factory('field:label:error:autocomplete', props={
-        'label': 'Enter some text (remote listdir)',
-        'value': '',
-        'source': 'yafowil.widget.autocomplete.json',
-        'minLength': 1})
+    part1 = factory(u'fieldset', name='yafowilwidgetautocompletelocal')
+    part1['local'] = factory('field:label:error:autocomplete', props={
+          'label': 'Enter some text (local, lorem ipsum)',
+          'value': '',
+          'source': lipsum})
+    part2 = factory(u'fieldset', name='yafowilwidgetautocompletejson')
+    part2['remote'] = factory('field:label:error:autocomplete', props={
+          'label': 'Enter some text (remote listdir)',
+          'value': '',
+          'source': 'yafowil.widget.autocomplete.json',
+          'minLength': 1})
     routes = {'yafowil.widget.autocomplete.json': json_response}
-    return {'widget': part, 'routes': routes}
+    return [{'widget': part1,
+             'doc': DOC_PART1},
+            {'widget': part2,
+             'routes': routes,
+             'doc': DOC_PART2}, ]
