@@ -23,7 +23,8 @@ def get_js():
 
 def get_css():
     return [{
-        'resource': 'jquery-ui-1.8.18.autocomplete.css',
+        #'resource': 'jquery-ui-1.8.18.autocomplete.css',
+        'resource': 'jquery-ui-1.8.16.autocomplete.bootstrap.css',
         'thirdparty': True,
         'order': 20,
     }, {
