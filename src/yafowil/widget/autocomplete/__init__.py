@@ -1,6 +1,5 @@
 import os
 
-
 def register():
     import widget
 
