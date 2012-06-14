@@ -34,7 +34,9 @@ text Lorem Ipsum was used. First the static list of wordsis generated::
     est laborum.'''
     lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
 
-Next field is defined as::
+Next field is defined as
+
+.. code-block:: python
 
     field = factory('field:label:error:autocomplete', props={
                     'label': 'Enter some text (local, lorem ipsum)',
@@ -49,7 +51,9 @@ Autocomplete with dynamic json vocabulary
 
 Instead of static lists autocomplete ay ask the server for a list of words
 matching a given term. The source is a string and as such interpreted as a
-absolute or relative url::
+absolute or relative url
+
+.. code-block:: python
 
     field = factory('field:label:error:autocomplete', props={
                     'label': 'Enter some text (remote listdir)',
@@ -59,7 +63,9 @@ absolute or relative url::
 
 The server answers with a JSON response, here the example does it using WSGI
 and ``webob``` way. This code needs modification depending on the framework
-used::
+used
+
+.. code-block:: python
 
     def json_response(environ, start_response):
         data = os.listdir('.')
