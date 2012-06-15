@@ -23,7 +23,9 @@ Autocomplete with static vocabulary
 -----------------------------------
 
 Autocomplete may happen against a static vocabulary source. Here words of blind
-text Lorem Ipsum was used. First the static list of wordsis generated::
+text Lorem Ipsum was used. First the static list of wordsis generated
+
+.. code-block:: python
 
     lipsum = '''Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
     eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
@@ -70,8 +72,8 @@ used
     def json_response(environ, start_response):
         data = os.listdir('.')
         if environ['QUERY_STRING'].startswith('term='):
-            data = [_ for _ in data \
-                    if _.startswith(environ['QUERY_STRING'][5:])]
+            qsts = environ['QUERY_STRING'][5:]
+            data = [_ for _ in data if _.startswith(qsts)]
         response = Response(content_type='application/json',
                             body=json.dumps(data))
         return response(environ, start_response)
