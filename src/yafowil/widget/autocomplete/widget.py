@@ -63,6 +63,3 @@ factory.defaults['autocomplete.minLength'] = '1' #characters
 factory.defaults['autocomplete.disabled'] = False 
 
 factory.defaults['autocomplete.size'] = None 
-
-factory.register_plan('autocompletefield',
-                      ['field', 'label', 'error', 'autocomplete'], {})
