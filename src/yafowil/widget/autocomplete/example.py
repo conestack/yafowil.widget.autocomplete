@@ -81,13 +81,13 @@ used
 """
 
 def get_example():
-    part1 = factory('label:error:autocomplete',
+    part1 = factory('#field:autocomplete',
           name='autocomplete-1',
           props={
           'label': 'Enter some text (local, lorem ipsum)',
           'value': '',
           'source': lipsum})
-    part2 = factory('label:error:autocomplete',
+    part2 = factory('#field:autocomplete',
           name='autocomplete-2',
           props={
           'label': 'Enter some text (remote listdir)',
