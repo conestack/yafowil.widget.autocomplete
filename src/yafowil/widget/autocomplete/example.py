@@ -13,7 +13,7 @@ lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
 
 def json_response(url):
     purl = urlparse.urlparse(url)
-    qs = urlparse.parse_qs(purl)
+    qs = urlparse.parse_qs(purl.query)
     term = qs.get('term', [''])[0]
     data = os.listdir('.')
     if term:
