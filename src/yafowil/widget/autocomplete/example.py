@@ -1,5 +1,6 @@
 import os
 import json
+import urlparse
 from yafowil.base import factory
 
 lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -10,12 +11,16 @@ dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 sunt in culpa qui officia deserunt mollit anim id est laborum."""
 lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
 
-def json_response(environ, start_response):
+def json_response(url):
+    purl = urlparse.urlparse(url)
+    qs = urlparse.parse_qs(purl)
+    term = qs.get('term', [''])[0]
     data = os.listdir('.')
-    if environ['QUERY_STRING'].startswith('term='):
-        data = [_ for _ in data if _.startswith(environ['QUERY_STRING'][5:])]
-    response = Response(content_type='application/json', body=json.dumps(data))
-    return response(environ, start_response)
+    if term:
+        data = [_ for _ in data if _.startswith(term)]
+    return {'body': json.dumps(data),
+            'header': [('Content-Type', 'application/json')]
+    }
 
 DOC_PART1 = """\
 Autocomplete with static vocabulary
