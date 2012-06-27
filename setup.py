@@ -41,9 +41,6 @@ setup(name='yafowil.widget.autocomplete',
       entry_points="""
       [yafowil.plugin]
       register = yafowil.widget.autocomplete:register
-      resourcedir = yafowil.widget.autocomplete:get_resource_dir
-      javascripts = yafowil.widget.autocomplete:get_js
-      stylesheets = yafowil.widget.autocomplete:get_css
       example = yafowil.widget.autocomplete.example:get_example
       """,
       )
