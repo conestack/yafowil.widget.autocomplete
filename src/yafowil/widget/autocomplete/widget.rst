@@ -55,23 +55,3 @@ Render, invalid source type::
     Traceback (most recent call last):
     ...
     ValueError: resulting source must be tuple/list or string
-
-Fetch as plan::
-
-    >>> widget = factory(
-    ...     '#autocompletefield',
-    ...     name='root',
-    ...     props={'source': test_source})
-    >>> widget.blueprints
-    ['field', 'label', 'error', 'autocomplete']
-    
-    >>> pxml(widget())
-    <div class="field" id="field-root">
-      <label for="input-root">root</label>
-      <div class="yafowil-widget-autocomplete">
-        <input class="autocomplete" id="input-root" name="root" type="text"/>
-        <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
-        <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
-      </div>
-    </div>
-    <BLANKLINE>
