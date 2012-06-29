@@ -6,13 +6,11 @@ from yafowil.base import factory
 
 # XXX: more generic
 try:
-    from webob import Response
+    from webob import Request, Response
     def json_response(environ, start_response):
-        data = os.listdir('.')
-        if environ['QUERY_STRING'].startswith('term='):
-            qsts = environ['QUERY_STRING'][5:]
-            data = [_ for _ in data if _.startswith(qsts)]
-        from webob import Response
+        request = Request(environ)
+        term = request.params.get('term')
+        data = json_data(request.params.get('term'))
         response = Response(content_type='application/json',
                             body=json.dumps(data))
         return response(environ, start_response)
@@ -20,13 +18,17 @@ except ImportError:
     def json_response(url):
         purl = urlparse.urlparse(url)
         qs = urlparse.parse_qs(purl.query)
-        term = qs.get('term', [''])[0]
-        data = os.listdir('.')
-        if term:
-            data = [_ for _ in data if _.startswith(term)]
+        data = json_data(qs.get('term', [''])[0])
         return {'body': json.dumps(data),
                 'header': [('Content-Type', 'application/json')]
         }
+
+
+def json_data(term):
+    data = os.listdir('.')
+    if term:
+        data = [_ for _ in data if _.startswith(term)]
+    return data
 
 
 lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
