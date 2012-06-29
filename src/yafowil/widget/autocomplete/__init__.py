@@ -14,8 +14,17 @@ js = [{
     'order': 21,
 }]
 
-css = [{
-    #'resource': 'jquery-ui-1.8.18.autocomplete.css',
+default_css = [{
+    'resource': 'jquery-ui-1.8.18.autocomplete.css',
+    'thirdparty': True,
+    'order': 20,
+}, {
+    'resource': 'widget.css',
+    'thirdparty': False,
+    'order': 21,
+}]
+
+bootstrap_css = [{
     'resource': 'jquery-ui-1.8.16.autocomplete.bootstrap.css',
     'thirdparty': True,
     'order': 20,
@@ -29,4 +38,6 @@ css = [{
 def register():
     import widget
     factory.register_theme('default', 'yafowil.widget.autocomplete',
-                           resourcedir, js=js, css=css)
+                           resourcedir, js=js, css=default_css)
+    factory.register_theme('bootstrap', 'yafowil.widget.autocomplete',
+                           resourcedir, js=js, css=bootstrap_css)
