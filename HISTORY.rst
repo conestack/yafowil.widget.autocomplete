@@ -5,6 +5,9 @@ History
 1.3.1dev
 --------
 
+- Add ``generic_required_extractor`` to extraction chain
+  [rnix, 2012-07-25]
+
 - Adopt resource providing
   [jensens, 2012-06-12]
 
