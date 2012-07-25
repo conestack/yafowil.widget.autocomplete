@@ -4,6 +4,7 @@ from yafowil.base import (
 )
 from yafowil.common import (
     generic_extractor,
+    generic_required_extractor,
     input_generic_renderer,
 )
 from yafowil.utils import (
@@ -40,7 +41,9 @@ def autocomplete_extractor(widget, data):
 
 factory.register(
     'autocomplete', 
-    extractors=[generic_extractor, autocomplete_extractor], 
+    extractors=[generic_extractor,
+                generic_required_extractor,
+                autocomplete_extractor], 
     edit_renderers=[input_generic_renderer, autocomplete_renderer])
 
 factory.doc['blueprint']['autocomplete'] = \

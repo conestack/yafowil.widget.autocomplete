@@ -47,6 +47,26 @@ Extraction::
     >>> data.printtree()
     <RuntimeData root, value=<UNSET>, extracted='abc' at ...>
 
+Extract required::
+
+    >>> widget = factory('error:autocomplete', name='root', 
+    ...                  props={'source': test_source,
+    ...                         'required': 'Autocomplete widget is required'})
+    >>> data = widget.extract({'root': ''})
+    >>> data.errors
+    [ExtractionError('Autocomplete widget is required',)]
+    
+    >>> pxml(widget(data))
+    <div class="error">
+      <div class="errormessage">Autocomplete widget is required</div>
+      <div class="yafowil-widget-autocomplete">
+        <input class="autocomplete required" id="input-root" name="root" required="required" type="text" value=""/>
+        <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
+        <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
+      </div>
+    </div>
+    <BLANKLINE>
+
 Render, invalid source type::
 
     >>> widget = factory('autocomplete', name='root', 
