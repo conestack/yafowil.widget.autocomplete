@@ -2,17 +2,17 @@
 History
 =======
 
-1.3.1dev
---------
+1.4dev
+------
 
 - Add ``generic_required_extractor`` to extraction chain
   [rnix, 2012-07-25]
 
 - Adopt resource providing
-  [jensens, 2012-06-12]
+  [rnix, 2012-06-12]
 
 - Remove example app
-  [jensens, 2012-06-12]
+  [rnix, 2012-06-12]
 
 1.3
 ---
