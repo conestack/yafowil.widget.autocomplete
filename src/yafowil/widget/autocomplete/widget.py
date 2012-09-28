@@ -59,10 +59,20 @@ factory.defaults['autocomplete.class'] = 'autocomplete'
 
 factory.defaults['autocomplete.required_class'] = 'required'
 
-factory.defaults['autocomplete.delay'] = '300' #ms
-
-factory.defaults['autocomplete.minLength'] = '1' #characters
-
 factory.defaults['autocomplete.disabled'] = False 
 
 factory.defaults['autocomplete.size'] = None 
+
+factory.defaults['autocomplete.delay'] = '300'
+factory.doc['props']['autocomplete.delay'] = \
+"""Delay in milliseconds.
+"""
+
+factory.defaults['autocomplete.minLength'] = '1'
+factory.doc['props']['autocomplete.minLength'] = \
+"""Minimum input length to trigger autocomplete.
+"""
+
+factory.doc['props']['autocomplete.source'] = \
+"""Autocomplete source as python iterable or string defining JSON view callback.
+"""
