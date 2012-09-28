@@ -2,9 +2,7 @@ import os
 from yafowil.base import factory
 
 
-# XXX: use fanstatic
 resourcedir = os.path.join(os.path.dirname(__file__), 'resources')
-
 js = [{
     'group': 'autocomplete',
     'resource': 'jquery-ui-1.8.18.autocomplete.min.js',
@@ -14,7 +12,6 @@ js = [{
     'resource': 'widget.js',
     'order': 21,
 }]
-
 default_css = [{
     'group': 'autocomplete',
     'resource': 'jquery-ui-1.8.18.autocomplete.css',
@@ -24,7 +21,6 @@ default_css = [{
     'resource': 'widget.css',
     'order': 21,
 }]
-
 bootstrap_css = [{
     'group': 'autocomplete',
     'resource': 'jquery-ui-1.8.16.autocomplete.bootstrap.css',
