@@ -4,29 +4,29 @@ from yafowil.base import factory
 
 resourcedir = os.path.join(os.path.dirname(__file__), 'resources')
 js = [{
-    'group': 'autocomplete',
+    'group': 'yafowil.widget.autocomplete.dependencies',
     'resource': 'jquery-ui-1.8.18.autocomplete.min.js',
     'order': 20,
 }, {
-    'group': 'yafowil.widget.autocomplete',
+    'group': 'yafowil.widget.autocomplete.common',
     'resource': 'widget.js',
     'order': 21,
 }]
 default_css = [{
-    'group': 'autocomplete',
+    'group': 'yafowil.widget.autocomplete.dependencies',
     'resource': 'jquery-ui-1.8.18.autocomplete.css',
     'order': 20,
 }, {
-    'group': 'yafowil.widget.autocomplete',
+    'group': 'yafowil.widget.autocomplete.common',
     'resource': 'widget.css',
     'order': 21,
 }]
 bootstrap_css = [{
-    'group': 'autocomplete',
+    'group': 'yafowil.widget.autocomplete.dependencies',
     'resource': 'jquery-ui-1.8.16.autocomplete.bootstrap.css',
     'order': 20,
 }, {
-    'group': 'yafowil.widget.autocomplete',
+    'group': 'yafowil.widget.autocomplete.common',
     'resource': 'widget.css',
     'order': 21,
 }]
