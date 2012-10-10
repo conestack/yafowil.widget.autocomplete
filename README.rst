@@ -5,7 +5,7 @@ It utilizes/integrates `jquery.ui.autocomplete
 <http://docs.jquery.com/UI/Autocomplete>`_ for/in YAFOWIL providing an
 autocomplete function on a text input.
 
-- `Documentation <http://docs.yafowil.info/yafowil/blueprints.html#autocomplete>`_
+- `Documentation <http://docs.yafowil.info/en/latest/blueprints.html#autocomplete>`_
 - `DEMO - see it Live <http://docs.demo.yafowil.info/++widget++yafowil.widget.autocomplete/index.html>`_
 
 

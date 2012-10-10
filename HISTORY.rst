@@ -2,8 +2,8 @@
 History
 =======
 
-1.4dev
-------
+1.4
+---
 
 - Add ``generic_required_extractor`` to extraction chain
   [rnix, 2012-07-25]
