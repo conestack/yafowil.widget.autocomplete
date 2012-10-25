@@ -8,7 +8,8 @@ from yafowil.common import (
     input_generic_renderer,
 )
 from yafowil.utils import (
-    managedprops
+    managedprops,
+    attr_value,
 )
 
 
@@ -16,7 +17,7 @@ from yafowil.utils import (
 def autocomplete_renderer(widget, data):
     result = data.rendered
     tag = data.tag
-    source = widget.attrs['source']
+    source = attr_value('source', widget, data)
     if callable(source):
         source = source(widget, data)
     if isinstance(source, (list, tuple)):
@@ -28,7 +29,8 @@ def autocomplete_renderer(widget, data):
         raise ValueError, 'resulting source must be tuple/list or string'  
     result += tag('div', source, 
                   **{'class': 'autocomplete-source hiddenStructure'})
-    params = [('%s,%s' % (_, widget.attrs[_])) for _ in ['delay', 'minLength']]
+    params = [('%s,%s' % (_, attr_value(_, widget, data))) \
+                  for _ in ['delay', 'minLength']]
     params.append('type,%s' % source_type)
     result += tag('div', '|'.join(params), 
                   **{'class': 'autocomplete-params hiddenStructure'})
