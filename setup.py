@@ -1,5 +1,9 @@
-from setuptools import setup, find_packages
 import os
+from setuptools import (
+    setup,
+    find_packages,
+)
+
 
 version = '1.4.1'
 shortdesc = 'Autocomplete Widget for YAFOWIL'
@@ -8,16 +12,17 @@ longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
 tests_require = ['yafowil[test]']
 
+
 setup(name='yafowil.widget.autocomplete',
       version=version,
       description=shortdesc,
       long_description=longdesc,
       classifiers=[
-            'Operating System :: OS Independent',
-            'Programming Language :: Python',
-            'Topic :: Software Development',
-            'Topic :: Internet :: WWW/HTTP :: Dynamic Content', 
-            'License :: OSI Approved :: BSD License',            
+          'Operating System :: OS Independent',
+          'Programming Language :: Python',
+          'Topic :: Software Development',
+          'Topic :: Internet :: WWW/HTTP :: Dynamic Content', 
+          'License :: OSI Approved :: BSD License',            
       ],
       keywords='jquery jquery.ui.autocomplete widget yafowil',
       author='BlueDynamics Alliance',
@@ -42,5 +47,4 @@ setup(name='yafowil.widget.autocomplete',
       [yafowil.plugin]
       register = yafowil.widget.autocomplete:register
       example = yafowil.widget.autocomplete.example:get_example
-      """,
-      )
+      """)
