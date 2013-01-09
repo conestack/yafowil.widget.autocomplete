@@ -32,8 +32,8 @@ DOC_STATIC = """\
 Autocomplete with static vocabulary
 -----------------------------------
 
-Autocomplete may happen against a static vocabulary source. Here words of blind
-text Lorem Ipsum was used. First the static list of wordsis generated
+Autocomplete can make use of a static vocabulary source. Here words of blind
+text Lorem Ipsum are used. First the static list of words is generated
 
 .. code-block:: python
 
@@ -46,7 +46,7 @@ text Lorem Ipsum was used. First the static list of wordsis generated
     est laborum.'''
     lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
 
-Next field is defined as
+Next, the field is defined as
 
 .. code-block:: python
 
@@ -60,7 +60,7 @@ DOC_JSON = """\
 Autocomplete with dynamic json vocabulary
 -----------------------------------------
 
-Instead of static lists autocomplete ay ask the server for a list of words
+Instead of static lists autocomplete may ask the server for a list of words
 matching a given term. The source is a string and as such interpreted as a
 absolute or relative url
 
@@ -73,7 +73,7 @@ absolute or relative url
         'minLength': 1})
 
 The server answers with a JSON response, here the example does it using WSGI
-and ``webob``` way. This code needs modification depending on the framework
+and ``webob`` way. This code needs modification depending on the framework
 used
 
 .. code-block:: python
