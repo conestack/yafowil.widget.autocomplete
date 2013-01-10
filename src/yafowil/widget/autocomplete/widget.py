@@ -18,8 +18,6 @@ def autocomplete_renderer(widget, data):
     result = data.rendered
     tag = data.tag
     source = attr_value('source', widget, data)
-    if callable(source):
-        source = source(widget, data)
     if isinstance(source, (list, tuple)):
         source = '|'.join(source)
         source_type = 'local'
