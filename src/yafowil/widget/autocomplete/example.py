@@ -3,6 +3,16 @@ import json
 import urlparse
 from yafowil.base import factory
 
+
+lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+sunt in culpa qui officia deserunt mollit anim id est laborum."""
+lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
+
+
 def json_response(url):
     purl = urlparse.urlparse(url)
     qs = urlparse.parse_qs(purl.query)
@@ -13,19 +23,10 @@ def json_response(url):
 
 
 def json_data(term):
-    data = os.listdir('.')
+    data = lipsum
     if term:
         data = [_ for _ in data if _.startswith(term)]
     return data
-
-
-lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-sunt in culpa qui officia deserunt mollit anim id est laborum."""
-lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
 
 
 DOC_STATIC = """\
@@ -79,7 +80,7 @@ used
 .. code-block:: python
 
     def json_response(environ, start_response):
-        data = os.listdir('.')
+        data = lipsum
         if environ['QUERY_STRING'].startswith('term='):
             qsts = environ['QUERY_STRING'][5:]
             data = [_ for _ in data if _.startswith(qsts)]
@@ -87,6 +88,7 @@ used
                             body=json.dumps(data))
         return response(environ, start_response)
 """
+
 
 def get_example():
     static_ac = factory('#field:autocomplete', name='static', props={
@@ -106,3 +108,4 @@ def get_example():
              'routes': routes,
              'doc': DOC_JSON,
              'title': 'JSON data autocomplete'}]
+
