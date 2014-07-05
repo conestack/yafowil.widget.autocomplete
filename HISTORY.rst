@@ -2,6 +2,13 @@
 History
 =======
 
+1.5 (unreleased)
+----------------
+
+- Update jquery UI autocomplete to 1.10.3 and use latest jquery ui boostrap
+  styles.
+  [rnix, 2014-07-05]
+
 1.4.1
 -----
 
