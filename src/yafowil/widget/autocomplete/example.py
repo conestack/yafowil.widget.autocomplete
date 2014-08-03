@@ -54,7 +54,8 @@ Next, the field is defined as
     field = factory('#field:autocomplete', props={
         'label': 'Enter some text (local, lorem ipsum)',
         'value': '',
-        'source': lipsum})
+        'source': lipsum,
+    })
 """
 
 DOC_JSON = """\
@@ -71,7 +72,8 @@ absolute or relative url
         'label': 'Enter some text (remote listdir)',
         'value': '',
         'source': 'yafowil.widget.autocomplete.json',
-        'minLength': 1})
+        'minLength': 1,
+    })
 
 The server answers with a JSON response, here the example does it using WSGI
 and ``webob`` way. This code needs modification depending on the framework
@@ -94,18 +96,24 @@ def get_example():
     static_ac = factory('#field:autocomplete', name='static', props={
         'label': 'Enter some text (local, lorem ipsum)',
         'value': '',
-        'source': lipsum})
+        'source': lipsum,
+    })
     json_ac = factory('#field:autocomplete', name='json', props={
         'label': 'Enter some text (remote listdir)',
         'value': '',
         'source': 'yafowil.widget.autocomplete.json',
-        'minLength': 1})
-    routes = {'yafowil.widget.autocomplete.json': json_response}
-    return [{'widget': static_ac,
-             'doc': DOC_STATIC,
-             'title': 'Static autocomplete'},
-            {'widget': json_ac,
-             'routes': routes,
-             'doc': DOC_JSON,
-             'title': 'JSON data autocomplete'}]
-
+        'minLength': 1,
+    })
+    routes = {
+        'yafowil.widget.autocomplete.json': json_response,
+    }
+    return [{
+        'widget': static_ac,
+        'doc': DOC_STATIC,
+        'title': 'Static autocomplete',
+    }, {
+        'widget': json_ac,
+        'routes': routes,
+        'doc': DOC_JSON,
+        'title': 'JSON data autocomplete',
+    }]
