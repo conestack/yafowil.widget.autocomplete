@@ -5,7 +5,7 @@ from setuptools import (
 )
 
 
-version = '1.5pre1'
+version = '1.5.dev1'
 shortdesc = 'Autocomplete Widget for YAFOWIL'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__), 'HISTORY.rst')).read()
