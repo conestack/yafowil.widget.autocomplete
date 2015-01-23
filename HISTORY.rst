@@ -2,7 +2,7 @@
 History
 =======
 
-1.5 (unreleased)
+1.5 (2015-01-23)
 ----------------
 
 - Update jquery UI autocomplete to 1.10.3 and use latest jquery ui boostrap
