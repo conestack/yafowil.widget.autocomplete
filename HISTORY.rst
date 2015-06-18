@@ -2,13 +2,6 @@
 History
 =======
 
-1.6 (unreleased)
-----------------
-
-- JSHint JavaScript resources.
-  [thet]
-
-
 1.5 (2015-01-23)
 ----------------
 
