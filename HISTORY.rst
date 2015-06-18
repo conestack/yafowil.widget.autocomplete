@@ -2,6 +2,13 @@
 History
 =======
 
+1.5.1 (unreleased)
+------------------
+
+- Resolve JSHint errors and warnings.
+  [thet]
+
+
 1.5 (2015-01-23)
 ----------------
 
