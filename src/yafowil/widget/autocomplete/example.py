@@ -1,7 +1,7 @@
-import os
-import json
-import urlparse
 from yafowil.base import factory
+import json
+import os
+import urlparse
 
 
 lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do

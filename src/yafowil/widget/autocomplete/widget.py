@@ -1,16 +1,10 @@
-from yafowil.base import (
-    ExtractionError,
-    factory,
-)
-from yafowil.common import (
-    generic_extractor,
-    generic_required_extractor,
-    input_generic_renderer,
-)
-from yafowil.utils import (
-    managedprops,
-    attr_value,
-)
+from yafowil.base import ExtractionError
+from yafowil.base import factory
+from yafowil.common import generic_extractor
+from yafowil.common import generic_required_extractor
+from yafowil.common import input_generic_renderer
+from yafowil.utils import attr_value
+from yafowil.utils import managedprops
 
 
 @managedprops('source', 'delay', 'minLength')
