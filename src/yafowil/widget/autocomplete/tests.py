@@ -6,7 +6,7 @@ from yafowil.tests import fxml
 import yafowil.loader
 
 
-class TestArrayWidget(NodeTestCase):
+class TestAutocompleteWidget(NodeTestCase):
 
     def test_source_is_string(self):
         # Render plain, source is string
