@@ -1,12 +1,17 @@
-from node.tests import NodeTestCase
 from node.utils import UNSET
 from yafowil.base import ExtractionError
 from yafowil.base import factory
+from yafowil.tests import YafowilTestCase
 from yafowil.tests import fxml
 import yafowil.loader
 
 
-class TestAutocompleteWidget(NodeTestCase):
+class TestAutocompleteWidget(YafowilTestCase):
+
+    def setUp(self):
+        super(TestAutocompleteWidget, self).setUp()
+        from yafowil.widget.autocomplete import widget
+        reload(widget)
 
     def test_source_is_string(self):
         # Render plain, source is string
