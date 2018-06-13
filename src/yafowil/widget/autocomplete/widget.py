@@ -1,13 +1,9 @@
-from yafowil.compat import IS_PY2
-
-if not IS_PY2:
-    basestring = str
-
 from yafowil.base import ExtractionError
 from yafowil.base import factory
 from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
 from yafowil.common import input_generic_renderer
+from yafowil.compat import STR_TYPE
 from yafowil.utils import attr_value
 from yafowil.utils import managedprops
 
@@ -20,7 +16,7 @@ def autocomplete_renderer(widget, data):
     if isinstance(source, (list, tuple)):
         source = '|'.join(source)
         source_type = 'local'
-    elif isinstance(source, basestring):
+    elif isinstance(source, STR_TYPE):
         source_type = 'remote'  
     else:
         raise ValueError('resulting source must be tuple/list or string')
