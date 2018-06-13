@@ -3,6 +3,7 @@ from yafowil.base import factory
 from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
 from yafowil.common import input_generic_renderer
+from yafowil.compat import STR_TYPE
 from yafowil.utils import attr_value
 from yafowil.utils import managedprops
 
@@ -15,10 +16,10 @@ def autocomplete_renderer(widget, data):
     if isinstance(source, (list, tuple)):
         source = '|'.join(source)
         source_type = 'local'
-    elif isinstance(source, basestring):
+    elif isinstance(source, STR_TYPE):
         source_type = 'remote'  
     else:
-        raise ValueError, 'resulting source must be tuple/list or string'  
+        raise ValueError('resulting source must be tuple/list or string')
     result += tag('div', source, 
                   **{'class': 'autocomplete-source hiddenStructure'})
     params = [('%s,%s' % (_, attr_value(_, widget, data))) \
