@@ -1,3 +1,8 @@
+from yafowil.compat import IS_PY2
+
+if not IS_PY2:
+    basestring = str
+
 from yafowil.base import ExtractionError
 from yafowil.base import factory
 from yafowil.common import generic_extractor

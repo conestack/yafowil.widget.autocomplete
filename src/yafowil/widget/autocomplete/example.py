@@ -1,7 +1,15 @@
+from yafowil.compat import IS_PY2
+
+if IS_PY2:
+    from urlparse import urlparse
+    from urlparse import parse_qs
+else:
+    from urllib.parse import urlparse
+    from urllib.parse import parse_qs
+
 from yafowil.base import factory
 import json
 import os
-import urlparse
 
 
 lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -14,8 +22,8 @@ lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
 
 
 def json_response(url):
-    purl = urlparse.urlparse(url)
-    qs = urlparse.parse_qs(purl.query)
+    purl = urlparse(url)
+    qs = parse_qs(purl.query)
     data = json_data(qs.get('term', [''])[0])
     return {'body': json.dumps(data),
             'header': [('Content-Type', 'application/json')]
