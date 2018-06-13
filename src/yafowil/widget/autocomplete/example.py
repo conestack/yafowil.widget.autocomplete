@@ -1,4 +1,7 @@
+from yafowil.base import factory
 from yafowil.compat import IS_PY2
+import json
+import os
 
 if IS_PY2:
     from urlparse import urlparse
@@ -6,10 +9,6 @@ if IS_PY2:
 else:
     from urllib.parse import urlparse
     from urllib.parse import parse_qs
-
-from yafowil.base import factory
-import json
-import os
 
 
 lipsum = """Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
