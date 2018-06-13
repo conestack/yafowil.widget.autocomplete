@@ -60,7 +60,7 @@ plone5_css = [{
 
 @entry_point(order=10)
 def register():
-    import widget
+    from yafowil.widget.autocomplete import widget
     factory.register_theme('default', 'yafowil.widget.autocomplete',
                            resourcedir, js=js, css=default_css)
     factory.register_theme('bootstrap', 'yafowil.widget.autocomplete',

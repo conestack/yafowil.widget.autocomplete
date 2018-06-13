@@ -18,7 +18,7 @@ def autocomplete_renderer(widget, data):
     elif isinstance(source, basestring):
         source_type = 'remote'  
     else:
-        raise ValueError, 'resulting source must be tuple/list or string'  
+        raise ValueError('resulting source must be tuple/list or string')
     result += tag('div', source, 
                   **{'class': 'autocomplete-source hiddenStructure'})
     params = [('%s,%s' % (_, attr_value(_, widget, data))) \
