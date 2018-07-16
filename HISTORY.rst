@@ -2,7 +2,7 @@
 History
 =======
 
-1.7 (unreleased)
+1.7 (2018-07-16)
 ----------------
 
 - Python 3 compatibility.
