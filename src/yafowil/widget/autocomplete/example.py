@@ -1,7 +1,7 @@
 from yafowil.base import factory
 from yafowil.compat import IS_PY2
 import json
-import os
+
 
 if IS_PY2:
     from urlparse import urlparse
@@ -24,8 +24,9 @@ def json_response(url):
     purl = urlparse(url)
     qs = parse_qs(purl.query)
     data = json_data(qs.get('term', [''])[0])
-    return {'body': json.dumps(data),
-            'header': [('Content-Type', 'application/json')]
+    return {
+        'body': json.dumps(data),
+        'header': [('Content-Type', 'application/json')]
     }
 
 
