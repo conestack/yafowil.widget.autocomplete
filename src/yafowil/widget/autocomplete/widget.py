@@ -50,7 +50,7 @@ factory.register(
 
 factory.doc['blueprint']['autocomplete'] = """\
 Add-on blueprint `yafowil.widget.autocomplete
-<http://github.com/bluedynamics/yafowil.widget.autocomplete/>`_ utilizing
+<http://github.com/conestack/yafowil.widget.autocomplete/>`_ utilizing
 ``jquery.ui.autocomplete`` to offer the user a selection based on the input
 given so far.
 """
