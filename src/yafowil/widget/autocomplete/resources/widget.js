@@ -1,97 +1,124 @@
-/* jslint browser: true */
-/* global jQuery, yafowil */
-/* 
- * yafowil autocomplete widget
- * 
- * Requires: jquery ui autocomplete
- * Optional: bdajax
- */
+(function (exports, $) {
+    'use strict';
 
-if (window.yafowil === undefined) {
-    window.yafowil = {};
-}
-
-(function($, yafowil) {
-    "use strict";
-
-    $(document).ready(function() {
-        // initial binding
-        yafowil.autocomplete.binder();
-        
-        // add after ajax binding if bdajax present
-        if (window.bdajax !== undefined) {
-            $.extend(window.bdajax.binders, {
-                autocomplete_binder: yafowil.autocomplete.binder
+    class AutocompleteWidget {
+        static initialize(context) {
+            $('div.yafowil-widget-autocomplete', context).each(function() {
+                let elem = $(this);
+                new AutocompleteWidget(elem);
             });
         }
-        
-        // add binder to yafowil.widget.array hooks
-        if (yafowil.array !== undefined) {
-            $.extend(yafowil.array.hooks.add, {
-                autocomplete_binder: yafowil.autocomplete.binder
-            });
+        constructor(elem) {
+            this.elem = elem;
+            this.input = $('input.autocomplete', this).attr('spellcheck', false);
+            this.ac_params = $('.autocomplete-params', this.elem);
+            this.ac_source = $('.autocomplete-source', this.elem);
+            let dd = this.dd = $(`<div />`).addClass('autocomplete-dropdown');
+            this.elem.append(dd);
+            this.params = [];
+            this.currentFocus = 0;
+            this.binder();
+            this.autocomplete = this.autocomplete.bind(this);
+            this.input.on('input', this.autocomplete);
         }
-    });
-    
-    $.extend(yafowil, {
-        
-        autocomplete: {
-            
-            binder: function(context) {
-                $('.yafowil-widget-autocomplete', context).each(function () {
-                    var elem = $(this);
-                    var rawparams = elem
-                        .find('.autocomplete-params')
-                        .text()
-                        .split('|');
-                    var params = [],
-                        idx,
-                        sourcetype;
-                    for (idx=0; idx < rawparams.length; idx++) {
-                        var pair = rawparams[idx].split(',');
-                        var value = pair[1].replace(/^\s+|\s+$/g, "");
-                        if (!isNaN(value)) {
-                            value = parseInt(value);
-                        }
-                        if (value === 'True') {
-                            value = true;
-                        }
-                        if (value === 'False') {
-                            value = false;
-                        }
-                        var key = pair[0].replace(/^\s+|\s+$/g, "");
-                        if (key === 'type') {
-                            sourcetype = value; 
-                        } else {
-                            params[key] = value;
-                        }
+        binder() {
+            let rawparams = this.ac_params
+                .text()
+                .split('|');
+            let params = [],
+                idx,
+                sourcetype;
+            for (idx=0; idx < rawparams.length; idx++) {
+                let pair = rawparams[idx].split(',');
+                let value = pair[1].replace(/^\s+|\s+$/g, "");
+                if (!isNaN(value)) {
+                    value = parseInt(value);
+                }
+                if (value === 'True') {
+                    value = true;
+                }
+                if (value === 'False') {
+                    value = false;
+                }
+                var key = pair[0].replace(/^\s+|\s+$/g, "");
+                if (key === 'type') {
+                    sourcetype = value;
+                } else {
+                    params[key] = value;
+                }
+            }
+            let source = this.ac_source.text();
+            if (source.indexOf('javascript:') === 0) {
+                source = source.substring(11, source.length);
+                source = source.split('.');
+                if (!source.length) {
+                    throw "No source path found.";
+                }
+                let ctx = window;
+                let name;
+                for (idx in source) {
+                    name = source[idx];
+                    if (ctx[name] === undefined) {
+                        throw "'" + name + "' not found.";
                     }
-                    var source = elem.find('.autocomplete-source').text();
-                    if (source.indexOf('javascript:') === 0) {
-                        source = source.substring(11, source.length);
-                        source = source.split('.');
-                        if (!source.length) {
-                            throw "No source path found.";
-                        }
-                        var ctx = window;
-                        var name;
-                        for (idx in source) {
-                            name = source[idx];
-                            if (ctx[name] === undefined) {
-                                throw "'" + name + "' not found.";
-                            }
-                            ctx = ctx[name];
-                        }
-                        source = ctx;
-                    }
-                    params.source = source;
-                    if (sourcetype === 'local') {
-                        params.source = params.source.split('|');
-                    }
-                    elem.find("input").autocomplete(params);
-                });
+                    ctx = ctx[name];
+                }
+                source = ctx;
+            }
+            params.source = source;
+            if (sourcetype === 'local') {
+                params.source = params.source.split('|');
+            }
+            this.params = params;
+        }
+        autocomplete() {
+            console.log(this.params);
+            let val = this.input.val();
+            if (!val) { return false;}
+            this.currentFocus = -1;
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            this.parentNode.appendChild(a);
+            for (i = 0; i < arr.length; i++) {
+                if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    b = document.createElement("DIV");
+                    b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                    b.innerHTML += arr[i].substr(val.length);
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                        b.addEventListener("click", function(e) {
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
             }
         }
+    }
+
+    $(function() {
+        if (window.ts !== undefined) {
+            ts.ajax.register(AutocompleteWidget.initialize, true);
+        } else if (window.bdajax !== undefined) {
+            bdajax.register(AutocompleteWidget.initialize, true);
+        } else {
+            AutocompleteWidget.initialize();
+        }
     });
-    
-})(jQuery, yafowil);
+
+    exports.AutocompleteWidget = AutocompleteWidget;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
+
+
+    if (window.yafowil === undefined) {
+        window.yafowil = {};
+    }
+
+    window.yafowil.autocomplete = exports;
+
+
+    return exports;
+
+})({}, jQuery);
+//# sourceMappingURL=widget.js.map
