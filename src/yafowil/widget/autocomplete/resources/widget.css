@@ -3,16 +3,23 @@ div.yafowil-widget-autocomplete .hiddenStructure {
 }
 
 div.autocomplete-dropdown {
-	width: 100%;
-    min-height: 35px;
-    background: lightcyan;
-	padding:10px;
+	display: none;
+    position: absolute;
+    z-index: 2000;
+    min-width: 200px;
+    overflow: hidden;
+    background: white;
+    border: 1px solid rgb(0 0 0 / 20%);
+    border-radius: 4px;
+    padding: 0;
+    box-shadow: 1px 1px 4px rgb(0 0 0 / 20%);
 }
 
 .suggestion {
 	display: block;
+	padding: 5px 15px;
 }
 
 .suggestion.active {
-	background: lightpink;
+	background: #b1dbfb;
 }
