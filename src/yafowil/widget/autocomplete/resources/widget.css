@@ -4,6 +4,15 @@ div.yafowil-widget-autocomplete .hiddenStructure {
 
 div.autocomplete-dropdown {
 	width: 100%;
-    height: 20px;
-    background: red;
+    min-height: 35px;
+    background: lightcyan;
+	padding:10px;
+}
+
+.suggestion {
+	display: block;
+}
+
+.suggestion.active {
+	background: lightpink;
 }

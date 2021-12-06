@@ -11,7 +11,7 @@ export class AutocompleteWidget {
 
     constructor(elem) {
         this.elem = elem;
-        this.input = $('input.autocomplete', this).attr('spellcheck', false);
+        this.input = $('input.autocomplete', this.elem).attr('spellcheck', false);
         this.ac_params = $('.autocomplete-params', this.elem);
         this.ac_source = $('.autocomplete-source', this.elem);
         let dd = this.dd = $(`<div />`).addClass('autocomplete-dropdown');
@@ -22,8 +22,15 @@ export class AutocompleteWidget {
         this.currentFocus = 0;
         this.binder();
 
-        this.autocomplete = this.autocomplete.bind(this);
-        this.input.on('input', this.autocomplete);
+        this.autocomplete_input = this.autocomplete_input.bind(this);
+        this.input.off('input', this.autocomplete_input).on('input', this.autocomplete_input);
+
+        this.close_all = this.close_all.bind(this);
+
+        this.keydown = this.keydown.bind(this);
+        this.input.on('keydown', this.keydown);
+
+        this.autocomplete_input();
     }
 
     binder() {
@@ -81,47 +88,72 @@ export class AutocompleteWidget {
         this.params = params;
     }
 
-    autocomplete() {
-        console.log(this.params)
+    autocomplete_input(e) {
+        this.close_all();
 
         let val = this.input.val();
+        let arr = this.params.source;
 
         if (!val) { return false;}
         this.currentFocus = -1;
 
 
-        /*create a DIV element that will contain the items (values):*/
-        a = document.createElement("DIV");
-        a.setAttribute("id", this.id + "autocomplete-list");
-        a.setAttribute("class", "autocomplete-items");
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+                let sug = $('<span />').addClass('suggestion');
+                let selected = $(`<strong>${arr[i].substr(0, val.length)}</strong>`);
+                let rest = $(`<span>${arr[i].substr(val.length)}</span>`);
+                let hidden = $(`<input type="hidden" />`);
 
+                this.dd.append(sug);
+                sug.append(selected);
+                sug.append(rest);
 
-        /*append the DIV element as a child of the autocomplete container:*/
-        this.parentNode.appendChild(a);
+                this.dd.append(hidden);
+                hidden.val(arr[i]);
 
-
-        /*for each item in the array...*/
-        for (i = 0; i < arr.length; i++) {
-
-            /*check if the item starts with the same letters as the text field value:*/
-            if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-                /*create a DIV element for each matching element:*/
-                b = document.createElement("DIV");
-                /*make the matching letters bold:*/
-                b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-                b.innerHTML += arr[i].substr(val.length);
-                /*insert a input field that will hold the current array item's value:*/
-                b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-                /*execute a function when someone clicks on the item value (DIV element):*/
-                    b.addEventListener("click", function(e) {
-                    /*insert the value for the autocomplete text field:*/
-                    inp.value = this.getElementsByTagName("input")[0].value;
-                    /*close the list of autocompleted values,
-                    (or any other open lists of autocompleted values:*/
-                    closeAllLists();
+                sug.on('click', () => {
+                    this.input.val(hidden.val());
+                    this.close_all();
                 });
-                a.appendChild(b);
             }
         }
+    }
+
+    keydown(e) {
+        console.log(e.key)
+        if (e.key === "ArrowDown") {
+            this.currentFocus++;
+            this.add_active();
+        } else if (e.key === "ArrowUp") {
+            this.currentFocus--;
+            this.add_active();
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+            if (this.currentFocus > -1) {
+                let suggestions = [];
+                $('span.suggestion', this.dd).each(function() {
+                    suggestions.push($(this));
+                });
+                suggestions[this.currentFocus].trigger('click');
+            }
+        }
+    }
+
+    add_active() {
+        let suggestions = [];
+        $('span.suggestion', this.dd).each(function() {
+            suggestions.push($(this));
+        });
+        for (let suggestion of suggestions) {
+            suggestion.removeClass('active');
+        }
+        if (this.currentFocus >= suggestions.length) this.currentFocus = 0;
+        if (this.currentFocus < 0) this.currentFocus = (suggestions.length - 1);
+        suggestions[this.currentFocus].addClass('active');
+    }
+
+    close_all() {
+        this.dd.empty();
     }
 }
