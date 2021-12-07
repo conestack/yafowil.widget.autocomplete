@@ -13,12 +13,12 @@
             this.input = $('input.autocomplete', this.elem).attr('spellcheck', false);
             this.ac_params = $('.autocomplete-params', this.elem);
             this.ac_source = $('.autocomplete-source', this.elem);
-            let dd = this.dd = $(`<div />`).addClass('autocomplete-dropdown');
-            this.elem.append(dd);
+            this.dd = $(`<div />`).addClass('autocomplete-dropdown');
+            this.elem.append(this.dd);
             this.params = [];
             this.suggestions = [];
             this.currentFocus = 0;
-            this.binder();
+            this.init();
             this.autocomplete_input = this.autocomplete_input.bind(this);
             this.input.off('input', this.autocomplete_input).on('input', this.autocomplete_input);
             this.hide_dropdown = this.hide_dropdown.bind(this);
@@ -34,7 +34,7 @@
                 .off('focus', this.show_dropdown)
                 .off('keydown', this.keydown);
         }
-        binder() {
+        init() {
             let rawparams = this.ac_params
                 .text()
                 .split('|');
@@ -105,7 +105,7 @@
             for (let i = 0; i < par.length; i++) {
                 if (par[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
                     this.dd.show();
-                    this.suggestions.push(new Suggestion(this, par[i]));
+                    this.suggestions.push(new Suggestion(this, par[i], val));
                 }
             }
         }
@@ -142,11 +142,12 @@
         }
     }
     class Suggestion {
-        constructor(ac_widget, value) {
+        constructor(ac_widget, value, val) {
             this.ac_widget = ac_widget;
-            this.elem = $('<div />').addClass('suggestion').val(value);
-            this.selected = $(`<strong />`).text(value.substr(0, value.length));
-            this.rest = $(`<span />`).text(value.substr(value.length));
+            this.elem = $('<div />').addClass('suggestion');
+            this.selected = $(`<strong />`).text(val.substr(0, val.length));
+            this.rest = $(`<span />`).text(value.substr(val.length, value.length));
+            console.log(value.substr(value.length));
             this.hidden = $(`<input type="hidden" />`).val(value);
             this.elem.append(this.selected).append(this.rest);
             this.ac_widget.dd.append(this.elem).append(this.hidden);

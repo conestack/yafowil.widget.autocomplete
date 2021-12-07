@@ -14,20 +14,24 @@ export class AutocompleteWidget {
         this.input = $('input.autocomplete', this.elem).attr('spellcheck', false);
         this.ac_params = $('.autocomplete-params', this.elem);
         this.ac_source = $('.autocomplete-source', this.elem);
-        let dd = this.dd = $(`<div />`).addClass('autocomplete-dropdown');
-        this.elem.append(dd);
+        this.dd = $(`<div />`).addClass('autocomplete-dropdown');
+        this.elem.append(this.dd);
 
         this.params = [];
         this.suggestions = [];
-        this.currentFocus = 0;
-        this.binder();
+        this.current_focus = 0;
+        this.init();
 
         this.autocomplete_input = this.autocomplete_input.bind(this);
-        this.input.off('input', this.autocomplete_input).on('input', this.autocomplete_input);
+        this.input
+            .off('input', this.autocomplete_input)
+            .on('input', this.autocomplete_input);
 
         this.hide_dropdown = this.hide_dropdown.bind(this);
         this.show_dropdown = this.show_dropdown.bind(this);
-        this.input.on('focusout', this.hide_dropdown).on('focus', this.show_dropdown);
+        this.input
+            .on('focusout', this.hide_dropdown)
+            .on('focus', this.show_dropdown);
 
         this.keydown = this.keydown.bind(this);
         this.input.on('keydown', this.keydown);
@@ -41,7 +45,7 @@ export class AutocompleteWidget {
             .off('keydown', this.keydown);
     }
 
-    binder() {
+    init() {
         let rawparams = this.ac_params
             .text()
             .split('|');
@@ -102,7 +106,7 @@ export class AutocompleteWidget {
     get_json(url) {
         let items = [];
         $.getJSON(url, function(data) {
-            $.each(data, function( key, val) {
+            $.each(data, function(key, val) {
               items.push(val);
             });
         });
@@ -114,30 +118,30 @@ export class AutocompleteWidget {
         this.suggestions = [];
 
         let val = this.input.val();
-        let par = this.params.source;
+        let src = this.params.source;
 
         if (!val) { return false;}
-        this.currentFocus = -1;
+        this.current_focus = -1;
 
-        for (let i = 0; i < par.length; i++) {
-            if (par[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+        for (let i = 0; i < src.length; i++) {
+            if (src[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
                 this.dd.show();
-                this.suggestions.push(new Suggestion(this, par[i]));
+                this.suggestions.push(new Suggestion(this, src[i], val));
             }
         }
     }
 
     keydown(e) {
         if (e.key === "ArrowDown") {
-            this.currentFocus++;
+            this.current_focus++;
             this.add_active();
         } else if (e.key === "ArrowUp") {
-            this.currentFocus--;
+            this.current_focus--;
             this.add_active();
         } else if (e.key === "Enter") {
             e.preventDefault();
-            if (this.currentFocus > -1) {
-                this.suggestions[this.currentFocus].select();
+            if (this.current_focus > -1) {
+                this.suggestions[this.current_focus].select();
             }
         }
     }
@@ -147,9 +151,9 @@ export class AutocompleteWidget {
             suggestion.elem.removeClass('active');
         }
 
-        if (this.currentFocus >= this.suggestions.length) this.currentFocus = 0;
-        if (this.currentFocus < 0) this.currentFocus = (this.suggestions.length - 1);
-        this.suggestions[this.currentFocus].elem.addClass('active');
+        if (this.current_focus >= this.suggestions.length) this.current_focus = 0;
+        if (this.current_focus < 0) this.current_focus = (this.suggestions.length - 1);
+        this.suggestions[this.current_focus].elem.addClass('active');
     }
 
     hide_dropdown() {
@@ -165,14 +169,15 @@ export class AutocompleteWidget {
 }
 
 export class Suggestion {
-    constructor(ac_widget, value) {
+    constructor(ac_widget, source, val) {
         this.ac_widget = ac_widget;
 
-        this.elem = $('<div />').addClass('suggestion').val(value);
+        this.elem = $('<div />').addClass('suggestion');
 
-        this.selected = $(`<strong />`).text(value.substr(0, value.length));
-        this.rest = $(`<span />`).text(value.substr(value.length));
-        this.hidden = $(`<input type="hidden" />`).val(value);
+        this.selected = $(`<strong />`).text(val.substr(0, val.length));
+        this.rest = $(`<span />`).text(source.substr(val.length, source.length));
+        console.log(source.substr(source.length));
+        this.hidden = $(`<input type="hidden" />`).val(source);
 
         this.elem.append(this.selected).append(this.rest);
         this.ac_widget.dd.append(this.elem).append(this.hidden);
