@@ -5,4 +5,4 @@ TODO
 
 [~] - json remote version
 
-[ ] - maybe remove init() and change to getter/setter
+[X] - maybe remove init() and change to getter/setter

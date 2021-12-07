@@ -11,14 +11,14 @@
         constructor(elem) {
             this.elem = elem;
             this.input = $('input.autocomplete', this.elem).attr('spellcheck', false);
-            this.ac_params = $('.autocomplete-params', this.elem);
-            this.ac_source = $('.autocomplete-source', this.elem);
             this.dd = $(`<div />`).addClass('autocomplete-dropdown');
             this.elem.append(this.dd);
-            this.params = [];
             this.suggestions = [];
             this.current_focus = 0;
-            this.init();
+            let rawparams = $('.autocomplete-params', this.elem).text().split('|');
+            this.params = rawparams;
+            let source = $('.autocomplete-source', this.elem).text();
+            this.source = source;
             this.autocomplete_input = this.autocomplete_input.bind(this);
             this.input
                 .off('input', this.autocomplete_input)
@@ -31,48 +31,52 @@
             this.keydown = this.keydown.bind(this);
             this.input.on('keydown', this.keydown);
         }
-        unload() {
-            this.input
-                .off('input', this.autocomplete_input)
-                .off('focusout', this.hide_dropdown)
-                .off('focus', this.show_dropdown)
-                .off('keydown', this.keydown);
+        get source() {
+            return this._source;
         }
-        init() {
-            let rawparams = this.ac_params.text().split('|');
-            let params = [],
-                sourcetype;
-            for (let idx=0; idx < rawparams.length; idx++) {
-                let pair = rawparams[idx].split(',');
+        set source(url) {
+            if (url.indexOf('javascript:') === 0) {
+                url = url.substring(11, url.length).split('.');
+                if (!url.length) throw "No source path found.";
+                for (let i in url) {
+                    let name = url[i];
+                    if (window[name] === undefined) throw "'" + name + "' not found.";
+                    window = window[name];
+                }
+                url = window;
+            }
+            if (this.params.sourcetype === 'local') {
+                this._source = url.split('|');
+            } else if (this.params.sourcetype === 'remote') {
+                this._source = this.get_json(url);
+            }
+        }
+        get params() {
+            return this._params;
+        }
+        set params(rawparams) {
+            let params = [];
+            for (let i = 0; i < rawparams.length; i++) {
+                let pair = rawparams[i].split(',');
                 let value = pair[1].replace(/^\s+|\s+$/g, "");
                 if (!isNaN(value)) value = parseInt(value);
                 if (value === 'True') value = true;
                 if (value === 'False') value = false;
                 let key = pair[0].replace(/^\s+|\s+$/g, "");
                 if (key === 'type') {
-                    sourcetype = value;
+                    params.sourcetype = value;
                 } else {
                     params[key] = value;
                 }
             }
-            let source = this.ac_source.text();
-            if (source.indexOf('javascript:') === 0) {
-                source = source.substring(11, source.length).split('.');
-                if (!source.length) throw "No source path found.";
-                for (let idx in source) {
-                    let name = source[idx];
-                    if (window[name] === undefined) throw "'" + name + "' not found.";
-                    window = window[name];
-                }
-                source = window;
-            }
-            params.source = source;
-            if (sourcetype === 'local') {
-                params.source = params.source.split('|');
-            } else if (sourcetype === 'remote') {
-                params.source = this.get_json(params.source);
-            }
-            this.params = params;
+            this._params = params;
+        }
+        unload() {
+            this.input
+                .off('input', this.autocomplete_input)
+                .off('focusout', this.hide_dropdown)
+                .off('focus', this.show_dropdown)
+                .off('keydown', this.keydown);
         }
         get_json(url) {
             let items = [];
@@ -87,7 +91,7 @@
             this.dd.empty().hide();
             this.suggestions = [];
             let val = this.input.val();
-            let src = this.params.source;
+            let src = this.source;
             if (!val) { return false;}
             this.current_focus = -1;
             for (let i = 0; i < src.length; i++) {
@@ -135,13 +139,13 @@
             this.elem = $('<div />').addClass('suggestion');
             this.selected = $(`<strong />`).text(val.substr(0, val.length));
             this.rest = $(`<span />`).text(source.substr(val.length, source.length));
-            this.hidden = $(`<input type="hidden" />`).val(source);
+            this.value = source;
             this.elem.append(this.selected).append(this.rest);
-            this.ac_widget.dd.append(this.elem).append(this.hidden);
+            this.ac_widget.dd.append(this.elem);
             this.select = this.select.bind(this);
         }
         select() {
-            this.ac_widget.input.val(this.hidden.val());
+            this.ac_widget.input.val(this.value);
             this.ac_widget.hide_dropdown();
             this.ac_widget.input.blur();
         }
