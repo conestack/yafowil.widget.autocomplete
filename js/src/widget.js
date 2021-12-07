@@ -46,27 +46,18 @@ export class AutocompleteWidget {
     }
 
     init() {
-        let rawparams = this.ac_params
-            .text()
-            .split('|');
-
+        let rawparams = this.ac_params.text().split('|');
         let params = [],
-            idx,
             sourcetype;
 
-        for (idx=0; idx < rawparams.length; idx++) {
+        for (let idx=0; idx < rawparams.length; idx++) {
             let pair = rawparams[idx].split(',');
             let value = pair[1].replace(/^\s+|\s+$/g, "");
-            if (!isNaN(value)) {
-                value = parseInt(value);
-            }
-            if (value === 'True') {
-                value = true;
-            }
-            if (value === 'False') {
-                value = false;
-            }
-            var key = pair[0].replace(/^\s+|\s+$/g, "");
+            if (!isNaN(value)) value = parseInt(value);
+            if (value === 'True') value = true;
+            if (value === 'False') value = false;
+
+            let key = pair[0].replace(/^\s+|\s+$/g, "");
             if (key === 'type') {
                 sourcetype = value; 
             } else {
@@ -76,21 +67,16 @@ export class AutocompleteWidget {
 
         let source = this.ac_source.text();
         if (source.indexOf('javascript:') === 0) {
-            source = source.substring(11, source.length);
-            source = source.split('.');
-            if (!source.length) {
-                throw "No source path found.";
+            source = source.substring(11, source.length).split('.');
+
+            if (!source.length) throw "No source path found.";
+
+            for (let idx in source) {
+                let name = source[idx];
+                if (window[name] === undefined) throw "'" + name + "' not found.";
+                window = window[name];
             }
-            let ctx = window;
-            let name;
-            for (idx in source) {
-                name = source[idx];
-                if (ctx[name] === undefined) {
-                    throw "'" + name + "' not found.";
-                }
-                ctx = ctx[name];
-            }
-            source = ctx;
+            source = window;
         }
         params.source = source;
 
@@ -176,7 +162,6 @@ export class Suggestion {
 
         this.selected = $(`<strong />`).text(val.substr(0, val.length));
         this.rest = $(`<span />`).text(source.substr(val.length, source.length));
-        console.log(source.substr(source.length));
         this.hidden = $(`<input type="hidden" />`).val(source);
 
         this.elem.append(this.selected).append(this.rest);
