@@ -77,6 +77,9 @@
                 .off('focusout', this.hide_dropdown)
                 .off('focus', this.show_dropdown)
                 .off('keydown', this.keydown);
+            for (let suggestion of this.suggestions) {
+                suggestion.unload();
+            }
         }
         get_json(url) {
             let items = [];
@@ -143,6 +146,10 @@
             this.elem.append(this.selected).append(this.rest);
             this.ac_widget.dd.append(this.elem);
             this.select = this.select.bind(this);
+            this.elem.off('mousedown', this.select).on('mousedown', this.select);
+        }
+        unload() {
+            this.elem.off('mousedown', this.select);
         }
         select() {
             this.ac_widget.input.val(this.value);
