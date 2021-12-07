@@ -89,11 +89,24 @@ export class AutocompleteWidget {
             source = ctx;
         }
         params.source = source;
+
         if (sourcetype === 'local') {
             params.source = params.source.split('|');
+        } else if (sourcetype === 'remote') {
+            params.source = this.get_json(params.source);
         }
 
         this.params = params;
+    }
+
+    get_json(url) {
+        let items = [];
+        $.getJSON(url, function(data) {
+            $.each(data, function( key, val) {
+              items.push(val);
+            });
+        });
+        return items;
     }
 
     autocomplete_input(e) {
