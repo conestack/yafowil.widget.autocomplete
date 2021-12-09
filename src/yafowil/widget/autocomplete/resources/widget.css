@@ -17,6 +17,7 @@ div.autocomplete-dropdown {
 
 .suggestion {
 	display: block;
+    cursor: default;
 	padding: 5px 15px;
 }
 
