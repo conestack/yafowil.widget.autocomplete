@@ -4,8 +4,7 @@ export class AutocompleteWidget {
 
     static initialize(context) {
         $('div.yafowil-widget-autocomplete', context).each(function() {
-            let elem = $(this);
-            new AutocompleteWidget(elem);
+            new AutocompleteWidget($(this));
         });
     }
 
@@ -18,16 +17,16 @@ export class AutocompleteWidget {
         this.suggestions = [];
         this.current_focus = 0;
 
-        let rawparams = $('.autocomplete-params', this.elem).text().split('|');
-        this.params = rawparams;
+        this.options = this.parse_options();
+        this.sourcetype = this.options.type;
+        this.source = this.options.source;
+        this.delay = this.options.delay;
+        this.min_length = this.options.minLength;
 
-        let source = $('.autocomplete-source', this.elem).text();
-        this.source = source;
-
-        this.autocomplete_input = this.autocomplete_input.bind(this);
+        this.input_handle = this.input_handle.bind(this);
         this.input
-            .off('input', this.autocomplete_input)
-            .on('input', this.autocomplete_input);
+            .off('input', this.input_handle)
+            .on('input', this.input_handle);
 
         this.hide_dropdown = this.hide_dropdown.bind(this);
         this.show_dropdown = this.show_dropdown.bind(this);
@@ -37,59 +36,13 @@ export class AutocompleteWidget {
 
         this.keydown = this.keydown.bind(this);
         this.input.on('keydown', this.keydown);
-    }
 
-    get source() {
-        return this._source;
-    }
-
-    set source(url) {
-        if (url.indexOf('javascript:') === 0) {
-            url = url.substring(11, url.length).split('.');
-
-            if (!url.length) throw "No source path found.";
-
-            for (let i in url) {
-                let name = url[i];
-                if (window[name] === undefined) throw "'" + name + "' not found.";
-                window = window[name];
-            }
-            url = window;
-        }
-
-        if (this.params.sourcetype === 'local') {
-            this._source = url.split('|');
-        } else if (this.params.sourcetype === 'remote') {
-            this._source = this.get_json(url);
-        }
-    }
-
-    get params() {
-        return this._params;
-    }
-
-    set params(rawparams) {
-        let params = [];
-        for (let i = 0; i < rawparams.length; i++) {
-            let pair = rawparams[i].split(',');
-            let value = pair[1].replace(/^\s+|\s+$/g, "");
-            if (!isNaN(value)) value = parseInt(value);
-            if (value === 'True') value = true;
-            if (value === 'False') value = false;
-
-            let key = pair[0].replace(/^\s+|\s+$/g, "");
-            if (key === 'type') {
-                params.sourcetype = value; 
-            } else {
-                params[key] = value;
-            }
-        }
-        this._params = params;
+        this.autocomplete = this.autocomplete.bind(this);
     }
 
     unload() {
         this.input
-            .off('input', this.autocomplete_input)
+            .off('input', this.input_handle)
             .off('focusout', this.hide_dropdown)
             .off('focus', this.show_dropdown)
             .off('keydown', this.keydown);
@@ -99,30 +52,61 @@ export class AutocompleteWidget {
         }
     }
 
-    get_json(url) {
-        let items = [];
-        $.getJSON(url, function(data) {
-            $.each(data, function(key, val) {
-              items.push(val);
-            });
-        });
-        return items;
+    parse_options() {
+        let rawparams = $('.autocomplete-params', this.elem).text().split('|'),
+            options = [];
+
+        for (let i = 0; i < rawparams.length; i++) {
+            let pair = rawparams[i].split(',');
+            let value = pair[1].replace(/^\s+|\s+$/g, "");
+            if (!isNaN(value)) value = parseInt(value);
+            if (value === 'True') value = true;
+            if (value === 'False') value = false;
+            let key = pair[0].replace(/^\s+|\s+$/g, "");
+            options[key] = value;
+        }
+
+        let source = $('.autocomplete-source', this.elem).text();
+        if (source.indexOf('javascript:') === 0) {
+            options.source = source.substring(11, source.length).split('.');
+        } else if (options.type === 'local') {
+            options.source = source.split('|');
+        } else if (options.type === 'remote') {
+            options.source = source;
+        }
+
+        return options;
     }
 
-    autocomplete_input(e) {
+    input_handle(e) {
+        clearTimeout(this.timeout);
         this.dd.empty().hide();
         this.suggestions = [];
-
-        let val = this.input.val();
-        let src = this.source;
-
-        if (!val) { return false;}
         this.current_focus = -1;
 
-        for (let i = 0; i < src.length; i++) {
-            if (src[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+        if (this.input.val().length < this.min_length) return;
+        this.timeout = setTimeout(this.autocomplete, this.delay);
+    }
+
+    autocomplete() {
+        let src = this.source;
+        let val = this.input.val();
+
+        if (this.sourcetype === "remote") {
+            $.getJSON(src).done((data) => {
+                for (let item of data) {
+                    if (item.substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+                        this.dd.show();
+                        this.suggestions.push(new Suggestion(this, item, val));
+                    }
+                }
+            });
+        } else {
+            for (let i = 0; i < src.length; i++) {
                 this.dd.show();
-                this.suggestions.push(new Suggestion(this, src[i], val));
+                if (src[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
+                    this.suggestions.push(new Suggestion(this, src[i], val));
+                }
             }
         }
     }
@@ -157,7 +141,7 @@ export class AutocompleteWidget {
     }
 
     show_dropdown() {
-        this.autocomplete_input();
+        this.input_handle();
         if (this.suggestions.length !== 0) {
             this.dd.show();
         }
