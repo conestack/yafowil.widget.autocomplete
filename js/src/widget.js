@@ -72,6 +72,8 @@ export class AutocompleteWidget {
         }
 
         let source = $('.autocomplete-source', this.elem).text();
+        console.log(source)
+        console.log(source.indexOf('javascript:'))
         if (source.indexOf('javascript:') === 0) {
             this.source = source;
         } else if (options.type === 'local') {
