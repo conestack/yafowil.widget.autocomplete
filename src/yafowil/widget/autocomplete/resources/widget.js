@@ -14,11 +14,7 @@
             this.elem.append(this.dd);
             this.suggestions = [];
             this.current_focus = 0;
-            let options = this.parse_options();
-            this.sourcetype = options.type;
-            this.source = options.source;
-            this.delay = options.delay;
-            this.min_length = options.minLength;
+            this.parse_options();
             this.input_handle = this.input_handle.bind(this);
             this.input
                 .off('input', this.input_handle)
@@ -62,43 +58,58 @@
             }
             let source = $('.autocomplete-source', this.elem).text();
             if (source.indexOf('javascript:') === 0) {
-                options.source = source.substring(11, source.length).split('.');
+                this.source = source;
             } else if (options.type === 'local') {
-                options.source = source.split('|');
+                this.source = function( request, response ) {
+                    let src = source.split('|'),
+                        val = request.term,
+                        data = [];
+                    for (let item of src) {
+                        if (
+                            item.substr(0, val.length).toUpperCase() ===
+                            val.toUpperCase()
+                        ) {
+                            data.push(item);
+                        }
+                    }
+                    response(data);
+                };
             } else if (options.type === 'remote') {
-                options.source = source;
+                this.source = function(request, response) {
+                    $.ajax({
+                        url: source,
+                        data: request,
+                        dataType: "json",
+                        success: function(data) {
+                            response(data);
+                        },
+                        error: function() {
+                            response([]);
+                        }
+                    });
+                };
             }
-            return options;
+            this.sourcetype = options.type;
+            this.delay = options.delay;
+            this.min_length = options.minLength;
         }
         input_handle(e) {
             clearTimeout(this.timeout);
             this.dd.empty().hide();
             this.suggestions = [];
             this.current_focus = -1;
-            if (this.input.val().length < this.min_length) {
-                return;
+            if (this.input.val().length >= this.min_length) {
+                this.timeout = setTimeout(this.autocomplete, this.delay);
             }
-            this.timeout = setTimeout(this.autocomplete, this.delay);
         }
         autocomplete() {
-            let src = this.source;
             let val = this.input.val();
-            if (this.sourcetype === "remote") {
-                $.getJSON(src, {data_input: val}).done((data) => {
-                    for (let item of data) {
-                        console.log(item);
-                        this.dd.show();
-                        this.suggestions.push(new Suggestion(this, item, val));
-                    }
-                });
-            } else {
-                for (let i = 0; i < src.length; i++) {
+            this.source( { term: val }, (data) => {
+                for (let item of data) {
                     this.dd.show();
-                    if (src[i].substr(0, val.length).toUpperCase() === val.toUpperCase()) {
-                        this.suggestions.push(new Suggestion(this, src[i], val));
-                    }
+                    this.suggestions.push(new Suggestion(this, item, val));
                 }
-            }
+            } );
         }
         keydown(e) {
             if (e.key === "ArrowDown") {
