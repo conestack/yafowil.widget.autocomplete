@@ -9,12 +9,15 @@
         }
         constructor(elem) {
             this.elem = elem;
-            this.input = $('input.autocomplete', this.elem).attr('spellcheck', false);
+            this.input = $('input.autocomplete', this.elem)
+                .attr('spellcheck', false)
+                .attr('autocomplete', false);
             this.dd = $(`<div />`).addClass('autocomplete-dropdown');
             this.elem.append(this.dd);
             this.suggestions = [];
             this.current_focus = 0;
             this.parse_options();
+            this.parse_source();
             this.input_handle = this.input_handle.bind(this);
             this.input
                 .off('input', this.input_handle)
@@ -29,6 +32,7 @@
             this.autocomplete = this.autocomplete.bind(this);
         }
         unload() {
+            clearTimeout(this.timeout);
             this.input
                 .off('input', this.input_handle)
                 .off('focusout', this.hide_dropdown)
@@ -56,11 +60,17 @@
                 let key = pair[0].replace(/^\s+|\s+$/g, "");
                 options[key] = value;
             }
+            this.sourcetype = options.type;
+            this.delay = options.delay;
+            this.min_length = options.minLength;
+        }
+        parse_source() {
             let source = $('.autocomplete-source', this.elem).text();
             if (source.indexOf('javascript:') === 0) {
-                this.source = source;
-            } else if (options.type === 'local') {
-                this.source = function( request, response ) {
+                source = source.substring(11, source.length).split('.');
+                this.source = window[source[0]][source[1]];
+            } else if (this.sourcetype === 'local') {
+                this.source = function(request, response) {
                     let src = source.split('|'),
                         val = request.term,
                         data = [];
@@ -74,7 +84,7 @@
                     }
                     response(data);
                 };
-            } else if (options.type === 'remote') {
+            } else if (this.sourcetype === 'remote') {
                 this.source = function(request, response) {
                     $.ajax({
                         url: source,
@@ -89,9 +99,6 @@
                     });
                 };
             }
-            this.sourcetype = options.type;
-            this.delay = options.delay;
-            this.min_length = options.minLength;
         }
         input_handle(e) {
             clearTimeout(this.timeout);
@@ -104,12 +111,12 @@
         }
         autocomplete() {
             let val = this.input.val();
-            this.source( { term: val }, (data) => {
+            this.source({term: val}, (data) => {
                 for (let item of data) {
                     this.dd.show();
                     this.suggestions.push(new Suggestion(this, item, val));
                 }
-            } );
+            });
         }
         keydown(e) {
             if (e.key === "ArrowDown") {
@@ -126,16 +133,20 @@
             }
         }
         add_active() {
+            if (this.suggestions.length === 0) {
+                return;
+            }
             for (let suggestion of this.suggestions) {
                 suggestion.elem.removeClass('active');
             }
             if (this.current_focus >= this.suggestions.length) {
                 this.current_focus = 0;
-            }
-            if (this.current_focus < 0) {
+            } else if (this.current_focus < 0) {
                 this.current_focus = (this.suggestions.length - 1);
             }
-            this.suggestions[this.current_focus].elem.addClass('active');
+            let active_elem = this.suggestions[this.current_focus].elem;
+            active_elem.addClass('active');
+            $('html,body').animate({scrollTop: active_elem.offset().top});
         }
         hide_dropdown() {
             this.dd.hide();

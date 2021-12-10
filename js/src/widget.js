@@ -20,6 +20,7 @@ export class AutocompleteWidget {
         this.current_focus = 0;
 
         this.parse_options();
+        this.parse_source();
 
         this.input_handle = this.input_handle.bind(this);
         this.input
@@ -70,13 +71,18 @@ export class AutocompleteWidget {
             let key = pair[0].replace(/^\s+|\s+$/g, "");
             options[key] = value;
         }
+        this.sourcetype = options.type;
+        this.delay = options.delay;
+        this.min_length = options.minLength;
+    }
 
+    parse_source() {
         let source = $('.autocomplete-source', this.elem).text();
-        console.log(source)
-        console.log(source.indexOf('javascript:'))
+
         if (source.indexOf('javascript:') === 0) {
-            this.source = source;
-        } else if (options.type === 'local') {
+            source = source.substring(11, source.length).split('.');
+            this.source = window[source[0]][source[1]];
+        } else if (this.sourcetype === 'local') {
             this.source = function(request, response) {
                 let src = source.split('|'),
                     val = request.term,
@@ -91,7 +97,7 @@ export class AutocompleteWidget {
                 }
                 response(data);
             }
-        } else if (options.type === 'remote') {
+        } else if (this.sourcetype === 'remote') {
             this.source = function(request, response) {
                 $.ajax({
                     url: source,
@@ -106,10 +112,6 @@ export class AutocompleteWidget {
                 });
             }
         }
-
-        this.sourcetype = options.type;
-        this.delay = options.delay;
-        this.min_length = options.minLength;
     }
 
     input_handle(e) {
@@ -149,17 +151,21 @@ export class AutocompleteWidget {
     }
 
     add_active() {
+        if (this.suggestions.length === 0) {
+            return;
+        }
         for (let suggestion of this.suggestions) {
             suggestion.elem.removeClass('active');
         }
 
         if (this.current_focus >= this.suggestions.length) {
             this.current_focus = 0;
-        }
-        if (this.current_focus < 0) {
+        } else if (this.current_focus < 0) {
             this.current_focus = (this.suggestions.length - 1);
         }
-        this.suggestions[this.current_focus].elem.addClass('active');
+        let active_elem = this.suggestions[this.current_focus].elem;
+        active_elem.addClass('active');
+        $('html,body').animate({scrollTop: active_elem.offset().top});
     }
 
     hide_dropdown() {
