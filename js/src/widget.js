@@ -6,11 +6,16 @@ export class AutocompleteSuggestion {
 
         this.elem = $('<div />').addClass('autocomplete-suggestion');
 
-        this.selected_elem = $(`<strong />`).text(val.substr(0, val.length));
-        this.rest_elem = $(`<span />`).text(source.substr(val.length, source.length));
+        let index = source.indexOf(val);
+        this.start_elem = $(`<span />`).text(source.substring(0, index));
+        this.selected_elem = $(`<strong />`).text(val);
+        this.rest_elem = $(`<span />`).text(source.substring(index + val.length));
         this.value = source;
 
-        this.elem.append(this.selected_elem).append(this.rest_elem);
+        this.elem
+            .append(this.start_elem)
+            .append(this.selected_elem)
+            .append(this.rest_elem);
         this.widget.dd_elem.append(this.elem);
 
         this.select = this.select.bind(this);
@@ -34,9 +39,8 @@ export class AutocompleteSuggestion {
     }
 
     select() {
-        this.widget.input_elem.val(this.value);
-        this.widget.hide_dropdown();
-        this.widget.input_elem.blur();
+        this.selected = true;
+        this.widget.select_suggestion(this.value);
     }
 }
 
@@ -128,9 +132,7 @@ export class AutocompleteWidget {
                     data = [];
                 for (let item of src) {
                     if (
-                        ///////////
-                        item.substr(0, term.length).toUpperCase() ===
-                        term.toUpperCase()
+                        item.indexOf(term) > -1
                     ) {
                         data.push(item);
                     }
@@ -176,17 +178,92 @@ export class AutocompleteWidget {
     }
 
     keydown_handle(e) {
-        if (e.key === "ArrowDown") {
-            this.current_focus++;
-            this.add_active();
-        } else if (e.key === "ArrowUp") {
-            this.current_focus--;
-            this.add_active();
-        } else if (e.key === "Enter") {
-            e.preventDefault();
-            if (this.current_focus > -1) {
-                this.suggestions[this.current_focus].select();
-            }
+        let scrolltop = this.dd_elem.scrollTop();
+        switch (e.key) {
+            case "ArrowDown":
+                this.current_focus++;
+                this.add_active();
+                break;
+
+            case "ArrowUp":
+                this.current_focus--;
+                this.add_active();
+                break;
+
+            case "Enter":
+                e.preventDefault();
+                if (this.current_focus > -1) {
+                    let selected_elem = this.suggestions[this.current_focus];
+                    selected_elem.selected = true;
+                    this.input_elem.val(selected_elem.value);
+                    this.hide_dropdown();
+                    this.input_elem.blur();
+                }
+                break;
+
+            case "Escape":
+                this.hide_dropdown();
+                this.input_elem.blur();
+                break;
+
+            case "Tab":
+                this.hide_dropdown();
+                if (this.current_focus > -1) {
+                    let selected_elem = this.suggestions[this.current_focus];
+                    this.input_elem.val(selected_elem.value);
+                    this.hide_dropdown();
+                    this.input_elem.blur();
+                }
+                break;
+
+            case "PageDown":
+                e.preventDefault();
+                this.dd_elem.scrollTop(scrolltop + this.dd_elem.height());
+                if (this.current_focus > -1) {
+                    let index = 0;
+
+                    for (let i in this.suggestions) {
+                        let elem = this.suggestions[i].elem;
+                        if (elem.offset().top < this.dd_elem.offset().top) {
+                            index++;
+                        }
+                    }
+                    this.current_focus = index;
+                    let selected_elem = this.suggestions[index];
+                    this.unselect_all();
+                    selected_elem.selected = true;
+                }
+                break;
+
+            case "PageUp":
+                e.preventDefault();
+                this.dd_elem.scrollTop(scrolltop - this.dd_elem.height());
+                if (this.current_focus > -1) {
+                    let index = 0;
+
+                    for (let i in this.suggestions) {
+                        let elem = this.suggestions[i].elem;
+                        if (elem.offset().top < this.dd_elem.offset().top) {
+                            index++;
+                        }
+                    }
+                    this.current_focus = index;
+                    let selected_elem = this.suggestions[index];
+                    this.unselect_all();
+                    selected_elem.selected = true;
+                }
+                break;
+        }
+    }
+
+    select_suggestion(val) {
+        this.hide_dropdown();
+        this.input_elem.val(val);
+    }
+
+    unselect_all() {
+        for (let suggestion of this.suggestions) {
+            suggestion.selected = false;
         }
     }
 
@@ -194,18 +271,16 @@ export class AutocompleteWidget {
         if (this.suggestions.length === 0) {
             return;
         }
-        for (let suggestion of this.suggestions) {
-            suggestion.elem.removeClass('selected');
-        }
+        this.unselect_all();
 
         if (this.current_focus >= this.suggestions.length) {
             this.current_focus = 0;
         } else if (this.current_focus < 0) {
             this.current_focus = (this.suggestions.length - 1);
         }
-        let active_elem = this.suggestions[this.current_focus].elem;
+        let active_elem = this.suggestions[this.current_focus];
         active_elem.selected = true;
-        $('html,body').animate({scrollTop: active_elem.offset().top});
+        $('html,body').animate({scrollTop: active_elem.elem.offset().top});
     }
 
     hide_dropdown() {

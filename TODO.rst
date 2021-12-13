@@ -3,16 +3,17 @@ TODO
 
 [ ] - implement lookup_factory from cone.maps (-> lookup_callback)
 
+[X] - keyboard events: Esc, Tab, Page up / Page down
+    [~] - Page up / down: add max height, page scroll
+
 [X] - parse_source: rename val to term
-    [ ] - use indexOf instead of current solution (indexOf term > -1)
+    [X] - use indexOf instead of current solution (indexOf term > -1)
 
-[ ] - select() input value in widget, not in suggestion (trigger from suggestion)
+[X] - select() input value in widget, not in suggestion (trigger from suggestion)
 
-[ ] - keyboard events: Esc, Tab, Page up / Page down
+[X] - suggestion.active: make into property (getter/setter)
 
-[ ] - suggestion.active: make into property (getter/setter)
-
-[ ] - function unselect_all
+[X] - function unselect_all
 
 [X] - read opts in intialize - return opts object for easier parsing in future
 
