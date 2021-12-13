@@ -9,9 +9,9 @@ TODO
 
 [X] - fetch JSON only on input
 
-[~] - 3 options:
+[X] - 3 options:
     [X] - local array
     [X] - remote json
-    [ ] - function
+    [X] - function
 
-[~] - json remote version
+[X] - json remote version

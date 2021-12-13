@@ -19,6 +19,9 @@ module.exports = function(config) {
         }, {
             pattern: '../js/tests/test_*.js',
             type: 'module'
+        }, {
+            pattern: '../src/yafowil/widget/autocomplete/resources/widget.css',
+            included: true
         }],
         browsers: [
             'ChromeHeadless'

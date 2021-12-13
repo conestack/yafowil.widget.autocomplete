@@ -9,6 +9,7 @@
         }
         constructor(elem) {
             this.elem = elem;
+            this.elem.data('autocomplete', this);
             this.input = $('input.autocomplete', this.elem)
                 .attr('spellcheck', false)
                 .attr('autocomplete', false);
@@ -68,6 +69,7 @@
             let source = $('.autocomplete-source', this.elem).text();
             if (source.indexOf('javascript:') === 0) {
                 source = source.substring(11, source.length).split('.');
+                console.log(source);
                 this.source = window[source[0]][source[1]];
             } else if (this.sourcetype === 'local') {
                 this.source = function(request, response) {

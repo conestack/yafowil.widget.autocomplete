@@ -10,6 +10,7 @@ export class AutocompleteWidget {
 
     constructor(elem) {
         this.elem = elem;
+        this.elem.data('autocomplete', this);
         this.input = $('input.autocomplete', this.elem)
             .attr('spellcheck', false)
             .attr('autocomplete', false);
