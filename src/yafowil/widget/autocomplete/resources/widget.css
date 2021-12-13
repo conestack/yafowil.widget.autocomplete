@@ -15,12 +15,12 @@ div.autocomplete-dropdown {
     box-shadow: 1px 1px 4px rgb(0 0 0 / 20%);
 }
 
-.suggestion {
+.autocomplete-suggestion {
 	display: block;
     cursor: default;
 	padding: 5px 15px;
 }
 
-.suggestion.active {
+.autocomplete-suggestion.selected {
 	background: #b1dbfb;
 }

@@ -1,17 +1,31 @@
 TODO
 ////
 
-[X] - remove setter and getter for params/value
+[ ] - implement lookup_factory from cone.maps (-> lookup_callback)
 
-[X] - add parse_options function
+[X] - parse_source: rename val to term
+    [ ] - use indexOf instead of current solution (indexOf term > -1)
 
-[X] - add props: min_length, delay, source, sourcetype
+[ ] - select() input value in widget, not in suggestion (trigger from suggestion)
 
-[X] - fetch JSON only on input
+[ ] - keyboard events: Esc, Tab, Page up / Page down
 
-[X] - 3 options:
-    [X] - local array
-    [X] - remote json
-    [X] - function
+[ ] - suggestion.active: make into property (getter/setter)
 
-[X] - json remote version
+[ ] - function unselect_all
+
+[X] - read opts in intialize - return opts object for easier parsing in future
+
+[X] - data {term: request.term}
+
+[X] - remove suggestion.unload (obsolete)
+
+[X] - move Suggestion class above Widget Class and rename to AutocompleteSuggestion
+
+[X] - ac_widget: rename to ac or widget
+
+[X] - rename dd to dd_elem, and similar _elem !!
+
+[X] - name all handlers with _handle!
+
+[X] - rename .suggestion to .autocomplete-suggestion
