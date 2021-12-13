@@ -17,6 +17,22 @@ export class AutocompleteSuggestion {
         this.elem.off('mousedown', this.select).on('mousedown', this.select);
     }
 
+    get selected() {
+        return this._selected;
+    }
+
+    set selected(selected) {
+        if (selected === true) {
+            this._selected = true;
+            this.elem.addClass('selected');
+        } else if (selected === false) {
+            this._selected = false;
+            this.elem.removeClass('selected');
+        } else {
+            return;
+        }
+    }
+
     select() {
         this.widget.input_elem.val(this.value);
         this.widget.hide_dropdown();
@@ -188,7 +204,7 @@ export class AutocompleteWidget {
             this.current_focus = (this.suggestions.length - 1);
         }
         let active_elem = this.suggestions[this.current_focus].elem;
-        active_elem.addClass('selected');
+        active_elem.selected = true;
         $('html,body').animate({scrollTop: active_elem.offset().top});
     }
 
