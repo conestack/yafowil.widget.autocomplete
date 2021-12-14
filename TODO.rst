@@ -3,11 +3,11 @@ TODO
 
 [X] - fix input val with toUppercase
 
-[ ] - throw errors if src not found
+[X] - throw errors if src not found
 
-[ ] - set defaults
+[-] - set defaults
 
-[~] - implement lookup_factory from cone.maps (-> lookup_callback)
+[X] - implement lookup_factory from cone.maps (-> lookup_callback)
 
 [X] - keyboard events: Esc, Tab, Page up / Page down
     [~] - Page up / down: add max height, page scroll

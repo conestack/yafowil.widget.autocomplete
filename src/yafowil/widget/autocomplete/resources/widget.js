@@ -58,9 +58,10 @@
             this.suggestions = [];
             this.current_focus = 0;
             let options = this.parse_options();
-            this.sourcetype = options.type;
-            this.delay = options.delay;
-            this.min_length = options.minLength;
+            this.sourcetype = options.type ? options.type : 'local';
+            this.delay = options.delay ? options.delay : 300;
+            console.log(options.minLength);
+            this.min_length = options.minLength ? options.minLength : 3;
             this.parse_source();
             this.input_handle = this.input_handle.bind(this);
             this.input_elem
@@ -106,15 +107,21 @@
         parse_source() {
             let source = $('.autocomplete-source', this.elem).text();
             if (source.indexOf('javascript:') === 0) {
-                source = source.substring(11, source.length).split('.');
+                let src = source.substring(11, source.length).split('.');
                 let window_src = window;
-                for (let part of source) {
+                for (let part of src) {
                     window_src = window_src[part];
+                    if (window_src === undefined) {
+                        throw new Error('Cannot locate source function: ' + source);
+                    }
                 }
                 this.source = function(request, response) {
                     window_src(request, response);
                 };
             } else if (this.sourcetype === 'local') {
+                if (source === '') {
+                    throw new Error('Local source is invalid');
+                }
                 this.source = function(request, response) {
                     let src = source.split('|'),
                         term = request.term,
@@ -139,6 +146,7 @@
                         },
                         error: function() {
                             response([]);
+                            throw new Error('Cannot locate JSON at: ' + source);
                         }
                     });
                 };

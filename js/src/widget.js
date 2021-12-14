@@ -124,21 +124,24 @@ export class AutocompleteWidget {
     }
 
     parse_source() {
-        let source = 'javascript:foo.bar';
+        let source = $('.autocomplete-source', this.elem).text();
 
         if (source.indexOf('javascript:') === 0) {
-            source = source.substring(11, source.length).split('.');
+            let src = source.substring(11, source.length).split('.');
             let window_src = window;
-            for (let part of source) {
+            for (let part of src) {
                 window_src = window_src[part];
                 if (window_src === undefined) {
-                    throw new Error('Cannot locate source: ' + source);
+                    throw new Error('Cannot locate source function: ' + source);
                 }
             }
             this.source = function(request, response) {
                 window_src(request, response);
             };
         } else if (this.sourcetype === 'local') {
+            if (source === '') {
+                throw new Error('Local source is empty');
+            }
             this.source = function(request, response) {
                 let src = source.split('|'),
                     term = request.term,
@@ -164,6 +167,7 @@ export class AutocompleteWidget {
                     },
                     error: function() {
                         response([]);
+                        throw new Error('Cannot locate JSON at: ' + source);
                     }
                 });
             }
