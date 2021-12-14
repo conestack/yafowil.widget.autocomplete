@@ -124,13 +124,16 @@ export class AutocompleteWidget {
     }
 
     parse_source() {
-        let source = $('.autocomplete-source', this.elem).text();
+        let source = 'javascript:foo.bar';
 
         if (source.indexOf('javascript:') === 0) {
             source = source.substring(11, source.length).split('.');
             let window_src = window;
             for (let part of source) {
                 window_src = window_src[part];
+                if (window_src === undefined) {
+                    throw new Error('Cannot locate source: ' + source);
+                }
             }
             this.source = function(request, response) {
                 window_src(request, response);
