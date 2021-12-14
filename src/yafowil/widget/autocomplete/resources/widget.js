@@ -32,8 +32,6 @@
             } else if (selected === false) {
                 this._selected = false;
                 this.elem.removeClass('selected');
-            } else {
-                return;
             }
         }
         select() {
@@ -58,10 +56,9 @@
             this.suggestions = [];
             this.current_focus = 0;
             let options = this.parse_options();
-            this.sourcetype = options.type ? options.type : 'local';
-            this.delay = options.delay ? options.delay : 300;
-            console.log(options.minLength);
-            this.min_length = options.minLength ? options.minLength : 3;
+            this.sourcetype = options.type;
+            this.delay = options.delay;
+            this.min_length = options.minLength;
             this.parse_source();
             this.input_handle = this.input_handle.bind(this);
             this.input_elem
@@ -120,7 +117,7 @@
                 };
             } else if (this.sourcetype === 'local') {
                 if (source === '') {
-                    throw new Error('Local source is invalid');
+                    throw new Error('Local source is empty');
                 }
                 this.source = function(request, response) {
                     let src = source.split('|'),

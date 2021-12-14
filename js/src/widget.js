@@ -37,8 +37,6 @@ export class AutocompleteSuggestion {
         } else if (selected === false) {
             this._selected = false;
             this.elem.removeClass('selected');
-        } else {
-            return;
         }
     }
 
