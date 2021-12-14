@@ -1,7 +1,13 @@
 TODO
 ////
 
-[ ] - implement lookup_factory from cone.maps (-> lookup_callback)
+[X] - fix input val with toUppercase
+
+[ ] - throw errors if src not found
+
+[ ] - set defaults
+
+[~] - implement lookup_factory from cone.maps (-> lookup_callback)
 
 [X] - keyboard events: Esc, Tab, Page up / Page down
     [~] - Page up / down: add max height, page scroll

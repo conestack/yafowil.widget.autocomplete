@@ -6,10 +6,13 @@ export class AutocompleteSuggestion {
 
         this.elem = $('<div />').addClass('autocomplete-suggestion');
 
-        let index = source.indexOf(val);
-        this.start_elem = $(`<span />`).text(source.substring(0, index));
-        this.selected_elem = $(`<strong />`).text(val);
-        this.end_elem = $(`<span />`).text(source.substring(index + val.length));
+        let index = source.toUpperCase().indexOf(val.toUpperCase());
+        this.start_elem = $(`<span />`)
+            .text(source.substring(0, index));
+        this.selected_elem = $(`<strong />`)
+            .text(source.substring(index, index + val.length));
+        this.end_elem = $(`<span />`)
+            .text(source.substring(index + val.length));
         this.value = source;
         this.selected = false;
 
@@ -137,9 +140,10 @@ export class AutocompleteWidget {
                 let src = source.split('|'),
                     term = request.term,
                     data = [];
+
                 for (let item of src) {
                     if (
-                        item.indexOf(term) > -1
+                        item.toUpperCase().indexOf(term.toUpperCase()) > -1
                     ) {
                         data.push(item);
                     }
