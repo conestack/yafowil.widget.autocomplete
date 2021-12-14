@@ -1,4 +1,4 @@
-import {AutocompleteWidget} from '../src/widget.js';
+import {AutocompleteSuggestion, AutocompleteWidget} from '../src/widget.js';
 
 let container = $('<div id="container" />');
 
@@ -6,100 +6,96 @@ let container = $('<div id="container" />');
 // AutocompleteWidget
 ////////////////////////////////////////////////////////////////////////////////
 
-QUnit.module('AutocompleteWidget', () => {
+QUnit.module('AutocompleteWidget', hooks => {
     let elem;
     let widget;
+    let arr = "|one|two|three|four|";
+    let params = "delay,0|minLength,0|type,local";
 
-    QUnit.module('constructor', hooks => {
-        let arr = "ad|adipisicing|aliqua|aliquip|amet|anim|aute|cillum|commodo|consectetur|consequat|culpa|cupidatat|deserunt|do|dolor|dolore|duis|ea|eiusmod|elit|enim|esse|est|et|eu|ex|excepteur|exercitation|fugiat|id|in|incididunt|ipsum|irure|labore|laboris|laborum|lorem|magna|minim|mollit|nisi|non|nostrud|nulla|occaecat|officia|pariatur|proident|qui|quis|reprehenderit|sed|sint|sit|sunt|tempor|ullamco|ut|velit|veniam|voluptate";
-        let params = "delay,300|minLength,1|type,local";
-
-        hooks.before(() => {
-            $('body').append(container);
-        });
-        hooks.beforeEach(() => {
-            elem = create_elem(arr, params);
-            container.append(elem);
-        });
-        hooks.afterEach(() => {
-            container.empty();
-            widget = null;
-        });
-
-        QUnit.test('initialize', assert => {
-            AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
-
-            assert.deepEqual(widget.elem, elem);
-            assert.ok(widget.input.is('input.autocomplete'));
-            assert.ok(widget.dd.is('div.autocomplete-dropdown'));
-
-            assert.ok(widget.parse_options);
-            assert.ok(widget.parse_source);
-
-            assert.ok(widget.input_handle);
-            assert.ok(widget.hide_dropdown);
-            assert.ok(widget.show_dropdown);
-            assert.ok(widget.keydown);
-            assert.ok(widget.autocomplete);
-        });
+    hooks.beforeEach(() => {
+        $('body').append(container);
+        elem = create_elem(arr, params);
+        container.append(elem);
+    });
+    hooks.afterEach(() => {
+        container.empty();
+        widget = null;
     });
 
-    QUnit.module('parse_options()', hooks => {
-        let arr = "ad|adipisicing";
-        let params = "delay,300|minLength,1|type,local";
+    QUnit.test('initialize', assert => {
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
 
-        hooks.before(() => {
-            $('body').append(container);
-        });
-        hooks.beforeEach(() => {
-            elem = create_elem(arr, params);
-            container.append(elem);
-        });
-        hooks.afterEach(() => {
-            container.empty();
-            widget = null;
-        });
+        assert.deepEqual(widget.elem, elem);
+        assert.ok(widget.input_elem.is('input.autocomplete'));
+        assert.ok(widget.dd_elem.is('div.autocomplete-dropdown'));
 
-        QUnit.test('parse_options', assert => {
-            AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+        assert.ok(widget.parse_options);
+        assert.ok(widget.parse_source);
 
-            assert.strictEqual(widget.sourcetype, 'local');
-            assert.strictEqual(widget.delay, 300);
-            assert.strictEqual(widget.min_length, 1);
-        });
+        assert.ok(widget.input_handle);
+        assert.ok(widget.hide_dropdown);
+        assert.ok(widget.show_dropdown);
+        assert.ok(widget.keydown_handle);
+        assert.ok(widget.autocomplete);
     });
 
-    QUnit.module.todo('parse_source()', hooks => {
-        let arr = "one|two|three|four";
-        let params = "delay,300|minLength,1|type,local";
+    QUnit.test('parse_options', assert => {
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
+        assert.strictEqual(widget.sourcetype, 'local');
+        assert.strictEqual(widget.delay, 0);
+        assert.strictEqual(widget.min_length, 0);
+    });
 
-        hooks.before(() => {
-            $('body').append(container);
-        });
-        hooks.beforeEach(() => {
-            elem = create_elem(arr, params);
-            container.append(elem);
-        });
-        hooks.afterEach(() => {
-            container.empty();
-            widget = null;
-        });
-
-        QUnit.test.todo('function', assert => {
+    QUnit.module('parse_source()', () => {
+        QUnit.test('function 1', assert => {
+            $('div.autocomplete-params').text('delay,0|minLength,0');
             window.foo = {
                 bar: function(request, response) {
-                    response(['i', 'love', 'donuts']);
+                    response(arr);
                 }
             }
-
-            $('div.autocomplete-params').text('delay,300|minLength,1|type,javascript:foo.bar');
+            $('div.autocomplete-source').text('javascript:foo.bar');
             AutocompleteWidget.initialize();
             widget = elem.data('autocomplete');
+            widget.autocomplete();
 
-            assert.strictEqual(widget.sourcetype, 'javascript:foo.bar');
-            // widget.autocomplete();
+            let done = assert.async();
+            setTimeout(()=> {
+                for (let i in widget.suggestions) {
+                    let val = widget.suggestions[i].value;
+                    assert.strictEqual(val, arr[i])
+                }
+                done();
+            }, 10);
+
+            window.foo = null;
+        });
+
+        QUnit.test('function 2', assert => {
+            $('div.autocomplete-params').text('delay,0|minLength,0');
+            window.foo = {
+                bar: {
+                    baz: function(request, response) {
+                        response(arr);
+                    }
+                }
+            }
+            $('div.autocomplete-source').text('javascript:foo.bar.baz');
+            AutocompleteWidget.initialize();
+            widget = elem.data('autocomplete');
+            widget.autocomplete();
+
+            let done = assert.async();
+            setTimeout(()=> {
+                for (let i in widget.suggestions) {
+                    let val = widget.suggestions[i].value;
+                    assert.strictEqual(val, arr[i])
+                }
+                done();
+            }, 10);
+
             window.foo = null;
         });
 
@@ -117,136 +113,98 @@ QUnit.module('AutocompleteWidget', () => {
         });
     });
 
-    QUnit.module('unload()', hooks => {
-        let arr = "one|two|three|four";
-        let params = "delay,300|minLength,1|type,local";
+    QUnit.test('unload', assert => {
+        // initialize widget
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
 
-        hooks.before(() => {
-            $('body').append(container);
-        });
-        hooks.beforeEach(() => {
-            elem = create_elem(arr, params);
-            container.append(elem);
-        });
-        hooks.afterEach(() => {
-            container.empty();
-            widget = null;
-        });
+        // dropdown is hidden
+        assert.strictEqual(widget.dd_elem.css('display'), 'none');
 
-        QUnit.test('unload', assert => {
-            // initialize widget
-            AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+        // set input value
+        widget.input_elem.val('fo');
 
-            // dropdown is hidden
-            assert.strictEqual(widget.dd.css('display'), 'none');
+        // trigger autocomplete to add suggestions
+        widget.autocomplete();
 
-            // set input value
-            widget.input.val('fo');
+        // async operation due to timeout in source code
+        let done = assert.async();
+        setTimeout(() => {
+            // one suggestion has been appended ('four')
+            assert.ok(widget.suggestions.length, 1);
+            assert.strictEqual(widget.dd_elem.css('display'), 'block');
 
-            // trigger autocomplete to add suggestions
-            widget.autocomplete();
+            // trigger hiding of dropdown
+            widget.hide_dropdown();
 
-            // async operation due to timeout in source code
-            let done = assert.async();
-            setTimeout(() => {
-                // one suggestion has been appended ('four')
-                assert.ok(widget.suggestions.length, 1);
-                assert.strictEqual(widget.dd.css('display'), 'block');
+            // unload widget
+            widget.unload();
 
-                // trigger hiding of dropdown
-                widget.hide_dropdown();
+            // trigger focus event
+            widget.input_elem.trigger('focus');
+            assert.strictEqual(widget.dd_elem.css('display'), 'none');
 
-                // unload widget
-                widget.unload();
+            // trigger focusout event
+            widget.input_elem.trigger('focusout');
+            assert.strictEqual(widget.dd_elem.css('display'), 'none');
 
-                // trigger focus event
-                widget.input.trigger('focus');
-                assert.strictEqual(widget.dd.css('display'), 'none');
+            // trigger input event
+            widget.input_elem.trigger('input');
+            assert.strictEqual(widget.dd_elem.css('display'), 'none');
 
-                // trigger focusout event
-                widget.input.trigger('focusout');
-                assert.strictEqual(widget.dd.css('display'), 'none');
+            // trigger keydown event
+            let keydown = new $.Event('keydown', {key:'ArrowDown'});
+            widget.input_elem.trigger(keydown);
+            assert.strictEqual(widget.dd_elem.css('display'), 'none');
 
-                // trigger input event
-                widget.input.trigger('input');
-                assert.strictEqual(widget.dd.css('display'), 'none');
-
-                // trigger keydown event
-                let keydown = new $.Event('keydown', {key:'ArrowDown'});
-                widget.input.trigger(keydown);
-                assert.strictEqual(widget.dd.css('display'), 'none');
-
-                // trigger mousedown on suggestion
-                widget.suggestions[0].elem.trigger('mousedown');
-                assert.strictEqual(widget.input.val(), 'fo');
-                done();
-            }, 500);
-        });
+            done();
+        }, 10);
     });
 
-    QUnit.module('input_handle()', hooks => {
-        let arr = "one|two|three|four|five|six";
-
-        hooks.before(() => {
-            $('body').append(container);
-        });
-        hooks.afterEach(() => {
-            container.empty();
-            widget = null;
-        });
-
+    QUnit.module('input_handle()', () => {
         QUnit.test('input', assert => {
-            let params = "delay,300|minLength,0|type,local";
-            elem = create_elem(arr, params);
-            container.append(elem);
-
             // initialize widget
             AutocompleteWidget.initialize();
             widget = elem.data('autocomplete');
-
+            widget.delay = 300;
             /**
              * trigger('input') does not perfectly trigger a naturally occuring
              * input event, so we append the value manually
              * See: https://api.jquery.com/trigger/
             */
-            widget.input.trigger('focus');
-            widget.input.val('f');
-            widget.input.trigger('input');
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('f');
+            widget.input_elem.trigger('input');
 
-            assert.strictEqual(widget.dd.css('display'), 'none');
+            assert.strictEqual(widget.dd_elem.css('display'), 'none');
             assert.strictEqual(widget.suggestions.length, 0);
             assert.strictEqual(widget.current_focus, -1);
 
             let done = assert.async();
 
             setTimeout(() => {
-                assert.strictEqual(widget.suggestions.length, 2);
+                assert.strictEqual(widget.suggestions.length, 1);
                 assert.strictEqual(widget.suggestions[0].value, 'four');
-                assert.strictEqual(widget.suggestions[1].value, 'five');
                 done();
             }, 500);
         });
 
         QUnit.test('timeout', assert => {
-            let params = "delay,600|minLength,0|type,local";
-            elem = create_elem(arr, params);
-            container.append(elem);
-
             // initialize widget
             AutocompleteWidget.initialize();
             widget = elem.data('autocomplete');
+            widget.delay = 600;
 
             /**
              * trigger('input') does not perfectly trigger a naturally occuring
              * input event, so we append the value manually
              * See: https://api.jquery.com/trigger/
             */
-            widget.input.trigger('focus');
-            widget.input.val('f');
-            widget.input.trigger('input');
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('f');
+            widget.input_elem.trigger('input');
 
-            assert.strictEqual(widget.dd.css('display'), 'none');
+            assert.strictEqual(widget.dd_elem.css('display'), 'none');
             assert.strictEqual(widget.suggestions.length, 0);
             assert.strictEqual(widget.current_focus, -1);
 
@@ -261,32 +219,28 @@ QUnit.module('AutocompleteWidget', () => {
 
             // autocomplete has been triggered
             setTimeout(() => {
-                assert.strictEqual(widget.suggestions.length, 2);
+                assert.strictEqual(widget.suggestions.length, 1);
                 assert.strictEqual(widget.suggestions[0].value, 'four');
-                assert.strictEqual(widget.suggestions[1].value, 'five');
                 done2();
             }, 700);
         });
 
         QUnit.test('under min length', assert => {
-            let params = "delay,10|minLength,5|type,local";
-            elem = create_elem(arr, params);
-            container.append(elem);
-
             // initialize widget
             AutocompleteWidget.initialize();
             widget = elem.data('autocomplete');
+            widget.min_length = 5;
 
             /**
              * trigger('input') does not perfectly trigger a naturally occuring
              * input event, so we append the value manually
              * See: https://api.jquery.com/trigger/
             */
-            widget.input.trigger('focus');
-            widget.input.val('f');
-            widget.input.trigger('input');
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('f');
+            widget.input_elem.trigger('input');
 
-            assert.strictEqual(widget.dd.css('display'), 'none');
+            assert.strictEqual(widget.dd_elem.css('display'), 'none');
             assert.strictEqual(widget.suggestions.length, 0);
             assert.strictEqual(widget.current_focus, -1);
 
@@ -299,200 +253,344 @@ QUnit.module('AutocompleteWidget', () => {
         });
     });
 
-    QUnit.module('autocomplete()', hooks => {
-        let arr = "en|tu|tre|fire|fem|seks|sju|atte|ni|ti|elleve|tolv|tretten|";
+    QUnit.test('autocomplete', assert => {
+        // initialize widget
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
 
-        hooks.before(() => {
-            $('body').append(container);
-            let params = "delay,0|minLength,0|type,local";
-            elem = create_elem(arr, params);
-            container.append(elem);
+        widget.input_elem.trigger('focus');
+        widget.input_elem.val('o');
+        widget.input_elem.trigger('input');
 
-            // initialize widget
-            AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
-        });
-        hooks.after(() => {
-            container.empty();
-            widget = null;
-        });
-
-        QUnit.test('autocomplete', assert => {
-            widget.input.trigger('focus');
-            widget.input.val('t');
-            widget.input.trigger('input');
-
-            let done = assert.async();
-            setTimeout(() => {
-                let sugs = [];
-                for (let sug of widget.suggestions) {
-                    sugs.push(sug.value);
-                }
-                assert.strictEqual(sugs[0], 'tu');
-                assert.strictEqual(sugs[1], 'tre');
-                assert.strictEqual(sugs[2], 'ti');
-                assert.strictEqual(sugs[3], 'tolv');
-                assert.strictEqual(sugs[4], 'tretten');
-                done();
-            }, 10);
-        });
+        let done = assert.async();
+        setTimeout(() => {
+            let sugs = [];
+            for (let sug of widget.suggestions) {
+                sugs.push(sug.value);
+            }
+            assert.strictEqual(sugs[0], 'one');
+            assert.strictEqual(sugs[1], 'two');
+            assert.strictEqual(sugs[2], 'four');
+            done();
+        }, 10);
     });
 
-    QUnit.module('keydown()', hooks => {
-        let arr = "en|tu|tre|fire|fem|seks|sju|atte|ni|ti|elleve|tolv|tretten|";
+    QUnit.module('keydown_handle()', hooks => {
+        let array = ['one', 'two', 'three', 'four', 'five', 'six', 'seven',
+        'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'e', 'ee', 'eee'];
 
-        hooks.before(() => {
-            $('body').append(container);
-            let params = "delay,0|minLength,0|type,local";
-            elem = create_elem(arr, params);
-            container.append(elem);
-
+        hooks.beforeEach(() => {
+            $('div.autocomplete-source').text(array.join('|'));
             // initialize widget
             AutocompleteWidget.initialize();
             widget = elem.data('autocomplete');
         });
-        hooks.after(() => {
+        hooks.afterEach(() => {
             container.empty();
             widget = null;
         });
 
         QUnit.test('ArrowDown', assert => {
-            widget.input.trigger('focus');
-            widget.input.val('t');
-            widget.input.trigger('input');
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('t');
+            widget.input_elem.trigger('input');
 
+            let down = new $.Event('keydown', { key: 'ArrowDown' });
             // async operation due to timeout - even if it's 0
             let done = assert.async();
             setTimeout(() => {
-                // five suggestions appended
-                assert.ok(widget.suggestions.length, 5);
-                // create events
-                let kd = new $.Event('keydown', {key: 'ArrowDown'});
-                let ku = new $.Event('keydown', {key: 'ArrowUp'});
-                let kent = new $.Event('keydown', {key: 'Enter'});
-
                 // focus on autocomplete is -1
                 assert.strictEqual(widget.current_focus, -1);
-                // trigger Enter key
-                widget.input.trigger(kent);
-                assert.strictEqual(widget.input.val(), 't');
+                assert.strictEqual(widget.suggestions.length, 6);
 
                 // trigger events for ArrowDown
-                for (let i = 0; i < 5; i++) {
-                    widget.input.trigger(kd);
+                for (let i = 0; i < 6; i++) {
+                    widget.input_elem.trigger(down);
                     assert.strictEqual(widget.current_focus, i);
                 }
+
                 // trigger ArrowDown on last suggestion
-                widget.input.trigger(kd);
+                widget.input_elem.trigger(down);
                 // focus reset to 0
                 assert.strictEqual(widget.current_focus, 0);
+                done();
+            }, 100);
+        });
 
-                // trigger arrowUp on first suggestion
-                widget.input.trigger(ku);
-                // focus reset to 4
-                assert.strictEqual(widget.current_focus, 4);
+        QUnit.test('ArrowUp', assert => {
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('t');
+            widget.input_elem.trigger('input');
 
-                widget.input.trigger(ku);
-                // focus on 3
-                assert.strictEqual(widget.current_focus, 3);
+            let up = new $.Event('keydown', { key: 'ArrowUp' });
+            // async operation due to timeout - even if it's 0
+            let done = assert.async();
+            setTimeout(() => {
+                // focus on autocomplete is -1
+                assert.strictEqual(widget.current_focus, -1);
+                assert.strictEqual(widget.suggestions.length, 6);
+
+                // trigger ArrowUp on first suggestion
+                widget.input_elem.trigger(up);
+                // focus reset to 5
+                assert.strictEqual(widget.current_focus, 5);
+
+                // trigger events for ArrowUp
+                for (let i = 4; i > 0; i--) {
+                    widget.input_elem.trigger(up);
+                    assert.strictEqual(widget.current_focus, i);
+                }
+                done();
+            }, 100);
+        });
+
+        QUnit.test('Enter', assert => {
+            let down = new $.Event('keydown', { key: 'ArrowDown' });
+            let enter = new $.Event('keydown', {key: 'Enter'});
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('t');
+            widget.input_elem.trigger('input');
+
+            // async operation due to timeout - even if it's 0
+            let done = assert.async();
+            setTimeout(() => {
+                // focus on autocomplete is -1
+                assert.strictEqual(widget.current_focus, -1);
+                assert.strictEqual(widget.suggestions.length, 6);
 
                 // trigger Enter key
-                widget.input.trigger(kent);
-                assert.strictEqual(widget.input.val(), widget.suggestions[3].value);
+                widget.input_elem.trigger(enter);
+                assert.strictEqual(widget.current_focus, -1);
+                // trigger ArrowDown key
+                widget.input_elem.trigger(down);
+                assert.strictEqual(widget.current_focus, 0);
+                // trigger Enter key
+                widget.input_elem.trigger(enter);
+                assert.strictEqual(widget.input_elem.val(), widget.suggestions[0].value);
+                done();
+            }, 10);
+        });
 
+        QUnit.test('Escape', assert => {
+            let escape = new $.Event('keydown', {key: 'Escape'});
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('t');
+            widget.input_elem.trigger('input');
+
+            // async operation due to timeout - even if it's 0
+            let done = assert.async();
+            setTimeout(() => {
+                // trigger Escape key
+                widget.input_elem.trigger(escape);
+                assert.strictEqual(widget.current_focus, -1);
+                assert.strictEqual(widget.input_elem.val(), 't');
+                assert.strictEqual(widget.dd_elem.css('display'), 'none');
+                assert.notOk(widget.input_elem.is(':focus'));
+                done();
+            }, 10);
+        });
+
+        QUnit.test('Tab', assert => {
+            let down = new $.Event('keydown', { key: 'ArrowDown' });
+            let tab = new $.Event('keydown', {key: 'Tab'});
+
+            let dummy_input = $('<input type="text" />');
+            dummy_input.appendTo('body');
+
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('t');
+            widget.input_elem.trigger('input');
+
+            // async operation due to timeout - even if it's 0
+            let done = assert.async();
+            setTimeout(() => {
+                // trigger ArrowDown key
+                widget.input_elem.trigger(down);
+                assert.strictEqual(widget.current_focus, 0);
+                // trigger Tab key
+                widget.input_elem.trigger(tab);
+                assert.strictEqual(
+                    widget.input_elem.val(),
+                    widget.suggestions[0].value
+                );
+                assert.strictEqual(widget.dd_elem.css('display'), 'none');
+                assert.notOk(widget.input_elem.is(':focus'));
+
+                done();
+            }, 10);
+
+            dummy_input.remove();
+        });
+
+        QUnit.test('PageDown', assert => {
+            let down = new $.Event('keydown', { key: 'ArrowDown' });
+            let pagedown = new $.Event('keydown', {key: 'PageDown'});
+
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('e');
+            widget.input_elem.trigger('input');
+
+            // async operation due to timeout - even if it's 0
+            let done = assert.async();
+            setTimeout(() => {
+                // trigger ArrowDown key
+                widget.input_elem.trigger(down);
+                assert.strictEqual(widget.current_focus, 0);
+
+                // trigger PageDown key
+                widget.input_elem.trigger(pagedown);
+
+                let elem_top = $('.selected').offset().top;
+                let dd_top = widget.dd_elem.offset().top;
+                assert.ok(elem_top > dd_top);
+                done();
+            }, 10);
+        });
+
+        QUnit.test('PageUp', assert => {
+            let down = new $.Event('keydown', { key: 'ArrowDown' });
+            let pageup = new $.Event('keydown', {key: 'PageUp'});
+
+            widget.input_elem.trigger('focus');
+            widget.input_elem.val('e');
+            widget.input_elem.trigger('input');
+
+            // async operation due to timeout - even if it's 0
+            let done = assert.async();
+            setTimeout(() => {
+                // trigger ArrowDown key
+                widget.input_elem.trigger(down);
+                assert.strictEqual(widget.current_focus, 0);
+
+                // trigger PageUp key
+                widget.input_elem.trigger(pageup);
+
+                let elem_top = $('.selected').offset().top;
+                let dd_top = widget.dd_elem.offset().top;
+                assert.ok(elem_top > dd_top);
+                assert.strictEqual(widget.current_focus, 0);
                 done();
             }, 10);
         });
     });
 
-    QUnit.module('add_active()', hooks => {
-        let arr = "en|tu|tre|fire|fem|seks|sju|atte|ni|ti|elleve|tolv|tretten|";
+    QUnit.test('add_active() with no suggestions', assert => {
+        // initialize widget
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
+        widget.input_elem.trigger('focus');
+        widget.input_elem.val('x');
+        widget.input_elem.trigger('input');
 
-        hooks.before(() => {
-            $('body').append(container);
-            let params = "delay,0|minLength,0|type,local";
-            elem = create_elem(arr, params);
-            container.append(elem);
+        // create events
+        let kd = new $.Event('keydown', { key: 'ArrowDown' });
 
-            // initialize widget
-            AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
-        });
-        hooks.after(() => {
-            container.empty();
-            widget = null;
-        });
-
-        QUnit.test('add active with no suggestions', assert => {
-            widget.input.trigger('focus');
-            widget.input.val('x');
-            widget.input.trigger('input');
-
-            // create events
-            let kd = new $.Event('keydown', {key: 'ArrowDown'});
-
-            // async operation due to timeout - even if it's 0
-            let done = assert.async();
-            setTimeout(() => {
-                // no suggestions appended
-                assert.strictEqual(widget.suggestions.length, 0);
-                widget.input.trigger(kd);
-                assert.strictEqual($('div.suggestion.active').length, 0);
-                done();
-            }, 10);
-        });
-
-        QUnit.test('add active on keydown', assert => {
-            widget.input.trigger('focus');
-            widget.input.val('t');
-            widget.input.trigger('input');
-
-            // create events
-            let kd = new $.Event('keydown', {key: 'ArrowDown'});
-
-            // async operation due to timeout - even if it's 0
-            let done = assert.async();
-            setTimeout(() => {
-                // five suggestions appended
-                assert.strictEqual(widget.suggestions.length, 5);
-                widget.input.trigger(kd);
-                assert.strictEqual($('div.suggestion.active').length, 1);
-                assert.ok(widget.suggestions[0].elem.hasClass('active'));
-                done();
-            }, 10);
-        });
+        // async operation due to timeout - even if it's 0
+        let done = assert.async();
+        setTimeout(() => {
+            // no suggestions appended
+            assert.strictEqual(widget.suggestions.length, 0);
+            widget.input_elem.trigger(kd);
+            assert.strictEqual($('div.autocomplete-suggestion.selected').length, 0);
+            done();
+        }, 10);
     });
 
-    QUnit.module('show_dropdown()', hooks => {
-        let arr = "en|tu|tre|fire|fem|seks|sju|atte|ni|ti|elleve|tolv|tretten|";
+    QUnit.test('add_active()', assert => {
+        // initialize widget
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
+        widget.input_elem.trigger('focus');
+        widget.input_elem.val('t');
+        widget.input_elem.trigger('input');
 
-        hooks.before(() => {
-            $('body').append(container);
-            let params = "delay,0|minLength,0|type,local";
-            elem = create_elem(arr, params);
-            container.append(elem);
+        // create events
+        let kd = new $.Event('keydown', { key: 'ArrowDown' });
 
-            // initialize widget
-            AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
-        });
-        hooks.after(() => {
-            container.empty();
-            widget = null;
-        });
+        // async operation due to timeout - even if it's 0
+        let done = assert.async();
+        setTimeout(() => {
+            // five suggestions appended
+            assert.strictEqual(widget.suggestions.length, 2);
+            widget.input_elem.trigger(kd);
+            assert.strictEqual($('div.autocomplete-suggestion.selected').length, 1);
+            assert.ok(widget.suggestions[0].elem.hasClass('selected'));
+            done();
+        }, 10);
+    });
 
-        QUnit.test('show dropdown', assert => {
-            assert.strictEqual(widget.dd.css('display'), 'none');
-            widget.input.val('e');
-            widget.input.trigger('input').trigger('focus');
+    QUnit.test('show_dropdown()', assert => {
+        // initialize widget
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
 
-            // async operation due to timeout - even if it's 0
-            let done = assert.async();
-            setTimeout(() => {
-                assert.strictEqual(widget.dd.css('display'), 'block');
-                done();
-            }, 10);
-        });
+        assert.strictEqual(widget.dd_elem.css('display'), 'none');
+        widget.input_elem.val('e');
+        widget.input_elem.trigger('input').trigger('focus');
+
+        // async operation due to timeout - even if it's 0
+        let done = assert.async();
+        setTimeout(() => {
+            assert.strictEqual(widget.dd_elem.css('display'), 'block');
+            done();
+        }, 10);
+    });
+});
+
+QUnit.module('AutocompleteSuggestion', hooks => {
+    let elem;
+    let widget;
+    let arr = "";
+    let params = "delay,0|minLength,0|type,local";
+    let sug;
+
+    hooks.beforeEach(() => {
+        $('body').append(container);
+        elem = create_elem(arr, params);
+        container.append(elem);
+    });
+    hooks.afterEach(() => {
+        container.empty();
+        widget = null;
+        sug = null;
+    });
+
+    QUnit.test('constructor', assert => {
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
+
+        sug = new AutocompleteSuggestion(widget, 'foo', 'foo');
+        widget.suggestions.push(sug);
+
+        assert.ok(sug.elem.is('div.autocomplete-suggestion'));
+        assert.ok(sug.start_elem.is('span'));
+        assert.ok(sug.selected_elem.is('strong'));
+        assert.ok(sug.end_elem.is('span'));
+        assert.ok(sug.elem.parent('div.autocomplete-dropdown'));
+        assert.strictEqual(sug.value, 'foo');
+    });
+
+    QUnit.test('select()', assert => {
+        AutocompleteWidget.initialize();
+        widget = elem.data('autocomplete');
+
+        sug = new AutocompleteSuggestion(widget, 'foo', 'foo');
+        widget.suggestions.push(sug);
+
+        assert.strictEqual(sug.selected, false);
+        assert.notOk(sug.elem.hasClass('selected'));
+        sug.selected = true;
+        assert.strictEqual(sug.selected, true);
+        assert.ok(sug.elem.hasClass('selected'));
+        sug.selected = false;
+        assert.strictEqual(sug.selected, false);
+        assert.notOk(sug.elem.hasClass('selected'));
+
+        sug.elem.trigger('mousedown');
+        assert.strictEqual(sug.selected, true);
+        assert.ok(sug.elem.hasClass('selected'));
+        assert.strictEqual(widget.dd_elem.css('display'), 'none');
+        assert.strictEqual(widget.input_elem.val(), 'foo');
     });
 });
 

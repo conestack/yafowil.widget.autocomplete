@@ -8,12 +8,13 @@
             let index = source.indexOf(val);
             this.start_elem = $(`<span />`).text(source.substring(0, index));
             this.selected_elem = $(`<strong />`).text(val);
-            this.rest_elem = $(`<span />`).text(source.substring(index + val.length));
+            this.end_elem = $(`<span />`).text(source.substring(index + val.length));
             this.value = source;
+            this.selected = false;
             this.elem
                 .append(this.start_elem)
                 .append(this.selected_elem)
-                .append(this.rest_elem);
+                .append(this.end_elem);
             this.widget.dd_elem.append(this.elem);
             this.select = this.select.bind(this);
             this.elem.off('mousedown', this.select).on('mousedown', this.select);
@@ -103,7 +104,13 @@
             let source = $('.autocomplete-source', this.elem).text();
             if (source.indexOf('javascript:') === 0) {
                 source = source.substring(11, source.length).split('.');
-                this.source = window[source[0]][source[1]];
+                let window_src = window;
+                for (let part of source) {
+                    window_src = window_src[part];
+                }
+                this.source = function(request, response) {
+                    window_src(request, response);
+                };
             } else if (this.sourcetype === 'local') {
                 this.source = function(request, response) {
                     let src = source.split('|'),
