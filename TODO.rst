@@ -14,7 +14,7 @@ TODO
 [X] - implement lookup_factory from cone.maps (-> lookup_callback)
 
 [X] - keyboard events: Esc, Tab, Page up / Page down
-    [~] - Page up / down: add max height, page scroll
+    [X] - Page up / down: add max height, page scroll
 
 [X] - parse_source: rename val to term
     [X] - use indexOf instead of current solution (indexOf term > -1)
