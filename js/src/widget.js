@@ -79,10 +79,10 @@ export class AutocompleteWidget {
             .on('input', this.input_handle);
 
         this.hide_dropdown = this.hide_dropdown.bind(this);
-        this.show_dropdown = this.show_dropdown.bind(this);
+
         this.input_elem
             .on('focusout', this.hide_dropdown)
-            .on('focus', this.show_dropdown);
+            .on('focus', this.input_handle);
 
         this.keydown_handle = this.keydown_handle.bind(this);
         this.input_elem.on('keydown', this.keydown_handle);
@@ -95,7 +95,7 @@ export class AutocompleteWidget {
         this.input_elem
             .off('input', this.input_handle)
             .off('focusout', this.hide_dropdown)
-            .off('focus', this.show_dropdown)
+            .off('focus', this.input_handle)
             .off('keydown', this.keydown_handle);
     }
 
@@ -108,10 +108,10 @@ export class AutocompleteWidget {
             let value = pair[1].replace(/^\s+|\s+$/g, "");
             if (!isNaN(value)) {
                 value = parseInt(value);
-            }
+            } else
             if (value === 'True') {
                 value = true;
-            }
+            } else
             if (value === 'False') {
                 value = false;
             }
@@ -198,12 +198,12 @@ export class AutocompleteWidget {
         switch (e.key) {
             case "ArrowDown":
                 this.current_focus++;
-                this.add_active();
+                this.add_active(true);
                 break;
 
             case "ArrowUp":
                 this.current_focus--;
-                this.add_active();
+                this.add_active(false);
                 break;
 
             case "Enter":
@@ -283,7 +283,7 @@ export class AutocompleteWidget {
         }
     }
 
-    add_active() {
+    add_active(dir) {
         if (this.suggestions.length === 0) {
             return;
         }
@@ -296,17 +296,30 @@ export class AutocompleteWidget {
         }
         let active_elem = this.suggestions[this.current_focus];
         active_elem.selected = true;
-        $('html,body').animate({scrollTop: active_elem.elem.offset().top});
+
+        let scrolltop = this.dd_elem.scrollTop();
+        let elem_top = active_elem.elem.offset().top;
+        let elem_height = active_elem.elem.outerHeight();
+        let dd_top = this.dd_elem.offset().top;
+        let dd_height = this.dd_elem.outerHeight();
+
+        if (dir) {
+            if (this.current_focus === 0) {
+                this.dd_elem.scrollTop(0);
+            } else if (elem_top + elem_height > dd_top + dd_height) {
+                this.dd_elem.scrollTop(scrolltop + elem_height);
+            }
+        } else {
+            if (this.current_focus >= this.suggestions.length - 1) {
+                this.dd_elem.scrollTop(elem_height * this.suggestions.length);
+            } else if (elem_top < dd_top) {
+                this.dd_elem.scrollTop(scrolltop - elem_height);
+            }
+        }
+        // $('html,body').animate({scrollTop: active_elem.elem.offset().top});
     }
 
     hide_dropdown() {
         this.dd_elem.hide();
-    }
-
-    show_dropdown() {
-        this.input_handle();
-        if (this.suggestions.length !== 0) {
-            this.dd_elem.show();
-        }
     }
 }
