@@ -1,9 +1,9 @@
 TODO
 ////
 
-[ ] - testing:
-    [ ] - test error handling
-    [ ] - improve test coverage
+[X] - testing:
+    [X] - test error handling
+    [X] - improve test coverage
 
 [X] - fix input val with toUppercase
 

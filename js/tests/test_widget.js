@@ -2,10 +2,6 @@ import {AutocompleteSuggestion, AutocompleteWidget} from '../src/widget.js';
 
 let container = $('<div id="container" />');
 
-////////////////////////////////////////////////////////////////////////////////
-// AutocompleteWidget
-////////////////////////////////////////////////////////////////////////////////
-
 QUnit.module('AutocompleteWidget', hooks => {
     let elem;
     let widget;
