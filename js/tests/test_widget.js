@@ -29,9 +29,9 @@ QUnit.module('AutocompleteWidget', hooks => {
         assert.ok(widget.parse_options);
         assert.ok(widget.parse_source);
 
-        assert.ok(widget.input_handle);
+        assert.ok(widget.on_input);
         assert.ok(widget.hide_dropdown);
-        assert.ok(widget.keydown_handle);
+        assert.ok(widget.on_keydown);
         assert.ok(widget.autocomplete);
     });
 

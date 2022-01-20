@@ -73,19 +73,19 @@ export class AutocompleteWidget {
 
         this.parse_source();
 
-        this.input_handle = this.input_handle.bind(this);
+        this.on_input = this.on_input.bind(this);
         this.input_elem
-            .off('input', this.input_handle)
-            .on('input', this.input_handle);
+            .off('input', this.on_input)
+            .on('input', this.on_input);
 
         this.hide_dropdown = this.hide_dropdown.bind(this);
 
         this.input_elem
             .on('focusout', this.hide_dropdown)
-            .on('focus', this.input_handle);
+            .on('focus', this.on_input);
 
-        this.keydown_handle = this.keydown_handle.bind(this);
-        this.input_elem.on('keydown', this.keydown_handle);
+        this.on_keydown = this.on_keydown.bind(this);
+        this.input_elem.on('keydown', this.on_keydown);
 
         this.autocomplete = this.autocomplete.bind(this);
     }
@@ -93,10 +93,10 @@ export class AutocompleteWidget {
     unload() {
         clearTimeout(this.timeout);
         this.input_elem
-            .off('input', this.input_handle)
+            .off('input', this.on_input)
             .off('focusout', this.hide_dropdown)
-            .off('focus', this.input_handle)
-            .off('keydown', this.keydown_handle);
+            .off('focus', this.on_input)
+            .off('keydown', this.on_keydown);
     }
 
     parse_options() {
@@ -172,7 +172,7 @@ export class AutocompleteWidget {
         }
     }
 
-    input_handle(e) {
+    on_input(e) {
         clearTimeout(this.timeout);
         this.dd_elem.empty().hide();
         this.suggestions = [];
@@ -193,7 +193,7 @@ export class AutocompleteWidget {
         });
     }
 
-    keydown_handle(e) {
+    on_keydown(e) {
         let scrolltop = this.dd_elem.scrollTop();
         switch (e.key) {
             case "ArrowDown":
@@ -213,13 +213,13 @@ export class AutocompleteWidget {
                     selected_elem.selected = true;
                     this.input_elem.val(selected_elem.value);
                     this.hide_dropdown();
-                    this.input_elem.blur();
+                    this.input_elem.trigger('blur');
                 }
                 break;
 
             case "Escape":
                 this.hide_dropdown();
-                this.input_elem.blur();
+                this.input_elem.trigger('blur');
                 break;
 
             case "Tab":
@@ -228,7 +228,7 @@ export class AutocompleteWidget {
                     let selected_elem = this.suggestions[this.current_focus];
                     this.input_elem.val(selected_elem.value);
                     this.hide_dropdown();
-                    this.input_elem.blur();
+                    this.input_elem.trigger('blur');
                 }
                 break;
 
@@ -316,7 +316,6 @@ export class AutocompleteWidget {
                 this.dd_elem.scrollTop(scrolltop - elem_height);
             }
         }
-        // $('html,body').animate({scrollTop: active_elem.elem.offset().top});
     }
 
     hide_dropdown() {
