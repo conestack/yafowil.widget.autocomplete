@@ -1,26 +1,25 @@
 import $ from 'jquery';
 
 export class AutocompleteSuggestion {
+
     constructor(widget, source, val) {
         this.widget = widget;
-
-        this.elem = $('<div />').addClass('autocomplete-suggestion');
+        this.elem = $('<div />')
+            .addClass('autocomplete-suggestion')
+            .appendTo(this.widget.dd_elem);
 
         let index = source.toUpperCase().indexOf(val.toUpperCase());
-        this.start_elem = $(`<span />`)
-            .text(source.substring(0, index));
-        this.selected_elem = $(`<strong />`)
-            .text(source.substring(index, index + val.length));
-        this.end_elem = $(`<span />`)
-            .text(source.substring(index + val.length));
+        let start_elem = $(`<span />`)
+            .text(source.substring(0, index))
+            .appendTo(this.elem);
+        let selected_elem = $(`<strong />`)
+            .text(source.substring(index, index + val.length))
+            .appendTo(this.elem);
+        let end_elem = $(`<span />`)
+            .text(source.substring(index + val.length))
+            .appendTo(this.elem);
         this.value = source;
         this.selected = false;
-
-        this.elem
-            .append(this.start_elem)
-            .append(this.selected_elem)
-            .append(this.end_elem);
-        this.widget.dd_elem.append(this.elem);
 
         this.select = this.select.bind(this);
         this.elem.off('mousedown', this.select).on('mousedown', this.select);
@@ -31,10 +30,10 @@ export class AutocompleteSuggestion {
     }
 
     set selected(selected) {
-        if (selected === true) {
+        if (selected) {
             this._selected = true;
             this.elem.addClass('selected');
-        } else if (selected === false) {
+        } else {
             this._selected = false;
             this.elem.removeClass('selected');
         }
@@ -60,8 +59,9 @@ export class AutocompleteWidget {
         this.input_elem = $('input.autocomplete', this.elem)
             .attr('spellcheck', false)
             .attr('autocomplete', false);
-        this.dd_elem = $(`<div />`).addClass('autocomplete-dropdown');
-        this.elem.append(this.dd_elem);
+        this.dd_elem = $(`<div />`)
+            .addClass('autocomplete-dropdown')
+            .appendTo(this.elem);
 
         this.suggestions = [];
         this.current_focus = 0;
@@ -74,18 +74,13 @@ export class AutocompleteWidget {
         this.parse_source();
 
         this.on_input = this.on_input.bind(this);
-        this.input_elem
-            .off('input', this.on_input)
-            .on('input', this.on_input);
-
         this.hide_dropdown = this.hide_dropdown.bind(this);
+        this.on_keydown = this.on_keydown.bind(this);
 
         this.input_elem
             .on('focusout', this.hide_dropdown)
-            .on('focus', this.on_input);
-
-        this.on_keydown = this.on_keydown.bind(this);
-        this.input_elem.on('keydown', this.on_keydown);
+            .on('focus input', this.on_input)
+            .on('keydown', this.on_keydown);
 
         this.autocomplete = this.autocomplete.bind(this);
     }
@@ -93,9 +88,8 @@ export class AutocompleteWidget {
     unload() {
         clearTimeout(this.timeout);
         this.input_elem
-            .off('input', this.on_input)
             .off('focusout', this.hide_dropdown)
-            .off('focus', this.on_input)
+            .off('focus input', this.on_input)
             .off('keydown', this.on_keydown);
     }
 
@@ -146,9 +140,7 @@ export class AutocompleteWidget {
                     data = [];
 
                 for (let item of src) {
-                    if (
-                        item.toUpperCase().indexOf(term.toUpperCase()) > -1
-                    ) {
+                    if (item.toUpperCase().indexOf(term.toUpperCase()) > -1) {
                         data.push(item);
                     }
                 }

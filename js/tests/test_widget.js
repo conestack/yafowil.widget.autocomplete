@@ -630,9 +630,6 @@ QUnit.module('AutocompleteSuggestion', hooks => {
         widget.suggestions.push(sug);
 
         assert.ok(sug.elem.is('div.autocomplete-suggestion'));
-        assert.ok(sug.start_elem.is('span'));
-        assert.ok(sug.selected_elem.is('strong'));
-        assert.ok(sug.end_elem.is('span'));
         assert.ok(sug.elem.parent('div.autocomplete-dropdown'));
         assert.strictEqual(sug.value, 'foo');
     });
