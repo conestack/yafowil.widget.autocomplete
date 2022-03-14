@@ -19,15 +19,17 @@ def autocomplete_renderer(widget, data):
         source_type = 'remote'
     else:
         raise ValueError('resulting source must be tuple/list or string')
-    result += tag('div', source,
-                  **{'class': 'autocomplete-source hiddenStructure'})
+    result += tag('div', source, **{
+        'class': 'autocomplete-source hiddenStructure'
+    })
     params = [
         ('%s,%s' % (_, attr_value(_, widget, data)))
         for _ in ['delay', 'minLength']
     ]
     params.append('type,%s' % source_type)
-    result += tag('div', '|'.join(params),
-                  **{'class': 'autocomplete-params hiddenStructure'})
+    result += tag('div', '|'.join(params), **{
+        'class': 'autocomplete-params hiddenStructure'
+    })
     return tag('div', result, **{'class': 'yafowil-widget-autocomplete'})
 
 

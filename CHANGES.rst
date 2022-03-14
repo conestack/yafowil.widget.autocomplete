@@ -1,10 +1,11 @@
 Changes
 =======
 
-1.8 (unreleased)
+2.0 (unreleased)
 ----------------
 
-- No changes yet.
+- Get rid of jQuery UI. Rewrite Jacascript widget using ES6.
+  [lenadax]
 
 
 1.7 (2018-07-16)
