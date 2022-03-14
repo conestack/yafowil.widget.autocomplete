@@ -1,4 +1,4 @@
-(function (exports, $) {
+var yafowil_autocomplete = (function (exports, $) {
     'use strict';
 
     class AutocompleteSuggestion {
@@ -302,4 +302,3 @@
     return exports;
 
 })({}, jQuery);
-//# sourceMappingURL=widget.js.map

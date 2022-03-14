@@ -5,8 +5,8 @@
 set -e
 
 to_remove=(
-    bin build bundle dist include karma lib lib64 node_modules
-    package-lock.json pyvenv.cfg share
+    .coverage bin build bundle dist include htmlcov karma lib lib64
+    node_modules package-lock.json pyvenv.cfg share
 )
 
 for item in "${to_remove[@]}"; do
