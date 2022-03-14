@@ -5,7 +5,7 @@
 set -e
 
 to_remove=(
-    .coverage bin build bundle dist include htmlcov karma lib64 lib
+    .coverage bin dist include htmlcov js/karma lib64 lib
     node_modules package-lock.json pyvenv.cfg share
 )
 
