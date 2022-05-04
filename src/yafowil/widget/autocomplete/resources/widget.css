@@ -24,6 +24,6 @@ div.autocomplete-dropdown {
 }
 
 .autocomplete-suggestion.selected {
-	background: var(--yafowil-accent-color, #b1dbfb);
-    color: var(--yafowil-accent-font-color, #000);
+	background: var(--yafowil-accent-color, #0d6efd);
+    color: var(--yafowil-accent-font-color, #fff);
 }
