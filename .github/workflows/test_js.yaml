@@ -1,4 +1,4 @@
-name: JS Test slider
+name: JS Test autocomplete
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   test:
-    name: TEST SLIDER
+    name: TEST AUTOCOMPLETE
 
     runs-on: ubuntu-latest
 
