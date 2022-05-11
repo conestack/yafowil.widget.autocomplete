@@ -1,7 +1,9 @@
-name: Test autocomplete
+name: PY Test autocomplete
 
 on:
   push:
+    paths:
+    - '**.py'
 
 jobs:
   test:
