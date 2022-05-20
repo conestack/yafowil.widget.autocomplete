@@ -54,8 +54,8 @@ export class AutocompleteWidget {
     }
 
     constructor(elem) {
+        elem.data('yafowil-autocomplete', this);
         this.elem = elem;
-        this.elem.data('autocomplete', this);
         this.input_elem = $('input.autocomplete', this.elem)
             .attr('spellcheck', false)
             .attr('autocomplete', false);

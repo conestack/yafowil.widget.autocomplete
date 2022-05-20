@@ -20,7 +20,7 @@ QUnit.module('AutocompleteWidget', hooks => {
 
     QUnit.test('initialize', assert => {
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
 
         assert.deepEqual(widget.elem, elem);
         assert.ok(widget.input_elem.is('input.autocomplete'));
@@ -37,7 +37,7 @@ QUnit.module('AutocompleteWidget', hooks => {
 
     QUnit.test('parse_options', assert => {
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
         assert.strictEqual(widget.sourcetype, 'local');
         assert.strictEqual(widget.delay, 0);
         assert.strictEqual(widget.min_length, 0);
@@ -46,7 +46,7 @@ QUnit.module('AutocompleteWidget', hooks => {
     QUnit.test('parse_options() true/false', assert =>{
         $('.autocomplete-params').text('delay,False|minLength,True|type,local');
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
 
         assert.strictEqual(widget.delay, false);
         assert.strictEqual(widget.min_length, true);
@@ -62,7 +62,7 @@ QUnit.module('AutocompleteWidget', hooks => {
             }
             $('div.autocomplete-source').text('javascript:foo.bar');
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
             widget.autocomplete();
 
             let done = assert.async();
@@ -88,7 +88,7 @@ QUnit.module('AutocompleteWidget', hooks => {
             }
             $('div.autocomplete-source').text('javascript:foo.bar.baz');
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
             widget.autocomplete();
 
             let done = assert.async();
@@ -117,7 +117,7 @@ QUnit.module('AutocompleteWidget', hooks => {
 
         QUnit.test('local', assert => {
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
             assert.strictEqual(widget.sourcetype, 'local');
         });
 
@@ -149,7 +149,7 @@ QUnit.module('AutocompleteWidget', hooks => {
 
             $('div.autocomplete-params').text('delay,0|minLength,0|type,remote');
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
             assert.strictEqual(widget.sourcetype, 'remote');
 
             widget.autocomplete();
@@ -176,7 +176,7 @@ QUnit.module('AutocompleteWidget', hooks => {
             $('div.autocomplete-source').text('test.json');
 
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
             assert.throws(
                 function () {
                     widget.autocomplete();
@@ -191,7 +191,7 @@ QUnit.module('AutocompleteWidget', hooks => {
     QUnit.test('unload', assert => {
         // initialize widget
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
 
         // dropdown is hidden
         assert.strictEqual(widget.dd_elem.css('display'), 'none');
@@ -240,7 +240,7 @@ QUnit.module('AutocompleteWidget', hooks => {
         QUnit.test('input', assert => {
             // initialize widget
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
             widget.delay = 300;
             /**
              * trigger('input') does not perfectly trigger a naturally occuring
@@ -267,7 +267,7 @@ QUnit.module('AutocompleteWidget', hooks => {
         QUnit.test('timeout', assert => {
             // initialize widget
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
             widget.delay = 600;
 
             /**
@@ -303,7 +303,7 @@ QUnit.module('AutocompleteWidget', hooks => {
         QUnit.test('under min length', assert => {
             // initialize widget
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
             widget.min_length = 5;
 
             /**
@@ -331,7 +331,7 @@ QUnit.module('AutocompleteWidget', hooks => {
     QUnit.test('autocomplete', assert => {
         // initialize widget
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
 
         widget.input_elem.trigger('focus');
         widget.input_elem.val('o');
@@ -359,7 +359,7 @@ QUnit.module('AutocompleteWidget', hooks => {
             $('div.autocomplete-source').text(array.join('|'));
             // initialize widget
             AutocompleteWidget.initialize();
-            widget = elem.data('autocomplete');
+            widget = elem.data('yafowil-autocomplete');
         });
         hooks.afterEach(() => {
             container.empty();
@@ -561,7 +561,7 @@ QUnit.module('AutocompleteWidget', hooks => {
     QUnit.test('add_active() with no suggestions', assert => {
         // initialize widget
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
         widget.input_elem.trigger('focus');
         widget.input_elem.val('x');
         widget.input_elem.trigger('input');
@@ -583,7 +583,7 @@ QUnit.module('AutocompleteWidget', hooks => {
     QUnit.test('add_active()', assert => {
         // initialize widget
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
         widget.input_elem.trigger('focus');
         widget.input_elem.val('t');
         widget.input_elem.trigger('input');
@@ -624,7 +624,7 @@ QUnit.module('AutocompleteSuggestion', hooks => {
 
     QUnit.test('constructor', assert => {
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
 
         sug = new AutocompleteSuggestion(widget, 'foo', 'foo');
         widget.suggestions.push(sug);
@@ -636,7 +636,7 @@ QUnit.module('AutocompleteSuggestion', hooks => {
 
     QUnit.test('select()', assert => {
         AutocompleteWidget.initialize();
-        widget = elem.data('autocomplete');
+        widget = elem.data('yafowil-autocomplete');
 
         sug = new AutocompleteSuggestion(widget, 'foo', 'foo');
         widget.suggestions.push(sug);
