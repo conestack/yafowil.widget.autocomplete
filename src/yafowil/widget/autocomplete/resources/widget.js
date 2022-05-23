@@ -46,8 +46,8 @@ var yafowil_autocomplete = (function (exports, $) {
             });
         }
         constructor(elem) {
+            elem.data('yafowil-autocomplete', this);
             this.elem = elem;
-            this.elem.data('autocomplete', this);
             this.input_elem = $('input.autocomplete', this.elem)
                 .attr('spellcheck', false)
                 .attr('autocomplete', false);
@@ -292,10 +292,7 @@ var yafowil_autocomplete = (function (exports, $) {
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    if (window.yafowil === undefined) {
-        window.yafowil = {};
-    }
-
+    window.yafowil = window.yafowil || {};
     window.yafowil.autocomplete = exports;
 
 
