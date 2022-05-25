@@ -13,7 +13,10 @@ resources_dir = os.path.join(os.path.dirname(__file__), 'resources')
 
 # webresource ################################################################
 
-scripts = wr.ResourceGroup(name='yafowil-autocomplete-scripts')
+scripts = wr.ResourceGroup(
+    name='yafowil-autocomplete-scripts',
+    path='yafowil.widget.autocomplete'
+)
 scripts.add(wr.ScriptResource(
     name='yafowil-autocomplete-js',
     depends='jquery-js',
@@ -22,7 +25,10 @@ scripts.add(wr.ScriptResource(
     compressed='widget.min.js'
 ))
 
-styles = wr.ResourceGroup(name='yafowil-autocomplete-styles')
+styles = wr.ResourceGroup(
+    name='yafowil-autocomplete-styles',
+    path='yafowil.widget.autocomplete'
+)
 styles.add(wr.StyleResource(
     name='yafowil-autocomplete-css',
     directory=resources_dir,
