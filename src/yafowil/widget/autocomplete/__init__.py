@@ -13,25 +13,19 @@ resources_dir = os.path.join(os.path.dirname(__file__), 'resources')
 
 # webresource ################################################################
 
-scripts = wr.ResourceGroup(
-    name='yafowil-autocomplete-scripts',
-    path='yafowil.widget.autocomplete'
+resources = wr.ResourceGroup(
+    name='yafowil-autocomplete-resources',
+    directory=resources_dir,
+    path='yafowil-autocomplete'
 )
-scripts.add(wr.ScriptResource(
+resources.add(wr.ScriptResource(
     name='yafowil-autocomplete-js',
     depends='jquery-js',
-    directory=resources_dir,
     resource='widget.js',
     compressed='widget.min.js'
 ))
-
-styles = wr.ResourceGroup(
-    name='yafowil-autocomplete-styles',
-    path='yafowil.widget.autocomplete'
-)
-styles.add(wr.StyleResource(
+resources.add(wr.StyleResource(
     name='yafowil-autocomplete-css',
-    directory=resources_dir,
     resource='widget.css'
 ))
 
@@ -57,10 +51,14 @@ css = [{
 def register():
     from yafowil.widget.autocomplete import widget  # noqa
 
+    widget_name = 'yafowil.widget.autocomplete'
+
     # Default
     factory.register_theme(
-        'default', 'yafowil.widget.autocomplete', resources_dir,
-        js=js, css=css
+        'default',
+        widget_name,
+        resources_dir,
+        js=js,
+        css=css
     )
-    factory.register_scripts('default', 'yafowil.widget.autocomplete', scripts)
-    factory.register_styles('default', 'yafowil.widget.autocomplete', styles)
+    factory.register_resources('default', widget_name, resources)
