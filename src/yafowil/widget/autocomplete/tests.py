@@ -27,7 +27,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             props={
                 'source': 'http://www.foo.bar/baz'
             })
-        self.check_output("""
+        self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">http://www.foo.bar/baz</div>
@@ -43,7 +43,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             props={
                 'source': ['foo', 'bar']
             })
-        self.check_output("""
+        self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">foo|bar</div>
@@ -62,7 +62,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             props={
                 'source': test_source
             })
-        self.check_output("""
+        self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
@@ -99,7 +99,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             ['root', UNSET, '', [error]]
         )
 
-        self.check_output("""
+        self.checkOutput("""
         <div class="error">
           <div class="errormessage">Autocomplete widget is required</div>
           <div class="yafowil-widget-autocomplete">
@@ -118,11 +118,12 @@ class TestAutocompleteWidget(YafowilTestCase):
             props={
                 'source': None
             })
-        err = self.expect_error(
-            ValueError,
-            widget
+        with self.assertRaises(ValueError) as arc:
+            widget()
+        self.assertEqual(
+            str(arc.exception),
+            'resulting source must be tuple/list or string'
         )
-        self.assertEqual(str(err), 'resulting source must be tuple/list or string')
 
 
 if __name__ == '__main__':
