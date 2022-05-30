@@ -21,7 +21,8 @@ class TestAutocompleteWidget(YafowilTestCase):
     def setUp(self):
         super(TestAutocompleteWidget, self).setUp()
         from yafowil.widget import autocomplete
-        reload(autocomplete.widget)
+        from yafowil.widget.autocomplete import widget
+        reload(widget)
         autocomplete.register()
 
     def test_source_is_string(self):
