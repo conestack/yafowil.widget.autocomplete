@@ -15,7 +15,6 @@ longdesc = '\n\n'.join([read_file(name) for name in [
     'CHANGES.rst',
     'LICENSE.rst'
 ]])
-tests_require = ['yafowil[test]']
 
 
 setup(
@@ -48,11 +47,15 @@ setup(
         'setuptools',
         'yafowil>2.1.99',
     ],
-    tests_require=tests_require,
+    tests_require=[
+        'lxml',
+        'zope.testrunner'
+    ],
+    extras_require=dict(test=[
+        'lxml',
+        'zope.testrunner'
+    ]),
     test_suite="yafowil.widget.autocomplete.tests",
-    extras_require=dict(
-        test=tests_require,
-    ),
     entry_points="""
     [yafowil.plugin]
     register = yafowil.widget.autocomplete:register

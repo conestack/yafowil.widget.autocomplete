@@ -137,6 +137,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.assertTrue(
             resources.directory.endswith(np('/autocomplete/resources'))
         )
+        self.assertEqual(resources.name, 'yafowil.widget.autocomplete')
         self.assertEqual(resources.path, 'yafowil-autocomplete')
 
         scripts = resources.scripts
