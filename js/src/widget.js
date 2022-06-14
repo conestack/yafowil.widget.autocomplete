@@ -58,7 +58,7 @@ export class AutocompleteWidget {
         this.elem = elem;
         this.input_elem = $('input.autocomplete', this.elem)
             .attr('spellcheck', false)
-            .attr('autocomplete', false);
+            .attr('autocomplete', 'off');
         this.dd_elem = $(`<div />`)
             .addClass('autocomplete-dropdown')
             .appendTo(this.elem);

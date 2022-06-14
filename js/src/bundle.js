@@ -12,4 +12,9 @@ $(function() {
     } else {
         AutocompleteWidget.initialize();
     }
+    if (yafowil.array !== undefined) {
+        $.extend(yafowil.array.hooks.add, {
+            autocomplete_binder: AutocompleteWidget.initialize
+        });
+    }
 });
