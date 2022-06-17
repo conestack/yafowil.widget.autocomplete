@@ -188,6 +188,27 @@ QUnit.module('AutocompleteWidget', hooks => {
         });
     });
 
+    QUnit.test('placement', assert => {
+        elem.css({
+            top: $(window).outerHeight() + 'px',
+            position: 'absolute'
+        });
+        // initialize widget
+        AutocompleteWidget.initialize();
+        widget = elem.data('yafowil-autocomplete');
+
+        // dropdown is hidden
+        assert.strictEqual(widget.dd_elem.css('display'), 'none');
+
+        widget.input_elem.val('e');
+        widget.autocomplete();
+
+        assert.strictEqual(
+            widget.dd_elem.offset().top,
+            widget.input_elem.offset().top - widget.dd_elem.outerHeight()
+        );
+    });
+
     QUnit.test('unload', assert => {
         // initialize widget
         AutocompleteWidget.initialize();
@@ -556,51 +577,6 @@ QUnit.module('AutocompleteWidget', hooks => {
                 done();
             }, 10);
         });
-    });
-
-    QUnit.test('add_active() with no suggestions', assert => {
-        // initialize widget
-        AutocompleteWidget.initialize();
-        widget = elem.data('yafowil-autocomplete');
-        widget.input_elem.trigger('focus');
-        widget.input_elem.val('x');
-        widget.input_elem.trigger('input');
-
-        // create events
-        let kd = new $.Event('keydown', { key: 'ArrowDown' });
-
-        // async operation due to timeout - even if it's 0
-        let done = assert.async();
-        setTimeout(() => {
-            // no suggestions appended
-            assert.strictEqual(widget.suggestions.length, 0);
-            widget.input_elem.trigger(kd);
-            assert.strictEqual($('div.autocomplete-suggestion.selected').length, 0);
-            done();
-        }, 10);
-    });
-
-    QUnit.test('add_active()', assert => {
-        // initialize widget
-        AutocompleteWidget.initialize();
-        widget = elem.data('yafowil-autocomplete');
-        widget.input_elem.trigger('focus');
-        widget.input_elem.val('t');
-        widget.input_elem.trigger('input');
-
-        // create events
-        let kd = new $.Event('keydown', { key: 'ArrowDown' });
-
-        // async operation due to timeout - even if it's 0
-        let done = assert.async();
-        setTimeout(() => {
-            // five suggestions appended
-            assert.strictEqual(widget.suggestions.length, 2);
-            widget.input_elem.trigger(kd);
-            assert.strictEqual($('div.autocomplete-suggestion.selected').length, 1);
-            assert.ok(widget.suggestions[0].elem.hasClass('selected'));
-            done();
-        }, 10);
     });
 });
 

@@ -61,7 +61,7 @@ export class AutocompleteWidget {
             .attr('autocomplete', 'off');
         this.dd_elem = $(`<div />`)
             .addClass('autocomplete-dropdown')
-            .appendTo(this.elem);
+            .appendTo('body');
 
         this.suggestions = [];
         this.current_focus = 0;
@@ -177,12 +177,37 @@ export class AutocompleteWidget {
 
     autocomplete() {
         let val = this.input_elem.val();
+
         this.source({term: val}, (data) => {
+            if(!data.length) {
+                return;
+            }
             for (let item of data) {
-                this.dd_elem.show();
                 this.suggestions.push(new AutocompleteSuggestion(this, item, val));
             }
+            let scrolltop = $(document).scrollTop(),
+                input_top = this.elem.offset().top,
+                input_left = this.elem.offset().left,
+                input_height = this.elem.outerHeight(),
+                dd_height = this.dd_elem.outerHeight(),
+                top;
+
+            let viewport_edge = scrolltop + $(window).outerHeight()
+            let dd_bottom = input_top + input_height + dd_height;
+
+            if (dd_bottom >= viewport_edge) {
+                top = input_top - dd_height;
+            } else {
+                top = input_top + input_height;
+            }
+
+            this.dd_elem.css({
+                top: `${top}px`,
+                left: `${input_left}px`
+            });
+            this.dd_elem.show();
         });
+
     }
 
     on_keydown(e) {
