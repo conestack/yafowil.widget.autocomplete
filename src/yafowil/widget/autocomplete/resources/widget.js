@@ -2,22 +2,23 @@ var yafowil_autocomplete = (function (exports, $) {
     'use strict';
 
     class AutocompleteSuggestion {
-        constructor(widget, source, val) {
+        constructor(widget, source, term) {
             this.widget = widget;
             this.elem = $('<div />')
                 .addClass('autocomplete-suggestion')
                 .appendTo(this.widget.dd_elem);
-            let index = source.toUpperCase().indexOf(val.toUpperCase());
+            this.key = (typeof source == 'object') ? source.key : source;
+            this.value = source.value ? source.value : null;
+            let index = this.key.toUpperCase().indexOf(term.toUpperCase());
             $(`<span />`)
-                .text(source.substring(0, index))
+                .text(this.key.substring(0, index))
                 .appendTo(this.elem);
             $(`<strong />`)
-                .text(source.substring(index, index + val.length))
+                .text(this.key.substring(index, index + term.length))
                 .appendTo(this.elem);
             $(`<span />`)
-                .text(source.substring(index + val.length))
+                .text(this.key.substring(index + term.length))
                 .appendTo(this.elem);
-            this.value = source;
             this.selected = false;
             this.select = this.select.bind(this);
             this.elem.off('mousedown', this.select).on('mousedown', this.select);
@@ -36,7 +37,7 @@ var yafowil_autocomplete = (function (exports, $) {
         }
         select() {
             this.selected = true;
-            this.widget.select_suggestion(this.value);
+            this.widget.select_suggestion(this.key, this.value);
         }
     }
     class AutocompleteWidget {
@@ -54,6 +55,15 @@ var yafowil_autocomplete = (function (exports, $) {
             this.dd_elem = $(`<div />`)
                 .addClass('autocomplete-dropdown')
                 .appendTo('body');
+            this.value_elem = $(`<div />`)
+                .addClass('autocomplete-value-elem')
+                .css({
+                    border: '1px solid red',
+                    height: '30px',
+                    width: '100%'
+                })
+                .insertAfter(this.input_elem)
+                .hide();
             this.suggestions = [];
             this.current_focus = 0;
             let options = this.parse_options();
@@ -118,10 +128,21 @@ var yafowil_autocomplete = (function (exports, $) {
                 this.source = function(request, response) {
                     let src = source.split('|'),
                         term = request.term,
+                        data;
+                    if (typeof src == 'object') {
+                        data = {};
+                        for (let item of src) {
+                            item = item.split(':');
+                            if (item[0].toUpperCase().indexOf(term.toUpperCase()) > -1) {
+                                data[item[0]] = item[1];
+                            }
+                        }
+                    } else {
                         data = [];
-                    for (let item of src) {
-                        if (item.toUpperCase().indexOf(term.toUpperCase()) > -1) {
-                            data.push(item);
+                        for (let item of src) {
+                            if (item.toUpperCase().indexOf(term.toUpperCase()) > -1) {
+                                data.push(item);
+                            }
                         }
                     }
                     response(data);
@@ -153,13 +174,27 @@ var yafowil_autocomplete = (function (exports, $) {
             }
         }
         autocomplete() {
-            let val = this.input_elem.val();
-            this.source({term: val}, (data) => {
-                if(!data.length) {
-                    return;
-                }
-                for (let item of data) {
-                    this.suggestions.push(new AutocompleteSuggestion(this, item, val));
+            let term = this.input_elem.val();
+            this.source({term: term}, (data) => {
+                if (data instanceof Array) {
+                    if(!data.length) {
+                        return;
+                    }
+                    for (let item of data) {
+                        this.suggestions.push(new AutocompleteSuggestion(this, item, term));
+                    }
+                } else {
+                    if(Object.keys(data).length === 0) {
+                        return;
+                    }
+                    for(let key in data) {
+                        let value = data[key];
+                        this.suggestions.push(new AutocompleteSuggestion(
+                            this,
+                            {key: key, value:value},
+                            term
+                        ));
+                    }
                 }
                 let scrolltop = $(document).scrollTop(),
                     input_top = this.elem.offset().top,
@@ -197,9 +232,7 @@ var yafowil_autocomplete = (function (exports, $) {
                     if (this.current_focus > -1) {
                         let selected_elem = this.suggestions[this.current_focus];
                         selected_elem.selected = true;
-                        this.input_elem.val(selected_elem.value);
-                        this.hide_dropdown();
-                        this.input_elem.trigger('blur');
+                        this.select_suggestion(selected_elem.key, selected_elem.value);
                     }
                     break;
                 case "Escape":
@@ -251,9 +284,12 @@ var yafowil_autocomplete = (function (exports, $) {
                     break;
             }
         }
-        select_suggestion(val) {
+        select_suggestion(key, value) {
             this.hide_dropdown();
-            this.input_elem.val(val);
+            this.input_elem.val(key);
+            if (value) {
+                this.value_elem.text(value).show();
+            }
         }
         unselect_all() {
             for (let suggestion of this.suggestions) {

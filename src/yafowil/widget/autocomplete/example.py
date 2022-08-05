@@ -37,6 +37,32 @@ def json_data(term):
     return data
 
 
+lipsum_dict = dict()
+for idx, word in enumerate(lipsum):
+    lipsum_dict[f'{idx}'] = word
+
+
+def dict_data(term):
+    data = lipsum_dict
+    if term:
+        result = dict()
+        for key in data:
+            if key.startswith(term):
+                result[key] = data[key]
+    return result
+
+
+def keyval_response(url):
+    purl = urlparse(url)
+    qs = parse_qs(purl.query)
+    data = dict_data(qs.get('term', [''])[0])
+
+    return {
+        'body': json.dumps(data),
+        'header': [('Content-Type', 'application/json')]
+    }
+
+
 DOC_STATIC = """\
 Autocomplete with static vocabulary
 -----------------------------------
@@ -99,6 +125,38 @@ used
         return response(environ, start_response)
 """
 
+DOC_KEYVAL_LOCAL = """\
+Autocomplete with key/value pairs - local
+-----------------------------------------
+
+.. code-block:: python
+
+    lipsum = dict()
+
+.. code-block:: python
+
+    field = factory('#field:autocomplete', props={
+        'label': 'Enter a number (local)',
+        'value': '',
+        'source': lipsum
+    })
+
+"""
+
+DOC_KEYVAL_REMOTE = """\
+Autocomplete with key/value pairs - remote
+------------------------------------------
+
+.. code-block:: python
+
+    field = factory('#field:autocomplete', props={
+        'label': 'Enter a number (remote)',
+        'value': '',
+        'source': 'yafowil.widget.autocomplete.json',
+        'minLength': 1
+    })
+
+"""
 
 def get_example():
     static_ac = factory('#field:autocomplete', name='static', props={
@@ -112,8 +170,21 @@ def get_example():
         'source': 'yafowil.widget.autocomplete.json',
         'minLength': 1,
     })
+    keyval_local = factory('#field:autocomplete', name='keyval_local', props={
+        'label': 'Enter a number (local)',
+        'value': '',
+        'source': 'yafowil.widget.keyval.json',
+        'minLength': 1,
+    })
+    keyval_remote = factory('#field:autocomplete', name='keyval_remote', props={
+        'label': 'Enter a number (remote)',
+        'value': '',
+        'source': lipsum_dict,
+        'minLength': 1,
+    })
     routes = {
         'yafowil.widget.autocomplete.json': json_response,
+        'yafowil.widget.keyval.json': keyval_response,
     }
     return [{
         'widget': static_ac,
@@ -124,4 +195,13 @@ def get_example():
         'routes': routes,
         'doc': DOC_JSON,
         'title': 'JSON data autocomplete',
+    }, {
+        'widget': keyval_local,
+        'doc': DOC_KEYVAL_LOCAL,
+        'title': 'Key/Value autocomplete local',
+    }, {
+        'widget': keyval_remote,
+        'routes': routes,
+        'doc': DOC_KEYVAL_REMOTE,
+        'title': 'Key/Value autocomplete remote',
     }]

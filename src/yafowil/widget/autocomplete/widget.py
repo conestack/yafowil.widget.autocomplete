@@ -15,6 +15,9 @@ def autocomplete_renderer(widget, data):
     if isinstance(source, (list, tuple)):
         source = '|'.join(source)
         source_type = 'local'
+    elif isinstance(source, dict):
+        source = '|'.join(f'{k}:{v}' for k,v in source.items())
+        source_type = 'local'
     elif isinstance(source, STR_TYPE):
         source_type = 'remote'
     else:
@@ -52,9 +55,7 @@ factory.register(
 
 factory.doc['blueprint']['autocomplete'] = """\
 Add-on blueprint `yafowil.widget.autocomplete
-<http://github.com/conestack/yafowil.widget.autocomplete/>`_ utilizing
-``jquery.ui.autocomplete`` to offer the user a selection based on the input
-given so far.
+<http://github.com/conestack/yafowil.widget.autocomplete/>`
 """
 
 factory.defaults['autocomplete.type'] = 'text'
