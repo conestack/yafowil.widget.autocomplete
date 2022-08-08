@@ -8,28 +8,18 @@ export class AutocompleteSuggestion {
             .addClass('autocomplete-suggestion')
             .appendTo(this.widget.dd_elem);
 
-        this.key = (typeof source == 'object') ? source.key : source;
-        this.value = source.value ? source.value : null;
-        let index = this.key.toUpperCase().indexOf(term.toUpperCase());
-        let key_elem = $(`<span />`)
-            .addClass('autocomplete-key')
-            .appendTo(this.elem);
+        this.key = (Array.isArray(source)) ? source[0] : null;
+        this.value = (Array.isArray(source)) ? source[1] : source;
+        let index = this.value.toUpperCase().indexOf(term.toUpperCase());
         let start_elem = $(`<span />`)
-            .text(this.key.substring(0, index))
-            .appendTo(key_elem);
+            .text(this.value.substring(0, index))
+            .appendTo(this.elem);
         let selected_elem = $(`<strong />`)
-            .text(this.key.substring(index, index + term.length))
-            .appendTo(key_elem);
+            .text(this.value.substring(index, index + term.length))
+            .appendTo(this.elem);
         let end_elem = $(`<span />`)
-            .text(this.key.substring(index + term.length))
-            .appendTo(key_elem);
-
-        if (this.value) {
-            let value_elem = $('<span />')
-                .addClass('autocomplete-value')
-                .text(this.value)
-                .appendTo(this.elem);
-        }
+            .text(this.value.substring(index + term.length))
+            .appendTo(this.elem);
         this.selected = false;
 
         this.select = this.select.bind(this);
@@ -52,7 +42,7 @@ export class AutocompleteSuggestion {
 
     select() {
         this.selected = true;
-        this.widget.select_suggestion(this.key, this.value);
+        this.widget.select_suggestion(this.value, this.key);
     }
 }
 
@@ -67,9 +57,10 @@ export class AutocompleteWidget {
     constructor(elem) {
         elem.data('yafowil-autocomplete', this);
         this.elem = elem;
-        this.input_elem = $('input.autocomplete', this.elem)
+        this.input_elem = $('input.autocomplete-display', this.elem)
             .attr('spellcheck', false)
             .attr('autocomplete', 'off');
+        this.hidden_input = $('input.autocomplete', this.elem);
         this.dd_elem = $(`<div />`)
             .addClass('autocomplete-dropdown')
             .appendTo('body');
@@ -78,6 +69,7 @@ export class AutocompleteWidget {
 
         let options = this.parse_options();
         this.sourcetype = options.type;
+        this.dict = options.dictionary;
         this.delay = options.delay;
         this.min_length = options.minLength;
 
@@ -148,14 +140,18 @@ export class AutocompleteWidget {
                 let src = source.split('|'),
                     term = request.term,
                     data;
-                data = {};
-                for (let item of src) {
-                    item = item.split(':');
-                    if (item[0].toUpperCase().indexOf(term.toUpperCase()) > -1) {
-                        data[item[0]] = item[1];
+                if (this.dict) {
+                    data = {};
+                    for (let item of src) {
+                        item = item.split(':');
+                        if (item[1].toUpperCase().indexOf(term.toUpperCase()) > -1) {
+                            data[item[0]] = item[1];
+                        }
                     }
+                    response(data);
+                } else {
+                    response(src);
                 }
-                response(data);
             }
         } else if (this.sourcetype === 'remote') {
             this.source = function(request, response) {
@@ -200,14 +196,14 @@ export class AutocompleteWidget {
                     );
                 }
             } else {
-                if(Object.keys(data).length === 0) {
+                let entries = Object.entries(data);
+                if (entries.length === 0) {
                     return;
                 }
-                for(let key in data) {
-                    let value = data[key]
+                for (let entry of entries) {
                     this.suggestions.push(new AutocompleteSuggestion(
                         this,
-                        {key: key, value:value},
+                        entry,
                         term
                     ));
                 }
@@ -254,8 +250,9 @@ export class AutocompleteWidget {
                 if (this.current_focus > -1) {
                     let selected_elem = this.suggestions[this.current_focus];
                     selected_elem.selected = true;
-                    this.select_suggestion(selected_elem.key, selected_elem.value);
+                    this.select_suggestion(selected_elem.value, selected_elem.key);
                 }
+                this.input_elem.trigger('blur');
                 break;
 
             case "Escape":
@@ -313,9 +310,14 @@ export class AutocompleteWidget {
         }
     }
 
-    select_suggestion(key, value) {
+    select_suggestion(value, key) {
         this.hide_dropdown();
-        this.input_elem.val(key);
+        this.input_elem.val(value);
+        if (key) {
+            this.hidden_input.val(key);
+        } else {
+            this.hidden_input.val(value);
+        }
     }
 
     unselect_all() {

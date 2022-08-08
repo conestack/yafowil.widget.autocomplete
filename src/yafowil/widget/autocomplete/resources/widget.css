@@ -18,8 +18,7 @@ div.autocomplete-dropdown {
 }
 
 .autocomplete-suggestion {
-    display: grid;
-    grid-template-columns: 5fr 5fr;
+    display: block;
     cursor: default;
     padding: 5px 15px;
 }

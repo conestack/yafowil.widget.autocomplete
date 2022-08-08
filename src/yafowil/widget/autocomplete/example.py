@@ -19,6 +19,9 @@ dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
 sunt in culpa qui officia deserunt mollit anim id est laborum."""
 lipsum = sorted(set(lipsum.lower().replace('.', '').replace(',', '').split()))
 
+lipsum_dict = {str(idx):word for idx, word in enumerate(lipsum)}
+lipsum_list_of_tuples = [(idx, word) for idx, word in enumerate(lipsum)]
+
 
 def json_response(url):
     purl = urlparse(url)
@@ -37,18 +40,10 @@ def json_data(term):
     return data
 
 
-lipsum_dict = dict()
-for idx, word in enumerate(lipsum):
-    lipsum_dict[f'{idx}'] = word
-
-
 def dict_data(term):
     data = lipsum_dict
     if term:
-        result = dict()
-        for key in data:
-            if key.startswith(term):
-                result[key] = data[key]
+        result = {str(key):data[key] for key in data if data[key].startswith(term)}
     return result
 
 
@@ -129,18 +124,18 @@ DOC_KEYVAL_LOCAL = """\
 Autocomplete with key/value pairs - local
 -----------------------------------------
 
-The autocomplete source can also be a dict containing key:value pairs.
-Autocomplete happens on the key value.
+The autocomplete source can also be a dict or list of tuples.
 
 .. code-block:: python
 
     lipsum = dict()
+    lipsum = ([1, 'foo'], [2, 'bar'])
 
 
 .. code-block:: python
 
     field = factory('#field:autocomplete', props={
-        'label': 'Enter a number (local)',
+        'label': 'Enter some text (local)',
         'value': '',
         'source': lipsum
     })
@@ -154,7 +149,7 @@ Autocomplete with key/value pairs - remote
 .. code-block:: python
 
     field = factory('#field:autocomplete', props={
-        'label': 'Enter a number (remote)',
+        'label': 'Enter some text (remote)',
         'value': '',
         'source': 'yafowil.widget.autocomplete.json',
         'minLength': 1
@@ -175,15 +170,17 @@ def get_example():
         'minLength': 1,
     })
     keyval_local = factory('#field:autocomplete', name='keyval_local', props={
-        'label': 'Enter a number (local)',
+        'label': 'Enter some text (local)',
         'value': '',
-        'source': 'yafowil.widget.keyval.json',
+        'source': lipsum_list_of_tuples,
+        'dictionary': True,
         'minLength': 1,
     })
     keyval_remote = factory('#field:autocomplete', name='keyval_remote', props={
-        'label': 'Enter a number (remote)',
+        'label': 'Enter some text (remote)',
         'value': '',
-        'source': lipsum_dict,
+        'source': 'yafowil.widget.keyval.json',
+        'dictionary': True,
         'minLength': 1,
     })
     routes = {
