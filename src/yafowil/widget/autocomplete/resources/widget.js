@@ -10,15 +10,24 @@ var yafowil_autocomplete = (function (exports, $) {
             this.key = (typeof source == 'object') ? source.key : source;
             this.value = source.value ? source.value : null;
             let index = this.key.toUpperCase().indexOf(term.toUpperCase());
+            let key_elem = $(`<span />`)
+                .addClass('autocomplete-key')
+                .appendTo(this.elem);
             $(`<span />`)
                 .text(this.key.substring(0, index))
-                .appendTo(this.elem);
+                .appendTo(key_elem);
             $(`<strong />`)
                 .text(this.key.substring(index, index + term.length))
-                .appendTo(this.elem);
+                .appendTo(key_elem);
             $(`<span />`)
                 .text(this.key.substring(index + term.length))
-                .appendTo(this.elem);
+                .appendTo(key_elem);
+            if (this.value) {
+                $('<span />')
+                    .addClass('autocomplete-value')
+                    .text(this.value)
+                    .appendTo(this.elem);
+            }
             this.selected = false;
             this.select = this.select.bind(this);
             this.elem.off('mousedown', this.select).on('mousedown', this.select);
@@ -55,15 +64,6 @@ var yafowil_autocomplete = (function (exports, $) {
             this.dd_elem = $(`<div />`)
                 .addClass('autocomplete-dropdown')
                 .appendTo('body');
-            this.value_elem = $(`<div />`)
-                .addClass('autocomplete-value-elem')
-                .css({
-                    border: '1px solid red',
-                    height: '30px',
-                    width: '100%'
-                })
-                .insertAfter(this.input_elem)
-                .hide();
             this.suggestions = [];
             this.current_focus = 0;
             let options = this.parse_options();
@@ -129,20 +129,11 @@ var yafowil_autocomplete = (function (exports, $) {
                     let src = source.split('|'),
                         term = request.term,
                         data;
-                    if (typeof src == 'object') {
-                        data = {};
-                        for (let item of src) {
-                            item = item.split(':');
-                            if (item[0].toUpperCase().indexOf(term.toUpperCase()) > -1) {
-                                data[item[0]] = item[1];
-                            }
-                        }
-                    } else {
-                        data = [];
-                        for (let item of src) {
-                            if (item.toUpperCase().indexOf(term.toUpperCase()) > -1) {
-                                data.push(item);
-                            }
+                    data = {};
+                    for (let item of src) {
+                        item = item.split(':');
+                        if (item[0].toUpperCase().indexOf(term.toUpperCase()) > -1) {
+                            data[item[0]] = item[1];
                         }
                     }
                     response(data);
@@ -181,7 +172,9 @@ var yafowil_autocomplete = (function (exports, $) {
                         return;
                     }
                     for (let item of data) {
-                        this.suggestions.push(new AutocompleteSuggestion(this, item, term));
+                        this.suggestions.push(
+                            new AutocompleteSuggestion(this, item, term)
+                        );
                     }
                 } else {
                     if(Object.keys(data).length === 0) {
@@ -243,7 +236,7 @@ var yafowil_autocomplete = (function (exports, $) {
                     this.hide_dropdown();
                     if (this.current_focus > -1) {
                         let selected_elem = this.suggestions[this.current_focus];
-                        this.input_elem.val(selected_elem.value);
+                        this.input_elem.val(selected_elem.key);
                         this.hide_dropdown();
                         this.input_elem.trigger('blur');
                     }
@@ -287,9 +280,6 @@ var yafowil_autocomplete = (function (exports, $) {
         select_suggestion(key, value) {
             this.hide_dropdown();
             this.input_elem.val(key);
-            if (value) {
-                this.value_elem.text(value).show();
-            }
         }
         unselect_all() {
             for (let suggestion of this.suggestions) {

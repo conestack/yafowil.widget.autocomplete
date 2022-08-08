@@ -128,7 +128,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             widget()
         self.assertEqual(
             str(arc.exception),
-            'resulting source must be tuple/list or string'
+            'resulting source must be tuple/list/dict or string'
         )
 
     def test_resources(self):
@@ -159,7 +159,6 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.assertEqual(styles[0].path, 'yafowil-autocomplete')
         self.assertEqual(styles[0].file_name, 'widget.css')
         self.assertTrue(os.path.exists(styles[0].file_path))
-
 
 if __name__ == '__main__':
     unittest.main()

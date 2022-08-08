@@ -16,12 +16,12 @@ def autocomplete_renderer(widget, data):
         source = '|'.join(source)
         source_type = 'local'
     elif isinstance(source, dict):
-        source = '|'.join(f'{k}:{v}' for k,v in source.items())
+        source = '|'.join('{}:{}'.format(k, v) for k,v in source.items())
         source_type = 'local'
     elif isinstance(source, STR_TYPE):
         source_type = 'remote'
     else:
-        raise ValueError('resulting source must be tuple/list or string')
+        raise ValueError('resulting source must be tuple/list/dict or string')
     result += tag('div', source, **{
         'class': 'autocomplete-source hiddenStructure'
     })

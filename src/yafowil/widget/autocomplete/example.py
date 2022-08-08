@@ -129,9 +129,13 @@ DOC_KEYVAL_LOCAL = """\
 Autocomplete with key/value pairs - local
 -----------------------------------------
 
+The autocomplete source can also be a dict containing key:value pairs.
+Autocomplete happens on the key value.
+
 .. code-block:: python
 
     lipsum = dict()
+
 
 .. code-block:: python
 
