@@ -160,5 +160,21 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.assertEqual(styles[0].file_name, 'widget.css')
         self.assertTrue(os.path.exists(styles[0].file_path))
 
+    def test_foo(self):
+        import pdb
+        # Render plain, source is callable
+        # def test_source(widget, data):
+            # return 'http://from.callable/'
+
+        widget = factory(
+            'autocomplete',
+            name='root',
+            props={
+                'source': {'foo': 'bar', 'baz': 'bam'}
+            })
+        data = widget.extract({'root': ''})
+        pdb.set_trace()
+
+
 if __name__ == '__main__':
     unittest.main()
