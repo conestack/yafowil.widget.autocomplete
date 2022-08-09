@@ -10,6 +10,7 @@ export class AutocompleteSuggestion {
 
         this.key = (Array.isArray(source)) ? source[0] : null;
         this.value = (Array.isArray(source)) ? source[1] : source;
+        console.log(this.value)
         let index = this.value.toUpperCase().indexOf(term.toUpperCase());
         let start_elem = $(`<span />`)
             .text(this.value.substring(0, index))
@@ -69,7 +70,6 @@ export class AutocompleteWidget {
 
         let options = this.parse_options();
         this.sourcetype = options.type;
-        this.dict = options.dictionary;
         this.delay = options.delay;
         this.min_length = options.minLength;
 
@@ -139,19 +139,18 @@ export class AutocompleteWidget {
             this.source = function(request, response) {
                 let src = source.split('|'),
                     term = request.term,
-                    data;
-                if (this.dict) {
                     data = {};
-                    for (let item of src) {
-                        item = item.split(':');
-                        if (item[1].toUpperCase().indexOf(term.toUpperCase()) > -1) {
-                            data[item[0]] = item[1];
-                        }
+                for (let item of src) {
+                    item = item.split(':');
+                    if (item.length === 1) {
+                        response(src);
+                        return;
                     }
-                    response(data);
-                } else {
-                    response(src);
+                    if (item[1].toUpperCase().indexOf(term.toUpperCase()) > -1) {
+                        data[item[0]] = item[1];
+                    }
                 }
+                response(data);
             }
         } else if (this.sourcetype === 'remote') {
             this.source = function(request, response) {

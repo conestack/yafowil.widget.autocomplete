@@ -9,7 +9,7 @@ from yafowil.utils import managedprops
 from yafowil.utils import cssid
 
 
-@managedprops('source', 'delay', 'minLength', 'dictionary')
+@managedprops('source', 'delay', 'minLength')
 def autocomplete_renderer(widget, data):
     result = data.rendered
     tag = data.tag
@@ -39,7 +39,7 @@ def autocomplete_renderer(widget, data):
     })
     params = [
         ('%s,%s' % (_, attr_value(_, widget, data)))
-        for _ in ['delay', 'minLength', 'dictionary']
+        for _ in ['delay', 'minLength']
     ]
     params.append('type,%s' % source_type)
     result += tag('div', '|'.join(params), **{
@@ -92,10 +92,4 @@ Minimum input length to trigger autocomplete.
 
 factory.doc['props']['autocomplete.source'] = """\
 Autocomplete source as python iterable or string defining JSON view callback.
-"""
-
-# XXX: remove
-factory.defaults['autocomplete.dictionary'] = False
-factory.doc['props']['autocomplete.dictionary'] = """\
-Pass key:value pairs as dict.
 """
