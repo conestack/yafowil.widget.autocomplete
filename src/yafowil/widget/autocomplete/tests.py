@@ -35,7 +35,8 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
+          <input class="autocomplete" id="input-root" name="root" type="hidden"/>
+          <input class="autocomplete-display form-control" type="text" value=""/>
           <div class="autocomplete-source hiddenStructure">http://www.foo.bar/baz</div>
           <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
         </div>
@@ -51,7 +52,8 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
+          <input class="autocomplete" id="input-root" name="root" type="hidden"/>
+          <input class="autocomplete-display form-control" type="text" value=""/>
           <div class="autocomplete-source hiddenStructure">foo|bar</div>
           <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,local</div>
         </div>
@@ -70,7 +72,8 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
+          <input class="autocomplete" id="input-root" name="root" type="hidden"/>
+          <input class="autocomplete-display form-control" type="text" value=""/>
           <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
           <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
         </div>""", fxml(widget()))
@@ -110,7 +113,8 @@ class TestAutocompleteWidget(YafowilTestCase):
           <div class="errormessage">Autocomplete widget is required</div>
           <div class="yafowil-widget-autocomplete">
             <input class="autocomplete required" id="input-root" name="root"
-                   required="required" type="text" value=""/>
+                   required="required" type="hidden" value=""/>
+            <input class="autocomplete-display form-control" type="text" value=""/>
             <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
             <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
           </div>

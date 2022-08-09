@@ -9,7 +9,6 @@ var yafowil_autocomplete = (function (exports, $) {
                 .appendTo(this.widget.dd_elem);
             this.key = (Array.isArray(source)) ? source[0] : null;
             this.value = (Array.isArray(source)) ? source[1] : source;
-            console.log(this.value);
             let index = this.value.toUpperCase().indexOf(term.toUpperCase());
             $(`<span />`)
                 .text(this.value.substring(0, index))
@@ -123,10 +122,12 @@ var yafowil_autocomplete = (function (exports, $) {
                         term = request.term,
                         data = {};
                     for (let item of src) {
-                        item = item.split(':');
+                        item = item.split(':').map(element => element.trim());
                         if (item.length === 1) {
-                            response(src);
-                            console.log('bleble');
+                            let result = src.filter(word =>
+                                word.toUpperCase().indexOf(term.toUpperCase()) > -1
+                            );
+                            response(result);
                             return;
                         }
                         if (item[1].toUpperCase().indexOf(term.toUpperCase()) > -1) {
@@ -234,10 +235,10 @@ var yafowil_autocomplete = (function (exports, $) {
                     this.hide_dropdown();
                     if (this.current_focus > -1) {
                         let selected_elem = this.suggestions[this.current_focus];
-                        this.input_elem.val(selected_elem.key);
-                        this.hide_dropdown();
-                        this.input_elem.trigger('blur');
+                        selected_elem.selected = true;
+                        this.select_suggestion(selected_elem.value, selected_elem.key);
                     }
+                    this.input_elem.trigger('blur');
                     break;
                 case "PageDown":
                     e.preventDefault();

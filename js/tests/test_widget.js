@@ -23,7 +23,8 @@ QUnit.module('AutocompleteWidget', hooks => {
         widget = elem.data('yafowil-autocomplete');
 
         assert.deepEqual(widget.elem, elem);
-        assert.ok(widget.input_elem.is('input.autocomplete'));
+        assert.ok(widget.input_elem.is('input.autocomplete-display'));
+        assert.ok(widget.hidden_input.is('input.autocomplete'));
         assert.ok(widget.dd_elem.is('div.autocomplete-dropdown'));
 
         assert.ok(widget.parse_options);
@@ -151,14 +152,13 @@ QUnit.module('AutocompleteWidget', hooks => {
             AutocompleteWidget.initialize();
             widget = elem.data('yafowil-autocomplete');
             assert.strictEqual(widget.sourcetype, 'remote');
-
             widget.autocomplete();
 
             let done = assert.async();
             setTimeout(() => {
                 assert.strictEqual(widget.suggestions.length, 2);
-                assert.strictEqual(widget.suggestions[0].key, 'one');
-                assert.strictEqual(widget.suggestions[1].key, 'two');
+                assert.strictEqual(widget.suggestions[0].value, 'one');
+                assert.strictEqual(widget.suggestions[1].value, 'two');
                 done();
             }, 10);
 
@@ -280,7 +280,7 @@ QUnit.module('AutocompleteWidget', hooks => {
 
             setTimeout(() => {
                 assert.strictEqual(widget.suggestions.length, 1);
-                assert.strictEqual(widget.suggestions[0].key, 'four');
+                assert.strictEqual(widget.suggestions[0].value, 'four');
                 done();
             }, 500);
         });
@@ -316,7 +316,7 @@ QUnit.module('AutocompleteWidget', hooks => {
             // autocomplete has been triggered
             setTimeout(() => {
                 assert.strictEqual(widget.suggestions.length, 1);
-                assert.strictEqual(widget.suggestions[0].key, 'four');
+                assert.strictEqual(widget.suggestions[0].value, 'four');
                 done2();
             }, 700);
         });
@@ -360,19 +360,19 @@ QUnit.module('AutocompleteWidget', hooks => {
 
         let done = assert.async();
         setTimeout(() => {
-            assert.strictEqual(widget.suggestions[0].key, 'one');
-            assert.strictEqual(widget.suggestions[0].value, null);
-            assert.strictEqual(widget.suggestions[1].key, 'two');
-            assert.strictEqual(widget.suggestions[1].value, null);
-            assert.strictEqual(widget.suggestions[2].key, 'four');
-            assert.strictEqual(widget.suggestions[2].value, null);
+            assert.strictEqual(widget.suggestions[0].value, 'one');
+            assert.strictEqual(widget.suggestions[0].key, null);
+            assert.strictEqual(widget.suggestions[1].value, 'two');
+            assert.strictEqual(widget.suggestions[1].key, null);
+            assert.strictEqual(widget.suggestions[2].value, 'four');
+            assert.strictEqual(widget.suggestions[2].key, null);
             done();
         }, 10);
     });
 
     QUnit.test('autocomplete key/value', assert => {
         container.empty();
-        let arr = "|one:eins|two:zwei|three:drei|four:vier|";
+        let arr = "one:eins|two:zwei|three:drei|four:vier";
         elem = create_elem(arr, params);
         container.append(elem);
 
@@ -381,17 +381,18 @@ QUnit.module('AutocompleteWidget', hooks => {
         widget = elem.data('yafowil-autocomplete');
 
         widget.input_elem.trigger('focus');
-        widget.input_elem.val('o');
+        widget.input_elem.val('ei');
         widget.input_elem.trigger('input');
 
         let done = assert.async();
         setTimeout(() => {
+            assert.strictEqual(widget.suggestions.length, 3)
             assert.strictEqual(widget.suggestions[0].key, 'one');
             assert.strictEqual(widget.suggestions[0].value, 'eins');
             assert.strictEqual(widget.suggestions[1].key, 'two');
             assert.strictEqual(widget.suggestions[1].value, 'zwei');
-            assert.strictEqual(widget.suggestions[2].key, 'four');
-            assert.strictEqual(widget.suggestions[2].value, 'vier');
+            assert.strictEqual(widget.suggestions[2].key, 'three');
+            assert.strictEqual(widget.suggestions[2].value, 'drei');
             done();
         }, 10);
     });
@@ -488,7 +489,10 @@ QUnit.module('AutocompleteWidget', hooks => {
                 assert.strictEqual(widget.current_focus, 0);
                 // trigger Enter key
                 widget.input_elem.trigger(enter);
-                assert.strictEqual(widget.input_elem.val(), widget.suggestions[0].key);
+                assert.strictEqual(
+                    widget.input_elem.val(),
+                    widget.suggestions[0].value
+                );
                 done();
             }, 10);
         });
@@ -533,7 +537,7 @@ QUnit.module('AutocompleteWidget', hooks => {
                 widget.input_elem.trigger(tab);
                 assert.strictEqual(
                     widget.input_elem.val(),
-                    widget.suggestions[0].key
+                    widget.suggestions[0].value
                 );
                 assert.strictEqual(widget.dd_elem.css('display'), 'none');
                 assert.notOk(widget.input_elem.is(':focus'));
@@ -632,7 +636,7 @@ QUnit.module('AutocompleteSuggestion', hooks => {
 
         assert.ok(sug.elem.is('div.autocomplete-suggestion'));
         assert.ok(sug.elem.parent('div.autocomplete-dropdown'));
-        assert.strictEqual(sug.key, 'foo');
+        assert.strictEqual(sug.value, 'foo');
     });
 
     QUnit.test('select()', assert => {
@@ -662,7 +666,8 @@ QUnit.module('AutocompleteSuggestion', hooks => {
 function create_elem(arr, params) {
     let widget_html = $(`
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" type="text" />
+          <input class="autocomplete-display" type="text" />
+          <input class="autocomplete" type="hidden" />
           <div class="autocomplete-source">
             ${arr}
           </div>

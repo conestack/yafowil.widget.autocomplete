@@ -125,6 +125,7 @@ Autocomplete with key/value pairs - local
 -----------------------------------------
 
 The autocomplete source can also be a dict or list of tuples.
+Autocomplete happens on the item value. Return value is the item key.
 
 .. code-block:: python
 
