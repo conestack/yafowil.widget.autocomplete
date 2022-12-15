@@ -13,8 +13,10 @@ $(function() {
         AutocompleteWidget.initialize();
     }
     if (yafowil.array !== undefined) {
-        $.extend(yafowil.array.hooks.add, {
-            autocomplete_binder: AutocompleteWidget.initialize
-        });
-    }
+        if (window.ts == undefined) {
+            $.extend(yafowil.array.hooks.add, {
+                autocomplete_binder: AutocompleteWidget.initialize
+            });
+        }
+    } else if (yafowil.array !== undefined) {}
 });

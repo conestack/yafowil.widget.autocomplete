@@ -1,5 +1,7 @@
 import {AutocompleteSuggestion, AutocompleteWidget} from '../src/widget.js';
 
+window.yafowil_array = undefined;
+
 let container = $('<div id="container" />');
 
 QUnit.module('AutocompleteWidget', hooks => {

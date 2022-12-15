@@ -295,6 +295,15 @@ var yafowil_autocomplete = (function (exports, $) {
             this.dd_elem.hide();
         }
     }
+    function autocomplete_on_array_add(inst, context) {
+        AutocompleteWidget.initialize(context);
+    }
+    $(function() {
+        if (yafowil_array === undefined || window.ts === undefined) {
+            return;
+        }
+        yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
+    });
 
     $(function() {
         if (window.ts !== undefined) {
@@ -305,10 +314,12 @@ var yafowil_autocomplete = (function (exports, $) {
             AutocompleteWidget.initialize();
         }
         if (yafowil.array !== undefined) {
-            $.extend(yafowil.array.hooks.add, {
-                autocomplete_binder: AutocompleteWidget.initialize
-            });
-        }
+            if (window.ts == undefined) {
+                $.extend(yafowil.array.hooks.add, {
+                    autocomplete_binder: AutocompleteWidget.initialize
+                });
+            }
+        } else if (yafowil.array !== undefined) ;
     });
 
     exports.AutocompleteSuggestion = AutocompleteSuggestion;

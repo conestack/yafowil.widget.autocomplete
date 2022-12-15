@@ -339,3 +339,18 @@ export class AutocompleteWidget {
         this.dd_elem.hide();
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// yafowil.widget.array integration
+//////////////////////////////////////////////////////////////////////////////
+
+function autocomplete_on_array_add(inst, context) {
+    AutocompleteWidget.initialize(context);
+}
+
+$(function() {
+    if (yafowil_array === undefined || window.ts === undefined) {
+        return;
+    }
+    yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
+});
