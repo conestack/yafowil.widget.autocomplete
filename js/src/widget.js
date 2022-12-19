@@ -349,8 +349,8 @@ function autocomplete_on_array_add(inst, context) {
 }
 
 $(function() {
-    if (yafowil_array === undefined || window.ts === undefined) {
+    if (window.yafowil_array === undefined || window.ts === undefined) {
         return;
     }
-    yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
+    window.yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
 });

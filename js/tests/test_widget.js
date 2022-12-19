@@ -1,6 +1,16 @@
 import {AutocompleteSuggestion, AutocompleteWidget} from '../src/widget.js';
 
-window.yafowil_array = undefined;
+let _array_subscribers = {
+    on_add: []
+}
+
+window.yafowil_array = {
+    on_array_event: function(evt_name, evt_function) {
+        _array_subscribers[evt_name] = evt_function;
+    }
+}
+
+window.ts = true;
 
 let container = $('<div id="container" />');
 
@@ -22,6 +32,25 @@ QUnit.module('AutocompleteWidget', hooks => {
 
     QUnit.test('initialize', assert => {
         AutocompleteWidget.initialize();
+        widget = elem.data('yafowil-autocomplete');
+
+        assert.deepEqual(widget.elem, elem);
+        assert.ok(widget.input_elem.is('input.autocomplete'));
+        assert.ok(widget.dd_elem.is('div.autocomplete-dropdown'));
+
+        assert.ok(widget.parse_options);
+        assert.ok(widget.parse_source);
+
+        assert.ok(widget.on_input);
+        assert.ok(widget.hide_dropdown);
+        assert.ok(widget.on_keydown);
+        assert.ok(widget.autocomplete);
+    });
+
+    QUnit.test('initialize in array', assert => {
+        // invoke array on_add
+        console.log(_array_subscribers)
+        _array_subscribers['on_add'].apply(null, $('body'));
         widget = elem.data('yafowil-autocomplete');
 
         assert.deepEqual(widget.elem, elem);
