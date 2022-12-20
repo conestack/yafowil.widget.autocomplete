@@ -298,12 +298,15 @@ var yafowil_autocomplete = (function (exports, $) {
     function autocomplete_on_array_add(inst, context) {
         AutocompleteWidget.initialize(context);
     }
-    $(function() {
-        if (window.yafowil_array === undefined || window.ts === undefined) {
-            return;
+    function register_array_subscribers() {
+        if (window.yafowil_array !== undefined) {
+            window.yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
+        } else if (yafowil.array !== undefined) {
+            $.extend(yafowil.array.hooks.add, {
+                autocomplete_binder: AutocompleteWidget.initialize
+            });
         }
-        window.yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
-    });
+    }
 
     $(function() {
         if (window.ts !== undefined) {
@@ -313,17 +316,12 @@ var yafowil_autocomplete = (function (exports, $) {
         } else {
             AutocompleteWidget.initialize();
         }
-        if (yafowil.array !== undefined) {
-            if (window.ts == undefined) {
-                $.extend(yafowil.array.hooks.add, {
-                    autocomplete_binder: AutocompleteWidget.initialize
-                });
-            }
-        } else if (yafowil.array !== undefined) ;
+        register_array_subscribers();
     });
 
     exports.AutocompleteSuggestion = AutocompleteSuggestion;
     exports.AutocompleteWidget = AutocompleteWidget;
+    exports.register_array_subscribers = register_array_subscribers;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

@@ -348,9 +348,12 @@ function autocomplete_on_array_add(inst, context) {
     AutocompleteWidget.initialize(context);
 }
 
-$(function() {
-    if (window.yafowil_array === undefined || window.ts === undefined) {
-        return;
+export function register_array_subscribers() {
+    if (window.yafowil_array !== undefined) {
+        window.yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
+    } else if (yafowil.array !== undefined) {
+        $.extend(yafowil.array.hooks.add, {
+            autocomplete_binder: AutocompleteWidget.initialize
+        });
     }
-    window.yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
-});
+}

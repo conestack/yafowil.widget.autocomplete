@@ -1,16 +1,5 @@
 import {AutocompleteSuggestion, AutocompleteWidget} from '../src/widget.js';
-
-let _array_subscribers = {
-    on_add: []
-}
-
-window.yafowil_array = {
-    on_array_event: function(evt_name, evt_function) {
-        _array_subscribers[evt_name] = evt_function;
-    }
-}
-
-window.ts = true;
+import {register_array_subscribers} from '../src/widget.js';
 
 let container = $('<div id="container" />');
 
@@ -19,6 +8,9 @@ QUnit.module('AutocompleteWidget', hooks => {
     let widget;
     let arr = "|one|two|three|four|";
     let params = "delay,0|minLength,0|type,local";
+    let _array_subscribers = {
+        on_add: []
+    };
 
     hooks.beforeEach(() => {
         $('body').append(container);
@@ -47,23 +39,28 @@ QUnit.module('AutocompleteWidget', hooks => {
         assert.ok(widget.autocomplete);
     });
 
-    QUnit.test('initialize in array', assert => {
+    QUnit.test('register_array_subscribers', assert => {
+        // patch yafowil_array
+        window.yafowil_array = {
+            on_array_event: function(evt_name, evt_function) {
+                _array_subscribers[evt_name] = evt_function;
+            }
+        }
+        register_array_subscribers();
+
+        // create table DOM
+        let table = $('<table />')
+            .append($('<tr />'))
+            .append($('<td />'))
+            .appendTo('body');
+        let el = create_elem(arr, params);
+        el.appendTo($('td', table));
         // invoke array on_add
-        console.log(_array_subscribers)
-        _array_subscribers['on_add'].apply(null, $('body'));
-        widget = elem.data('yafowil-autocomplete');
+        _array_subscribers['on_add'].apply(null, $('tr', table));
 
-        assert.deepEqual(widget.elem, elem);
-        assert.ok(widget.input_elem.is('input.autocomplete'));
-        assert.ok(widget.dd_elem.is('div.autocomplete-dropdown'));
-
-        assert.ok(widget.parse_options);
-        assert.ok(widget.parse_source);
-
-        assert.ok(widget.on_input);
-        assert.ok(widget.hide_dropdown);
-        assert.ok(widget.on_keydown);
-        assert.ok(widget.autocomplete);
+        widget = el.data('yafowil-autocomplete');
+        assert.ok(widget);
+        table.remove();
     });
 
     QUnit.test('parse_options', assert => {
@@ -494,7 +491,10 @@ QUnit.module('AutocompleteWidget', hooks => {
                 assert.strictEqual(widget.current_focus, 0);
                 // trigger Enter key
                 widget.input_elem.trigger(enter);
-                assert.strictEqual(widget.input_elem.val(), widget.suggestions[0].value);
+                assert.strictEqual(
+                    widget.input_elem.val(),
+                    widget.suggestions[0].value
+                );
                 done();
             }, 10);
         });
