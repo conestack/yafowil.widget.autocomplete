@@ -1,10 +1,15 @@
 Changes
 =======
 
-1.8 (unreleased)
+2.0 (unreleased)
 ----------------
 
-- No changes yet.
+- Extend JS by ``autocomplete_on_array_add`` and ``register_array_subscribers``
+  to enable usage in ``yafowil.widget.array``.
+  [lenadax]
+
+- Get rid of jQuery UI. Rewrite Jacascript widget using ES6.
+  [lenadax]
 
 
 1.7 (2018-07-16)

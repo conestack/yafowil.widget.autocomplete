@@ -1,69 +1,64 @@
 from yafowil.base import factory
 from yafowil.utils import entry_point
 import os
+import webresource as wr
 
 
-resourcedir = os.path.join(os.path.dirname(__file__), 'resources')
+resources_dir = os.path.join(os.path.dirname(__file__), 'resources')
+
+
+##############################################################################
+# Default
+##############################################################################
+
+# webresource ################################################################
+
+resources = wr.ResourceGroup(
+    name='yafowil.widget.autocomplete',
+    directory=resources_dir,
+    path='yafowil-autocomplete'
+)
+resources.add(wr.ScriptResource(
+    name='yafowil-autocomplete-js',
+    depends='jquery-js',
+    resource='widget.js',
+    compressed='widget.min.js'
+))
+resources.add(wr.StyleResource(
+    name='yafowil-autocomplete-css',
+    resource='widget.css'
+))
+
+# B/C resources ##############################################################
+
 js = [{
-    'group': 'yafowil.widget.autocomplete.dependencies',
-    'resource': 'jquery.ui.menu.min.js',
-    'order': 20,
-}, {
-    'group': 'yafowil.widget.autocomplete.dependencies',
-    'resource': 'jquery.ui.autocomplete.min.js',
-    'order': 20,
-}, {
     'group': 'yafowil.widget.autocomplete.common',
     'resource': 'widget.js',
     'order': 21,
 }]
-default_css = [{
-    'group': 'yafowil.widget.autocomplete.dependencies',
-    'resource': 'jquery.ui.menu.css',
-    'order': 20,
-}, {
-    'group': 'yafowil.widget.autocomplete.dependencies',
-    'resource': 'jquery.ui.autocomplete.css',
-    'order': 20,
-}, {
-    'group': 'yafowil.widget.autocomplete.common',
-    'resource': 'widget.css',
-    'order': 21,
-}]
-bootstrap_css = [{
-    'group': 'yafowil.widget.autocomplete.dependencies',
-    'resource': 'jquery.ui.menu.bootstrap.css',
-    'order': 20,
-}, {
-    'group': 'yafowil.widget.autocomplete.dependencies',
-    'resource': 'jquery.ui.autocomplete.bootstrap.css',
-    'order': 20,
-}, {
-    'group': 'yafowil.widget.autocomplete.common',
-    'resource': 'widget.css',
-    'order': 21,
-}]
-plone5_css = [{
-    'group': 'yafowil.widget.autocomplete.dependencies',
-    'resource': 'jquery.ui.menu.plone5.css',
-    'order': 20,
-}, {
-    'group': 'yafowil.widget.autocomplete.dependencies',
-    'resource': 'jquery.ui.autocomplete.plone5.css',
-    'order': 20,
-}, {
+css = [{
     'group': 'yafowil.widget.autocomplete.common',
     'resource': 'widget.css',
     'order': 21,
 }]
 
+
+##############################################################################
+# Registration
+##############################################################################
 
 @entry_point(order=10)
 def register():
     from yafowil.widget.autocomplete import widget  # noqa
-    factory.register_theme('default', 'yafowil.widget.autocomplete',
-                           resourcedir, js=js, css=default_css)
-    factory.register_theme('bootstrap', 'yafowil.widget.autocomplete',
-                           resourcedir, js=js, css=bootstrap_css)
-    factory.register_theme('plone5', 'yafowil.widget.autocomplete',
-                           resourcedir, js=js, css=plone5_css)
+
+    widget_name = 'yafowil.widget.autocomplete'
+
+    # Default
+    factory.register_theme(
+        'default',
+        widget_name,
+        resources_dir,
+        js=js,
+        css=css
+    )
+    factory.register_resources('default', widget_name, resources)

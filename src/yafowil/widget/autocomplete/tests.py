@@ -4,20 +4,26 @@ from yafowil.base import factory
 from yafowil.compat import IS_PY2
 from yafowil.tests import fxml
 from yafowil.tests import YafowilTestCase
+import os
 import unittest
-import yafowil.loader  # noqa
 
 
 if not IS_PY2:
     from importlib import reload
 
 
+def np(path):
+    return path.replace('/', os.path.sep)
+
+
 class TestAutocompleteWidget(YafowilTestCase):
 
     def setUp(self):
         super(TestAutocompleteWidget, self).setUp()
+        from yafowil.widget import autocomplete
         from yafowil.widget.autocomplete import widget
         reload(widget)
+        autocomplete.register()
 
     def test_source_is_string(self):
         # Render plain, source is string
@@ -27,7 +33,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             props={
                 'source': 'http://www.foo.bar/baz'
             })
-        self.check_output("""
+        self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">http://www.foo.bar/baz</div>
@@ -43,7 +49,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             props={
                 'source': ['foo', 'bar']
             })
-        self.check_output("""
+        self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">foo|bar</div>
@@ -62,7 +68,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             props={
                 'source': test_source
             })
-        self.check_output("""
+        self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
@@ -99,7 +105,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             ['root', UNSET, '', [error]]
         )
 
-        self.check_output("""
+        self.checkOutput("""
         <div class="error">
           <div class="errormessage">Autocomplete widget is required</div>
           <div class="yafowil-widget-autocomplete">
@@ -118,11 +124,41 @@ class TestAutocompleteWidget(YafowilTestCase):
             props={
                 'source': None
             })
-        err = self.expect_error(
-            ValueError,
-            widget
+        with self.assertRaises(ValueError) as arc:
+            widget()
+        self.assertEqual(
+            str(arc.exception),
+            'resulting source must be tuple/list or string'
         )
-        self.assertEqual(str(err), 'resulting source must be tuple/list or string')
+
+    def test_resources(self):
+        factory.theme = 'default'
+        resources = factory.get_resources('yafowil.widget.autocomplete')
+        self.assertTrue(
+            resources.directory.endswith(np('/autocomplete/resources'))
+        )
+        self.assertEqual(resources.name, 'yafowil.widget.autocomplete')
+        self.assertEqual(resources.path, 'yafowil-autocomplete')
+
+        scripts = resources.scripts
+        self.assertEqual(len(scripts), 1)
+
+        self.assertTrue(
+            scripts[0].directory.endswith(np('/autocomplete/resources'))
+        )
+        self.assertEqual(scripts[0].path, 'yafowil-autocomplete')
+        self.assertEqual(scripts[0].file_name, 'widget.min.js')
+        self.assertTrue(os.path.exists(scripts[0].file_path))
+
+        styles = resources.styles
+        self.assertEqual(len(styles), 1)
+
+        self.assertTrue(
+            styles[0].directory.endswith(np('/autocomplete/resources'))
+        )
+        self.assertEqual(styles[0].path, 'yafowil-autocomplete')
+        self.assertEqual(styles[0].file_name, 'widget.css')
+        self.assertTrue(os.path.exists(styles[0].file_path))
 
 
 if __name__ == '__main__':
