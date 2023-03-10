@@ -42,7 +42,12 @@ var yafowil_autocomplete = (function (exports, $) {
     class AutocompleteWidget {
         static initialize(context) {
             $('div.yafowil-widget-autocomplete', context).each(function() {
-                new AutocompleteWidget($(this));
+                let elem = $(this);
+                if (window.yafowil_array !== undefined &&
+                    window.yafowil_array.inside_template(elem)) {
+                    return;
+                }
+                new AutocompleteWidget(elem);
             });
         }
         constructor(elem) {
