@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 import {AutocompleteWidget} from './widget.js';
+import {register_array_subscribers} from './widget.js';
 
 export * from './widget.js';
 
@@ -12,9 +13,5 @@ $(function() {
     } else {
         AutocompleteWidget.initialize();
     }
-    if (yafowil.array !== undefined) {
-        $.extend(yafowil.array.hooks.add, {
-            autocomplete_binder: AutocompleteWidget.initialize
-        });
-    }
+    register_array_subscribers();
 });
