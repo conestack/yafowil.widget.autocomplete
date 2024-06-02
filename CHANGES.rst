@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.0a1 (unreleased)
+2.0a1 (2024-06-02)
 ------------------
 
 - Extend JS by ``autocomplete_on_array_add`` and ``register_array_subscribers``
