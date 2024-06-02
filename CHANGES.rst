@@ -1,8 +1,8 @@
 Changes
 =======
 
-2.0 (unreleased)
-----------------
+2.0a1 (unreleased)
+------------------
 
 - Extend JS by ``autocomplete_on_array_add`` and ``register_array_subscribers``
   to enable usage in ``yafowil.widget.array``.
