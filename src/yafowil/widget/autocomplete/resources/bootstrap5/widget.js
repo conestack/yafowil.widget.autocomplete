@@ -1,7 +1,7 @@
 var yafowil_autocomplete = (function (exports, $) {
     'use strict';
 
-    class AutocompleteSuggestion {
+    class AutocompleteSuggestion$1 {
         constructor(widget, source, val) {
             this.widget = widget;
             this.value = source;
@@ -43,7 +43,7 @@ var yafowil_autocomplete = (function (exports, $) {
             this.widget.select_suggestion(this.value);
         }
     }
-    class AutocompleteWidget {
+    class AutocompleteWidget$1 {
         static initialize(context) {
             $('div.yafowil-widget-autocomplete', context).each(function() {
                 let elem = $(this);
@@ -51,13 +51,13 @@ var yafowil_autocomplete = (function (exports, $) {
                     window.yafowil_array.inside_template(elem)) {
                     return;
                 }
-                new AutocompleteWidget(elem);
+                new AutocompleteWidget$1(elem);
             });
         }
         constructor(elem) {
             elem.data('yafowil-autocomplete', this);
             this.elem = elem;
-            this.Suggestion = AutocompleteSuggestion;
+            this.Suggestion = AutocompleteSuggestion$1;
             this.compile();
             this.suggestions = [];
             this.current_focus = 0;
@@ -306,6 +306,64 @@ var yafowil_autocomplete = (function (exports, $) {
         }
         hide_dropdown() {
             this.dd_elem.hide();
+        }
+    }
+
+    class AutocompleteSuggestion extends AutocompleteSuggestion$1 {
+        constructor(widget, source, val) {
+            super(widget, source, val);
+        }
+        compile() {
+            let index = this.value.toUpperCase().indexOf(this.val.toUpperCase());
+            this.elem = $('<div />')
+                .addClass('autocomplete-suggestion list-group-item')
+                .appendTo(this.widget.ul_elem);
+            $(`<span />`)
+                .text(this.value.substring(0, index))
+                .appendTo(this.elem);
+            $(`<strong />`)
+                .text(this.value.substring(index, index + this.val.length))
+                .appendTo(this.elem);
+            $(`<span />`)
+                .text(this.value.substring(index + this.val.length))
+                .appendTo(this.elem);
+        }
+    }
+    class AutocompleteWidget extends AutocompleteWidget$1 {
+        static initialize(context) {
+            $('div.yafowil-widget-autocomplete', context).each(function() {
+                let elem = $(this);
+                if (window.yafowil_array !== undefined &&
+                    window.yafowil_array.inside_template(elem)) {
+                    return;
+                }
+                new AutocompleteWidget(elem);
+            });
+        }
+        constructor(elem) {
+            super(elem);
+            this.Suggestion = AutocompleteSuggestion;
+        }
+        compile() {
+            this.input_elem = $('input.autocomplete', this.elem)
+                .attr('spellcheck', false)
+                .attr('autocomplete', 'off');
+            this.dd_elem = $(`<div />`)
+                .addClass('autocomplete-dropdown card shadow')
+                .appendTo('body');
+            this.ul_elem = $(`<ul />`)
+                .addClass('list-group list-group-flush')
+                .appendTo(this.dd_elem);
+        }
+        on_input(e) {
+            clearTimeout(this.timeout);
+            this.ul_elem.empty();
+            this.dd_elem.hide();
+            this.suggestions = [];
+            this.current_focus = -1;
+            if (this.input_elem.val().length >= this.min_length) {
+                this.timeout = setTimeout(this.autocomplete, this.delay);
+            }
         }
     }
     function autocomplete_on_array_add(inst, context) {

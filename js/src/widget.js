@@ -4,25 +4,28 @@ export class AutocompleteSuggestion {
 
     constructor(widget, source, val) {
         this.widget = widget;
+        this.value = source;
+        this.val = val;
+        this.compile();
+        this.selected = false;
+        this.select = this.select.bind(this);
+        this.elem.off('mousedown', this.select).on('mousedown', this.select);
+    }
+
+    compile() {
+        let index = this.value.toUpperCase().indexOf(this.val.toUpperCase());
         this.elem = $('<div />')
             .addClass('autocomplete-suggestion')
             .appendTo(this.widget.dd_elem);
-
-        let index = source.toUpperCase().indexOf(val.toUpperCase());
         let start_elem = $(`<span />`)
-            .text(source.substring(0, index))
+            .text(this.value.substring(0, index))
             .appendTo(this.elem);
         let selected_elem = $(`<strong />`)
-            .text(source.substring(index, index + val.length))
+            .text(this.value.substring(index, index + this.val.length))
             .appendTo(this.elem);
         let end_elem = $(`<span />`)
-            .text(source.substring(index + val.length))
+            .text(this.value.substring(index + this.val.length))
             .appendTo(this.elem);
-        this.value = source;
-        this.selected = false;
-
-        this.select = this.select.bind(this);
-        this.elem.off('mousedown', this.select).on('mousedown', this.select);
     }
 
     get selected() {
@@ -61,12 +64,8 @@ export class AutocompleteWidget {
     constructor(elem) {
         elem.data('yafowil-autocomplete', this);
         this.elem = elem;
-        this.input_elem = $('input.autocomplete', this.elem)
-            .attr('spellcheck', false)
-            .attr('autocomplete', 'off');
-        this.dd_elem = $(`<div />`)
-            .addClass('autocomplete-dropdown')
-            .appendTo('body');
+        this.Suggestion = AutocompleteSuggestion;
+        this.compile();
 
         this.suggestions = [];
         this.current_focus = 0;
@@ -88,6 +87,15 @@ export class AutocompleteWidget {
             .on('keydown', this.on_keydown);
 
         this.autocomplete = this.autocomplete.bind(this);
+    }
+
+    compile() {
+        this.input_elem = $('input.autocomplete', this.elem)
+            .attr('spellcheck', false)
+            .attr('autocomplete', 'off');
+        this.dd_elem = $(`<div />`)
+            .addClass('autocomplete-dropdown')
+            .appendTo('body');
     }
 
     unload() {
@@ -188,7 +196,7 @@ export class AutocompleteWidget {
                 return;
             }
             for (let item of data) {
-                this.suggestions.push(new AutocompleteSuggestion(this, item, val));
+                this.suggestions.push(new this.Suggestion(this, item, val));
             }
             let scrolltop = $(document).scrollTop(),
                 input_top = this.elem.offset().top,
