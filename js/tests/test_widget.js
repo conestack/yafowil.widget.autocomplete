@@ -1,7 +1,9 @@
-import {AutocompleteSuggestion, AutocompleteWidget} from '../src/widget.js';
-import {register_array_subscribers} from '../src/widget.js';
+import {AutocompleteSuggestion, AutocompleteWidget} from '../src/default/widget.js';
+import {register_array_subscribers} from '../src/default/widget.js';
+import $ from 'jquery';
 
 let container = $('<div id="container" />');
+let css_link;
 
 QUnit.module('AutocompleteWidget', hooks => {
     let elem;
@@ -12,6 +14,13 @@ QUnit.module('AutocompleteWidget', hooks => {
         on_add: []
     };
 
+    hooks.before(() => {
+        // include link to styles required for test run
+        css_link = document.createElement('link');
+        css_link.rel = 'stylesheet';
+        css_link.href = '../../src/yafowil/widget/autocomplete/resources/default/widget.css';
+        document.head.appendChild(css_link);
+    });
     hooks.beforeEach(() => {
         $('body').append(container);
         elem = create_elem(arr, params);
@@ -20,6 +29,12 @@ QUnit.module('AutocompleteWidget', hooks => {
     hooks.afterEach(() => {
         container.empty();
         widget = null;
+    });
+    hooks.after(() => {
+        // remove required css styles after test run has finished
+        if (css_link) {
+            document.head.removeChild(css_link);
+        }
     });
 
     QUnit.test('initialize', assert => {

@@ -1,0 +1,22 @@
+div.yafowil-widget-autocomplete .hiddenStructure {
+    display: none;
+}
+
+div.autocomplete-dropdown {
+    position: absolute;
+    z-index: 2000;
+    min-width: 200px;
+    max-height: 320px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.autocomplete-suggestion {
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+
+.autocomplete-suggestion.selected {
+	background: var(--yafowil-accent-color, #0d6efd);
+    color: var(--yafowil-accent-font-color, #fff);
+}

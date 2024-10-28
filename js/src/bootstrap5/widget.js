@@ -1,6 +1,6 @@
 import $ from 'jquery';
-import {AutocompleteWidget as BaseAutocomplete} from '../widget.js';
-import {AutocompleteSuggestion as BaseAutocompleteSuggestion} from '../widget.js';
+import {AutocompleteWidget as BaseAutocomplete} from '../default/widget.js';
+import {AutocompleteSuggestion as BaseAutocompleteSuggestion} from '../default/widget.js';
 
 export class AutocompleteSuggestion extends BaseAutocompleteSuggestion {
 

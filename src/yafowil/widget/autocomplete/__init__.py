@@ -21,24 +21,24 @@ resources = wr.ResourceGroup(
 resources.add(wr.ScriptResource(
     name='yafowil-autocomplete-js',
     depends='jquery-js',
-    resource='widget.js',
-    compressed='widget.min.js'
+    resource='default/widget.js',
+    compressed='default/widget.min.js'
 ))
 resources.add(wr.StyleResource(
     name='yafowil-autocomplete-css',
-    resource='widget.css'
+    resource='default/widget.css'
 ))
 
 # B/C resources ##############################################################
 
 js = [{
     'group': 'yafowil.widget.autocomplete.common',
-    'resource': 'widget.js',
+    'resource': 'default/widget.js',
     'order': 21,
 }]
 css = [{
     'group': 'yafowil.widget.autocomplete.common',
-    'resource': 'widget.css',
+    'resource': 'default/widget.css',
     'order': 21,
 }]
 
