@@ -18,7 +18,7 @@ QUnit.module('AutocompleteWidget', hooks => {
         // include link to styles required for test run
         css_link = document.createElement('link');
         css_link.rel = 'stylesheet';
-        css_link.href = '../../src/yafowil/widget/autocomplete/resources/default/widget.css';
+        css_link.href = '../../src/yafowil/widget/autocomplete/resources/default/widget.min.css';
         document.head.appendChild(css_link);
     });
     hooks.beforeEach(() => {

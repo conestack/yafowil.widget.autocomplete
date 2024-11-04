@@ -20,13 +20,15 @@ resources = wr.ResourceGroup(
 )
 resources.add(wr.ScriptResource(
     name='yafowil-autocomplete-js',
+    directory=os.path.join(resources_dir, 'default'),
     depends='jquery-js',
-    resource='default/widget.js',
-    compressed='default/widget.min.js'
+    resource='widget.js',
+    compressed='widget.min.js'
 ))
 resources.add(wr.StyleResource(
     name='yafowil-autocomplete-css',
-    resource='default/widget.css'
+    directory=os.path.join(resources_dir, 'default'),
+    resource='widget.min.css'
 ))
 
 # B/C resources ##############################################################
@@ -38,7 +40,7 @@ js = [{
 }]
 css = [{
     'group': 'yafowil.widget.autocomplete.common',
-    'resource': 'default/widget.css',
+    'resource': 'default/widget.min.css',
     'order': 21,
 }]
 
@@ -48,30 +50,31 @@ css = [{
 ##############################################################################
 
 # webresource ################################################################
-bootstrap5_js = wr.ScriptResource(
-    name='yafowil-autocomplete-js',
-    depends='jquery-js',
-    resource='bootstrap5/widget.js',
-    compressed='bootstrap5/widget.min.js'
-)
 bootstrap5_resources = wr.ResourceGroup(
     name='yafowil.widget.autocomplete',
     directory=resources_dir,
     path='yafowil-autocomplete'
+)
+bootstrap5_js = wr.ScriptResource(
+    name='yafowil-autocomplete-js',
+    directory=os.path.join(resources_dir, 'bootstrap5'),
+    depends='jquery-js',
+    resource='widget.js',
+    compressed='widget.min.js'
 )
 bootstrap5_resources.add(bootstrap5_js)
 bootstrap5_resources.add(wr.StyleResource(
     name='yafowil-autocomplete-css',
     directory=os.path.join(resources_dir, 'bootstrap5'),
     path='yafowil-autocomplete/bootstrap5',
-    resource='widget.css'
+    resource='widget.min.css'
 ))
 
 # B/C resources ##############################################################
 
 bootstrap5_css = [{
     'group': 'yafowil.widget.autocomplete.common',
-    'resource': 'bootstrap5/widget.css',
+    'resource': 'bootstrap5/widget.min.css',
     'order': 20,
 }]
 
