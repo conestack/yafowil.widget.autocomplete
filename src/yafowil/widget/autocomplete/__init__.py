@@ -21,6 +21,7 @@ resources = wr.ResourceGroup(
 resources.add(wr.ScriptResource(
     name='yafowil-autocomplete-js',
     directory=os.path.join(resources_dir, 'default'),
+    path='yafowil-autocomplete/default',
     depends='jquery-js',
     resource='widget.js',
     compressed='widget.min.js'
@@ -28,6 +29,7 @@ resources.add(wr.ScriptResource(
 resources.add(wr.StyleResource(
     name='yafowil-autocomplete-css',
     directory=os.path.join(resources_dir, 'default'),
+    path='yafowil-autocomplete/default',
     resource='widget.min.css'
 ))
 
@@ -58,6 +60,7 @@ bootstrap5_resources = wr.ResourceGroup(
 bootstrap5_js = wr.ScriptResource(
     name='yafowil-autocomplete-js',
     directory=os.path.join(resources_dir, 'bootstrap5'),
+    path='yafowil-autocomplete/bootstrap5',
     depends='jquery-js',
     resource='widget.js',
     compressed='widget.min.js'

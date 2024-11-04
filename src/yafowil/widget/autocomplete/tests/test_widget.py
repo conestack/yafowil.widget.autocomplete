@@ -146,7 +146,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.assertTrue(
             scripts[0].directory.endswith(np('/autocomplete/resources/default'))
         )
-        self.assertEqual(scripts[0].path, 'yafowil-autocomplete')
+        self.assertEqual(scripts[0].path, 'yafowil-autocomplete/default')
         self.assertEqual(scripts[0].file_name, 'widget.min.js')
         self.assertTrue(os.path.exists(scripts[0].file_path))
 
@@ -156,7 +156,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.assertTrue(
             styles[0].directory.endswith(np('/autocomplete/resources/default'))
         )
-        self.assertEqual(styles[0].path, 'yafowil-autocomplete')
+        self.assertEqual(styles[0].path, 'yafowil-autocomplete/default')
         self.assertEqual(styles[0].file_name, 'widget.min.css')
         self.assertTrue(os.path.exists(styles[0].file_path))
 
