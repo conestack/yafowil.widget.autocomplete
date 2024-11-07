@@ -21,15 +21,23 @@ export class AutocompleteSuggestion extends BaseAutocompleteSuggestion {
         this.elem = $('<div />')
             .addClass('autocomplete-suggestion list-group-item')
             .appendTo(this.widget.ul_elem);
-        $('<span />').text(this.value.substring(0, index)).appendTo(this.elem);
-        $('<strong />').text(this.value.substring(index, index + this.val.length)).appendTo(this.elem);
-        $('<span />').text(this.value.substring(index + this.val.length)).appendTo(this.elem);
+        $('<span />')
+            .text(this.value.substring(0, index))
+            .appendTo(this.elem);
+        $('<strong />')
+            .text(this.value.substring(index, index + this.val.length))
+            .appendTo(this.elem);
+        $('<span />')
+            .text(this.value.substring(index + this.val.length))
+            .appendTo(this.elem);
     }
 }
 
 export class AutocompleteWidget extends BaseAutocomplete {
 
     /**
+     * Initializes each widget in the given DOM context.
+     * 
      * @param {HTMLElement} context - DOM context for initialization.
      */
     static initialize(context) {
@@ -89,7 +97,7 @@ export class AutocompleteWidget extends BaseAutocomplete {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Re-initializes Ace editor on array add event.
+ * Re-initializes widget on array add event.
  */
 function autocomplete_on_array_add(inst, context) {
     AutocompleteWidget.initialize(context);
