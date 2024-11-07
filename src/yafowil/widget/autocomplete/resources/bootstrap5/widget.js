@@ -318,13 +318,13 @@ var yafowil_autocomplete = (function (exports, $) {
             this.elem = $('<div />')
                 .addClass('autocomplete-suggestion list-group-item')
                 .appendTo(this.widget.ul_elem);
-            $(`<span />`)
+            $('<span />')
                 .text(this.value.substring(0, index))
                 .appendTo(this.elem);
-            $(`<strong />`)
+            $('<strong />')
                 .text(this.value.substring(index, index + this.val.length))
                 .appendTo(this.elem);
-            $(`<span />`)
+            $('<span />')
                 .text(this.value.substring(index + this.val.length))
                 .appendTo(this.elem);
         }
@@ -348,10 +348,10 @@ var yafowil_autocomplete = (function (exports, $) {
             this.input_elem = $('input.autocomplete', this.elem)
                 .attr('spellcheck', false)
                 .attr('autocomplete', 'off');
-            this.dd_elem = $(`<div />`)
+            this.dd_elem = $('<div />')
                 .addClass('autocomplete-dropdown card shadow')
                 .appendTo('body');
-            this.ul_elem = $(`<ul />`)
+            this.ul_elem = $('<ul />')
                 .addClass('list-group list-group-flush')
                 .appendTo(this.dd_elem);
         }
