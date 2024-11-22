@@ -30,11 +30,22 @@ def autocomplete_renderer(widget, data):
     result += tag('div', '|'.join(params), **{
         'class': 'autocomplete-params hiddenStructure'
     })
+    # result_key = attr_value('result_key', widget, data)
+    result += tag('input', **{
+        'type': 'hidden',
+        'name': 'result_key',
+        'value': '', # XXX
+        'class': 'autocomplete-result-key hiddenStructure'
+    })
     return tag('div', result, **{'class': 'yafowil-widget-autocomplete'})
 
 
 def autocomplete_extractor(widget, data):
-    return data.extracted
+    result_key = data.request.get('result_key')
+    return {
+        'key': result_key,
+        'value': data.extracted
+    }
 
 
 factory.register(

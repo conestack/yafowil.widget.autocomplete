@@ -4,7 +4,16 @@ var yafowil_autocomplete = (function (exports, $) {
     class AutocompleteSuggestion$1 {
         constructor(widget, source, val) {
             this.widget = widget;
-            this.value = source;
+            if (($.isPlainObject(source))) {
+                this.key = Object.keys(source)[0];
+                this.value = Object.values(source)[0];
+            } else if (typeof source === 'string') {
+                this.key = null;
+                this.value = source;
+            } else {
+                throw 'yafowil.widget.autocomplete: Invalid Suggestion type. Suggestion' +
+                      'must be string or {key: value} object.'
+            }
             this.val = val;
             this.compile();
             this.selected = false;
@@ -40,7 +49,7 @@ var yafowil_autocomplete = (function (exports, $) {
         }
         select() {
             this.selected = true;
-            this.widget.select_suggestion(this.value);
+            this.widget.select_suggestion(this.key, this.value);
         }
     }
     class AutocompleteWidget$1 {
@@ -57,6 +66,7 @@ var yafowil_autocomplete = (function (exports, $) {
         constructor(elem) {
             elem.data('yafowil-autocomplete', this);
             this.elem = elem;
+            this.result_key_elem = $('input.autocomplete-result-key', elem);
             this.Suggestion = AutocompleteSuggestion$1;
             this.compile();
             this.suggestions = [];
@@ -168,7 +178,11 @@ var yafowil_autocomplete = (function (exports, $) {
         autocomplete() {
             let val = this.input_elem.val();
             this.source({term: val}, (data) => {
-                if(!data.length) {
+                if (!Array.isArray(data)) {
+                    throw 'yafowil.widget.autocomplete: invalid datatype, data must ' +
+                          'be array of strings or {key: value} objects'
+                }
+                if (!data.length) {
                     return;
                 }
                 for (let item of data) {
@@ -264,11 +278,15 @@ var yafowil_autocomplete = (function (exports, $) {
                     break;
             }
         }
-        select_suggestion(val) {
+        select_suggestion(key, val) {
             this.hide_dropdown();
             this.input_elem.val(val);
+            if (key) {
+                this.result_key_elem.val(key);
+            }
         }
         unselect_all() {
+            this.result_key_elem.val('');
             for (let suggestion of this.suggestions) {
                 suggestion.selected = false;
             }
