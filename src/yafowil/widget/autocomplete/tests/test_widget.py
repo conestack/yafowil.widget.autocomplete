@@ -38,6 +38,7 @@ class TestAutocompleteWidget(YafowilTestCase):
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">http://www.foo.bar/baz</div>
           <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
+          <input class="autocomplete-result-key hiddenStructure" name="result_key" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -54,6 +55,7 @@ class TestAutocompleteWidget(YafowilTestCase):
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">foo|bar</div>
           <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,local</div>
+          <input class="autocomplete-result-key hiddenStructure" name="result_key" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -73,6 +75,7 @@ class TestAutocompleteWidget(YafowilTestCase):
           <input class="autocomplete" id="input-root" name="root" type="text"/>
           <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
           <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
+          <input class="autocomplete-result-key hiddenStructure" name="result_key" type="hidden" value=""/>
         </div>""", fxml(widget()))
 
     def test_extraction(self):
@@ -88,7 +91,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         data = widget.extract({'root': 'abc'})
         self.assertEqual(
             [data.name, data.value, data.extracted, data.errors],
-            ['root', UNSET, 'abc', []]
+            ['root', UNSET, {'key': None, 'value': 'abc'}, []]
         )
 
         widget = factory(
@@ -113,6 +116,7 @@ class TestAutocompleteWidget(YafowilTestCase):
                    required="required" type="text" value=""/>
             <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
             <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
+            <input class="autocomplete-result-key hiddenStructure" name="result_key" type="hidden" value=""/>
           </div>
         </div>
         """, fxml(widget(data)))

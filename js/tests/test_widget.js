@@ -119,6 +119,7 @@ QUnit.module('AutocompleteWidget', hooks => {
 
     QUnit.module('parse_source()', () => {
         QUnit.test('function 1', assert => {
+            let arr = ['one', 'two', 'three']
             $('div.autocomplete-params').text('delay,0|minLength,0');
             window.foo = {
                 bar: function(request, response) {
@@ -143,6 +144,7 @@ QUnit.module('AutocompleteWidget', hooks => {
         });
 
         QUnit.test('function 2', assert => {
+            let arr = ['one', 'two', 'three']
             $('div.autocomplete-params').text('delay,0|minLength,0');
             window.foo = {
                 bar: {
