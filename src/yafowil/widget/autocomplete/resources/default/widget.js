@@ -223,7 +223,7 @@ var yafowil_autocomplete = (function (exports, $) {
                     e.preventDefault();
                     if (this.current_focus > -1) {
                         let selected_elem = this.suggestions[this.current_focus];
-                        selected_elem.selected = true;
+                        selected_elem.select();
                         this.input_elem.val(selected_elem.value);
                         this.hide_dropdown();
                         this.input_elem.trigger('blur');
@@ -276,6 +276,8 @@ var yafowil_autocomplete = (function (exports, $) {
                         selected_elem.selected = true;
                     }
                     break;
+                default:
+                    this.result_key_elem.val('');
             }
         }
         select_suggestion(key, val) {

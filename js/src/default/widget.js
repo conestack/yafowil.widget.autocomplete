@@ -54,7 +54,6 @@ export class AutocompleteSuggestion {
     }
 
     select() {
-        // XXX: this does not seem to work when selecting via keyboard
         this.selected = true;
         this.widget.select_suggestion(this.key, this.value);
     }
@@ -257,7 +256,7 @@ export class AutocompleteWidget {
                 e.preventDefault();
                 if (this.current_focus > -1) {
                     let selected_elem = this.suggestions[this.current_focus];
-                    selected_elem.selected = true;
+                    selected_elem.select();
                     this.input_elem.val(selected_elem.value);
                     this.hide_dropdown();
                     this.input_elem.trigger('blur');
@@ -316,13 +315,15 @@ export class AutocompleteWidget {
                     selected_elem.selected = true;
                 }
                 break;
+            default:
+                // remove result key when user is typing
+                this.result_key_elem.val('');
         }
     }
 
     select_suggestion(key, val) {
         this.hide_dropdown();
         this.input_elem.val(val);
-        // XXX: ensure this works when selecting via keyboard
         if (key) {
             this.result_key_elem.val(key);
         }
