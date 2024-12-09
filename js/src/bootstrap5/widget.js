@@ -72,6 +72,50 @@ export class AutocompleteWidget extends BaseAutocomplete {
         this.ul_elem = $('<ul />')
             .addClass('list-group list-group-flush')
             .appendTo(this.dd_elem);
+        this.no_results = $('<div />')
+            .hide()
+            .addClass('no-results px-3 py-2')
+            .text('No results found.')
+            .appendTo(this.dd_elem);
+    }
+
+    autocomplete() {
+        this.no_results.hide();
+        let val = this.input_elem.val();
+        this.source({term: val}, (data) => {
+            if (!Array.isArray(data)) {
+                throw 'yafowil.widget.autocomplete: invalid datatype, data must ' +
+                      'be array of strings or {key: value} objects'
+            }
+            if (!data.length) {
+                this.no_results.show();
+            } else {
+                for (let item of data) {
+                    this.suggestions.push(new this.Suggestion(this, item, val));
+                }
+            }
+            let scrolltop = $(document).scrollTop(),
+                input_top = this.elem.offset().top,
+                input_left = this.elem.offset().left,
+                input_height = this.elem.outerHeight(),
+                dd_height = this.dd_elem.outerHeight(),
+                top;
+
+            let viewport_edge = scrolltop + $(window).outerHeight();
+            let dd_bottom = input_top + input_height + dd_height;
+
+            if (dd_bottom >= viewport_edge) {
+                top = input_top - dd_height;
+            } else {
+                top = input_top + input_height;
+            }
+
+            this.dd_elem.css({
+                top: `${top}px`,
+                left: `${input_left}px`
+            });
+            this.dd_elem.show();
+        });
     }
 
     /**

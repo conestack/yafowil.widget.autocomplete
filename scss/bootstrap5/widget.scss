@@ -9,6 +9,12 @@ div.autocomplete-dropdown {
     max-height: 320px;
     overflow: hidden;
     overflow-y: auto;
+
+    .no-results {
+        background-color: var(--bs-secondary-bg);
+        color: var(--bs-secondary-color);
+        font-size: 14px;
+    }
 }
 
 .autocomplete-suggestion {
