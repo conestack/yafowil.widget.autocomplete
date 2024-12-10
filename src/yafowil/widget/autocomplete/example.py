@@ -37,6 +37,42 @@ def json_data(term):
     return data
 
 
+actions_source = [
+    {'Say Hello': 'javascript:hello_world'},
+    {'item_a': 'Item A'},
+    {'item_b': 'Item B'},
+    'Item C'
+]
+
+
+def json_response_actions(url):
+    purl = urlparse(url)
+    qs = parse_qs(purl.query)
+    data = actions_json_data(qs.get('term', [''])[0])
+    return {
+        'body': json.dumps(data),
+        'header': [('Content-Type', 'application/json')]
+    }
+
+
+def actions_json_data(term):
+    filtered_data = []
+
+    for item in actions_source:
+        if isinstance(item, dict):
+            for key, value in item.items():
+                if value.startswith('javascript:'):
+                    filtered_data.append(item)
+                elif value.lower().startswith(term.lower()):
+                    filtered_data.append(item)
+        else:
+            if value.lower().startswith(term.lower()):
+                filtered_data.append(item)
+
+    return filtered_data
+
+
+
 DOC_STATIC = """\
 Autocomplete with static vocabulary
 -----------------------------------
@@ -99,6 +135,38 @@ used
         return response(environ, start_response)
 """
 
+DOC_ACTIONS = """\
+Autocomplete Actions and Key:Value Pairs
+----------------------------------------
+
+Remote Autocomplete widgets may receive items using key:value pairs. The key 
+of the currently selected item will be available in a hidden input field.
+
+This also allows the Autocomplete Widget to receive JavaScript Actions as 
+selectable items. These Actions will not be validated client-side,
+but rather be available at all times.
+
+Item types can be mixed and matched in one widget. Make sure to adjust your
+backend validation method for filtering multiple types.
+
+.. code-block:: python
+
+    source=[
+        {'Say Hello': 'javascript:hello_world'},
+        {'item_a': 'Item A'},
+        {'item_b': 'Item B'},
+        'Item C'
+    ]
+
+    field = factory('#field:autocomplete', props={
+        'label': 'Enter some text or select an Action',
+        'value': '',
+        'source': 'yafowil.widget.autocomplete_actions.json',
+        'minLength': 1,
+    })
+"""
+
+
 
 def get_example():
     static_ac = factory('#field:autocomplete', name='static', props={
@@ -112,8 +180,15 @@ def get_example():
         'source': 'yafowil.widget.autocomplete.json',
         'minLength': 1,
     })
+    actions_ac = factory('#field:autocomplete', name='actions', props={
+        'label': 'Enter some text or select an Action',
+        'value': '',
+        'source': 'yafowil.widget.autocomplete_actions.json',
+        'minLength': 1,
+    })
     routes = {
         'yafowil.widget.autocomplete.json': json_response,
+        'yafowil.widget.autocomplete_actions.json': json_response_actions,
     }
     return [{
         'widget': static_ac,
@@ -124,4 +199,8 @@ def get_example():
         'routes': routes,
         'doc': DOC_JSON,
         'title': 'JSON data autocomplete',
+    }, {
+        'widget': actions_ac,
+        'doc': DOC_ACTIONS,
+        'title': 'Autocomplete Actions and key:value pairs',
     }]
