@@ -5,10 +5,10 @@ var yafowil_autocomplete = (function (exports, $) {
         constructor(widget, source, val) {
             this.widget = widget;
             if (($.isPlainObject(source))) {
-                this.key = Object.keys(source)[0];
-                this.value = Object.values(source)[0];
+                this.id = source.id;
+                this.value = source.title;
             } else if (typeof source === 'string') {
-                this.key = null;
+                this.id = null;
                 this.value = source;
             } else {
                 throw 'yafowil.widget.autocomplete: Invalid Suggestion type. Suggestion' +
@@ -49,7 +49,7 @@ var yafowil_autocomplete = (function (exports, $) {
         }
         select() {
             this.selected = true;
-            this.widget.select_suggestion(this.key, this.value);
+            this.widget.select_suggestion(this.id, this.value);
         }
     }
     class AutocompleteWidget$1 {
@@ -180,7 +180,7 @@ var yafowil_autocomplete = (function (exports, $) {
             this.source({term: val}, (data) => {
                 if (!Array.isArray(data)) {
                     throw 'yafowil.widget.autocomplete: invalid datatype, data must ' +
-                          'be array of strings or {key: value} objects'
+                          'be array of strings or objects'
                 }
                 if (!data.length) {
                     return;
@@ -349,53 +349,6 @@ var yafowil_autocomplete = (function (exports, $) {
                 .appendTo(this.elem);
         }
     }
-    class AutocompleteAction {
-        constructor(widget, text, cb) {
-            this.widget = widget;
-            this.cb = this.get_function(cb);
-            this.text = text;
-            this.compile();
-            this.selected = false;
-            this.select = this.select.bind(this);
-            this.elem.off('mousedown', this.select).on('mousedown', this.select);
-        }
-        get_function(path) {
-            const clean_path = path.replace(/^javascript:/, '');
-            const parts = clean_path.split('.');
-            let target = window;
-            for (const part of parts) {
-              if (target[part] === undefined) {
-                throw new Error(`yafowil.widget.autocomplete: Path not found: ${part}`);
-              }
-              target = target[part];
-            }
-            return target;
-        }
-        compile() {
-            this.elem = $('<div />')
-                .addClass('autocomplete-action list-group-item text-center')
-                .appendTo(this.widget.ul_elem);
-            $('<span />')
-                .text(this.text)
-                .appendTo(this.elem);
-        }
-        get selected() {
-            return this._selected;
-        }
-        set selected(selected) {
-            if (selected) {
-                this._selected = true;
-                this.elem.addClass('selected');
-            } else {
-                this._selected = false;
-                this.elem.removeClass('selected');
-            }
-        }
-        select() {
-            this.selected = true;
-            this.widget.select_action(this.text, this.cb);
-        }
-    }
     class AutocompleteWidget extends AutocompleteWidget$1 {
         static initialize(context) {
             $('div.yafowil-widget-autocomplete', context).each(function() {
@@ -410,7 +363,6 @@ var yafowil_autocomplete = (function (exports, $) {
         constructor(elem) {
             super(elem);
             this.Suggestion = AutocompleteSuggestion;
-            this.Action = AutocompleteAction;
         }
         compile() {
             this.input_elem = $('input.autocomplete', this.elem)
@@ -434,20 +386,19 @@ var yafowil_autocomplete = (function (exports, $) {
             this.source({term: val}, (data) => {
                 if (!Array.isArray(data)) {
                     throw 'yafowil.widget.autocomplete: invalid datatype, data must ' +
-                          'be array of strings or {key: value} objects'
+                          'be array of strings or objects'
                 }
                 if (!data.length) {
                     this.no_results.show();
                 } else {
-                    const actions = data.filter(item => Object.values(item)[0].startsWith('javascript:'));
-                    if (actions.length === data.length) {
+                    const ignored = data.filter(item => item.ignore_filter === true);
+                    if (ignored.length === data.length) {
                         this.no_results.show();
                     }
                     for (let item of data) {
-                        const key = Object.keys(item)[0];
-                        const value = Object.values(item)[0];
-                        if (value.startsWith('javascript:')) {
-                            this.suggestions.push(new this.Action(this, key, value));
+                        if (item.factory !== undefined) {
+                            const factory = ts.object_by_path(item.factory);
+                            this.suggestions.push(new factory(this, item, val));
                         } else {
                             this.suggestions.push(new this.Suggestion(this, item, val));
                         }
@@ -483,10 +434,6 @@ var yafowil_autocomplete = (function (exports, $) {
                 this.timeout = setTimeout(this.autocomplete, this.delay);
             }
         }
-        select_action(key, cb) {
-            this.hide_dropdown();
-            cb(this);
-        }
     }
     function autocomplete_on_array_add(inst, context) {
         AutocompleteWidget.initialize(context);
@@ -512,7 +459,6 @@ var yafowil_autocomplete = (function (exports, $) {
         register_array_subscribers();
     });
 
-    exports.AutocompleteAction = AutocompleteAction;
     exports.AutocompleteSuggestion = AutocompleteSuggestion;
     exports.AutocompleteWidget = AutocompleteWidget;
     exports.register_array_subscribers = register_array_subscribers;

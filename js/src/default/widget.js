@@ -5,12 +5,12 @@ export class AutocompleteSuggestion {
     constructor(widget, source, val) {
         this.widget = widget;
         if (($.isPlainObject(source))) {
-            // if source is a key:value object, set this.key to object key and
+            // if source is a key:value object, set this.id to object key and
             // this.value to object value
-            this.key = Object.keys(source)[0];
-            this.value = Object.values(source)[0];
+            this.id = source.id;
+            this.value = source.title;
         } else if (typeof source === 'string') {
-            this.key = null;
+            this.id = null;
             this.value = source;
         } else {
             throw 'yafowil.widget.autocomplete: Invalid Suggestion type. Suggestion' +
@@ -55,7 +55,7 @@ export class AutocompleteSuggestion {
 
     select() {
         this.selected = true;
-        this.widget.select_suggestion(this.key, this.value);
+        this.widget.select_suggestion(this.id, this.value);
     }
 }
 
@@ -206,7 +206,7 @@ export class AutocompleteWidget {
         this.source({term: val}, (data) => {
             if (!Array.isArray(data)) {
                 throw 'yafowil.widget.autocomplete: invalid datatype, data must ' +
-                      'be array of strings or {key: value} objects'
+                      'be array of strings or objects'
             }
             if (!data.length) {
                 return;
