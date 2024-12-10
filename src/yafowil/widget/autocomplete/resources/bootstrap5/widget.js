@@ -349,6 +349,53 @@ var yafowil_autocomplete = (function (exports, $) {
                 .appendTo(this.elem);
         }
     }
+    class AutocompleteAction {
+        constructor(widget, text, cb) {
+            this.widget = widget;
+            this.cb = this.get_function(cb);
+            this.text = text;
+            this.compile();
+            this.selected = false;
+            this.select = this.select.bind(this);
+            this.elem.off('mousedown', this.select).on('mousedown', this.select);
+        }
+        get_function(path) {
+            const clean_path = path.replace(/^javascript:/, '');
+            const parts = clean_path.split('.');
+            let target = window;
+            for (const part of parts) {
+              if (target[part] === undefined) {
+                throw new Error(`yafowil.widget.autocomplete: Path not found: ${part}`);
+              }
+              target = target[part];
+            }
+            return target;
+        }
+        compile() {
+            this.elem = $('<div />')
+                .addClass('autocomplete-action list-group-item text-center')
+                .appendTo(this.widget.ul_elem);
+            $('<span />')
+                .text(this.text)
+                .appendTo(this.elem);
+        }
+        get selected() {
+            return this._selected;
+        }
+        set selected(selected) {
+            if (selected) {
+                this._selected = true;
+                this.elem.addClass('selected');
+            } else {
+                this._selected = false;
+                this.elem.removeClass('selected');
+            }
+        }
+        select() {
+            this.selected = true;
+            this.widget.select_action(this.text, this.cb);
+        }
+    }
     class AutocompleteWidget extends AutocompleteWidget$1 {
         static initialize(context) {
             $('div.yafowil-widget-autocomplete', context).each(function() {
@@ -363,6 +410,7 @@ var yafowil_autocomplete = (function (exports, $) {
         constructor(elem) {
             super(elem);
             this.Suggestion = AutocompleteSuggestion;
+            this.Action = AutocompleteAction;
         }
         compile() {
             this.input_elem = $('input.autocomplete', this.elem)
@@ -391,8 +439,18 @@ var yafowil_autocomplete = (function (exports, $) {
                 if (!data.length) {
                     this.no_results.show();
                 } else {
+                    const actions = data.filter(item => Object.values(item)[0].startsWith('javascript:'));
+                    if (actions.length === data.length) {
+                        this.no_results.show();
+                    }
                     for (let item of data) {
-                        this.suggestions.push(new this.Suggestion(this, item, val));
+                        const key = Object.keys(item)[0];
+                        const value = Object.values(item)[0];
+                        if (value.startsWith('javascript:')) {
+                            this.suggestions.push(new this.Action(this, key, value));
+                        } else {
+                            this.suggestions.push(new this.Suggestion(this, item, val));
+                        }
                     }
                 }
                 let scrolltop = $(document).scrollTop(),
@@ -425,6 +483,10 @@ var yafowil_autocomplete = (function (exports, $) {
                 this.timeout = setTimeout(this.autocomplete, this.delay);
             }
         }
+        select_action(key, cb) {
+            this.hide_dropdown();
+            cb(this);
+        }
     }
     function autocomplete_on_array_add(inst, context) {
         AutocompleteWidget.initialize(context);
@@ -450,6 +512,7 @@ var yafowil_autocomplete = (function (exports, $) {
         register_array_subscribers();
     });
 
+    exports.AutocompleteAction = AutocompleteAction;
     exports.AutocompleteSuggestion = AutocompleteSuggestion;
     exports.AutocompleteWidget = AutocompleteWidget;
     exports.register_array_subscribers = register_array_subscribers;

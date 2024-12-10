@@ -33,6 +33,77 @@ export class AutocompleteSuggestion extends BaseAutocompleteSuggestion {
     }
 }
 
+export class AutocompleteAction {
+
+    /**
+     * @param {AutocompleteWidget} widget - The parent widget instance.
+     * @param {string} text - The Action text.
+     * @param {string|function} cb - The Action callback.
+     */
+    constructor(widget, text, cb) {
+        this.widget = widget;
+        this.cb = this.get_function(cb);
+        this.text = text;
+        this.compile();
+        this.selected = false;
+        this.select = this.select.bind(this);
+        this.elem.off('mousedown', this.select).on('mousedown', this.select);
+    }
+
+    /**
+     * Gets the callback method from a string path.
+     * @param {string} path 
+     * @returns the callback method
+     */
+    get_function(path) {
+        const clean_path = path.replace(/^javascript:/, '');
+        const parts = clean_path.split('.');
+
+        let target = window;
+        for (const part of parts) {
+          if (target[part] === undefined) {
+            throw new Error(`yafowil.widget.autocomplete: Path not found: ${part}`);
+          }
+          target = target[part];
+        }
+        return target;
+    }
+
+    /**
+     * Compiles and renders the action element.
+     */
+    compile() {
+        this.elem = $('<div />')
+            .addClass('autocomplete-action list-group-item text-center')
+            .appendTo(this.widget.ul_elem);
+        $('<span />')
+            .text(this.text)
+            .appendTo(this.elem);
+    }
+
+    get selected() {
+        return this._selected;
+    }
+
+    set selected(selected) {
+        if (selected) {
+            this._selected = true;
+            this.elem.addClass('selected');
+        } else {
+            this._selected = false;
+            this.elem.removeClass('selected');
+        }
+    }
+
+    /**
+     * Selects the Action and invokes its callback.
+     */
+    select() {
+        this.selected = true;
+        this.widget.select_action(this.text, this.cb);
+    }
+}
+
 export class AutocompleteWidget extends BaseAutocomplete {
 
     /**
@@ -57,6 +128,7 @@ export class AutocompleteWidget extends BaseAutocomplete {
     constructor(elem) {
         super(elem);
         this.Suggestion = AutocompleteSuggestion;
+        this.Action = AutocompleteAction;
     }
 
     /**
@@ -90,8 +162,18 @@ export class AutocompleteWidget extends BaseAutocomplete {
             if (!data.length) {
                 this.no_results.show();
             } else {
+                const actions = data.filter(item => Object.values(item)[0].startsWith('javascript:'));
+                if (actions.length === data.length) {
+                    this.no_results.show();
+                }
                 for (let item of data) {
-                    this.suggestions.push(new this.Suggestion(this, item, val));
+                    const key = Object.keys(item)[0];
+                    const value = Object.values(item)[0];
+                    if (value.startsWith('javascript:')) {
+                        this.suggestions.push(new this.Action(this, key, value));
+                    } else {
+                        this.suggestions.push(new this.Suggestion(this, item, val));
+                    }
                 }
             }
             let scrolltop = $(document).scrollTop(),
@@ -133,6 +215,12 @@ export class AutocompleteWidget extends BaseAutocomplete {
         if (this.input_elem.val().length >= this.min_length) {
             this.timeout = setTimeout(this.autocomplete, this.delay);
         }
+    }
+
+    /** Selects an action and invokes its callback. */
+    select_action(key, cb) {
+        this.hide_dropdown();
+        cb(this);
     }
 }
 

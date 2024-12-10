@@ -22,7 +22,7 @@ div.autocomplete-dropdown {
     padding-bottom: 7px;
 }
 
-.autocomplete-suggestion.selected {
+.autocomplete-suggestion.selected, .autocomplete-action.selected {
 	background: var(--yafowil-accent-color, #0d6efd);
     color: var(--yafowil-accent-font-color, #fff);
 }
