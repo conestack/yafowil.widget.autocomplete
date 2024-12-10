@@ -38,10 +38,17 @@ def json_data(term):
 
 
 actions_source = [
-    {'Say Hello': 'javascript:hello_world'},
-    {'item_a': 'Item A'},
-    {'item_b': 'Item B'},
-    'Item C'
+    {
+        'id': 'default',
+        'title': 'Default Suggestion'
+    },
+    {
+        'id': 'custom',
+        'title': 'Custom Alert Item',
+        'ignore_filter': True,
+        'factory': 'yafowil_demo.CustomSuggestion'
+    },
+    'String Suggestion'
 ]
 
 
@@ -60,15 +67,13 @@ def actions_json_data(term):
 
     for item in actions_source:
         if isinstance(item, dict):
-            for key, value in item.items():
-                if value.startswith('javascript:'):
-                    filtered_data.append(item)
-                elif value.lower().startswith(term.lower()):
-                    filtered_data.append(item)
-        else:
-            if value.lower().startswith(term.lower()):
+            title = item['title']
+            if title.lower().startswith(term.lower()) or \
+               ('ignore_filter' in item and item['ignore_filter'] == True):
                 filtered_data.append(item)
-
+        else:
+            if item.lower().startswith(term.lower()):
+                filtered_data.append(item)
     return filtered_data
 
 
@@ -136,27 +141,64 @@ used
 """
 
 DOC_ACTIONS = """\
-Autocomplete Actions and Key:Value Pairs
-----------------------------------------
+Suggestion Factories and Data types
+-----------------------------------
 
-Remote Autocomplete widgets may receive items using key:value pairs. The key 
+Remote Autocomplete widgets may receive dict-like items. The key 
 of the currently selected item will be available in a hidden input field.
 
-This also allows the Autocomplete Widget to receive JavaScript Actions as 
-selectable items. These Actions will not be validated client-side,
-but rather be available at all times.
+This also allows the Autocomplete Widget to initialize Suggestions using factories.
+Setting the 'ignore_filter' flag won't validate a Suggestion client-side,
+as long as it is present in the data returned from server.
 
 Item types can be mixed and matched in one widget. Make sure to adjust your
 backend validation method for filtering multiple types.
 
-.. code-block:: python
+The following example shows how to extend or create your own Suggestion class
+based on yafowil.widget.autocomplete:
 
-    source=[
-        {'Say Hello': 'javascript:hello_world'},
-        {'item_a': 'Item A'},
-        {'item_b': 'Item B'},
-        'Item C'
+.. code-block:: js
+
+    window.yafowil_demo = { // your desired path
+        CustomSuggestion: class CustomSuggestion extends window.yafowil_autocomplete.AutocompleteSuggestion {
+
+            constructor(widget, source, val) {
+                super(widget, source, val);
+            }
+
+            select() {
+                super.select();
+                alert('The Suggestion has been selected.');
+            }
+
+            compile() {
+                super.compile();
+                this.elem.css('background-color', '#ffe00057');
+            }
+        }
+    }
+
+Your JSON data should return data formatted similar to the following example:
+
+.. code-block:: json
+
+    [
+        {
+            'id': 'default',
+            'title': 'Default Suggestion'
+        },
+        {
+            'id': 'custom',
+            'title': 'Custom Alert Item',
+            'ignore_filter': True,
+            'factory': 'yafowil_demo.CustomSuggestion'
+        },
+        'String Suggestion'
     ]
+
+Now initialize your widget:
+
+.. code-block:: python
 
     field = factory('#field:autocomplete', props={
         'label': 'Enter some text or select an Action',
@@ -164,6 +206,7 @@ backend validation method for filtering multiple types.
         'source': 'yafowil.widget.autocomplete_actions.json',
         'minLength': 1,
     })
+
 """
 
 
@@ -202,5 +245,5 @@ def get_example():
     }, {
         'widget': actions_ac,
         'doc': DOC_ACTIONS,
-        'title': 'Autocomplete Actions and key:value pairs',
+        'title': 'Suggestion Factories and Data types',
     }]
