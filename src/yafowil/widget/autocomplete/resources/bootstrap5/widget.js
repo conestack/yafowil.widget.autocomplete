@@ -424,6 +424,10 @@ var yafowil_autocomplete = (function (exports, $) {
                 this.dd_elem.show();
             });
         }
+        destroy() {
+            this.unload();
+            this.dd_elem.remove();
+        }
         on_input(e) {
             clearTimeout(this.timeout);
             this.ul_elem.empty();
