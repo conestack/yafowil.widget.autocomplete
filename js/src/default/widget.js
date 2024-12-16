@@ -75,17 +75,17 @@ export class AutocompleteWidget {
     constructor(elem) {
         elem.data('yafowil-autocomplete', this);
         this.elem = elem;
-        this.result_key_elem = $('input.autocomplete-result-key', elem);
+        this.result_input = $('input.autocomplete-result', elem);
+        this.input_elem = $('input.autocomplete', elem);
+        this.delay = this.input_elem.data('delay');
+        this.sourcetype = this.input_elem.data('type');
+        this.min_length = this.input_elem.data('minLength');
+
         this.Suggestion = AutocompleteSuggestion;
         this.compile();
 
         this.suggestions = [];
         this.current_focus = 0;
-
-        let options = this.parse_options();
-        this.sourcetype = options.type;
-        this.delay = options.delay;
-        this.min_length = options.minLength;
 
         this.parse_source();
 
@@ -102,7 +102,7 @@ export class AutocompleteWidget {
     }
 
     compile() {
-        this.input_elem = $('input.autocomplete', this.elem)
+        this.input_elem
             .attr('spellcheck', false)
             .attr('autocomplete', 'off');
         this.dd_elem = $(`<div />`)
@@ -118,30 +118,8 @@ export class AutocompleteWidget {
             .off('keydown', this.on_keydown);
     }
 
-    parse_options() {
-        let rawparams = $('.autocomplete-params', this.elem).text().split('|'),
-            options = [];
-
-        for (let i = 0; i < rawparams.length; i++) {
-            let pair = rawparams[i].split(',');
-            let value = pair[1].replace(/^\s+|\s+$/g, "");
-            if (!isNaN(value)) {
-                value = parseInt(value);
-            } else
-            if (value === 'True') {
-                value = true;
-            } else
-            if (value === 'False') {
-                value = false;
-            }
-            let key = pair[0].replace(/^\s+|\s+$/g, "");
-            options[key] = value;
-        }
-        return options;
-    }
-
     parse_source() {
-        let source = $('.autocomplete-source', this.elem).text();
+        const source = this.input_elem.data('source');
 
         if (source.indexOf('javascript:') === 0) {
             let src = source.substring(11, source.length).split('.');
@@ -257,9 +235,7 @@ export class AutocompleteWidget {
                 if (this.current_focus > -1) {
                     let selected_elem = this.suggestions[this.current_focus];
                     selected_elem.select();
-                    this.input_elem.val(selected_elem.value);
-                    this.hide_dropdown();
-                    this.input_elem.trigger('blur');
+                    this.select_suggestion(selected_elem.id, selected_elem.value);
                 }
                 break;
 
@@ -272,9 +248,8 @@ export class AutocompleteWidget {
                 this.hide_dropdown();
                 if (this.current_focus > -1) {
                     let selected_elem = this.suggestions[this.current_focus];
-                    this.input_elem.val(selected_elem.value);
-                    this.hide_dropdown();
-                    this.input_elem.trigger('blur');
+                    selected_elem.select();
+                    this.select_suggestion(selected_elem.id, selected_elem.value);
                 }
                 break;
 
@@ -317,20 +292,22 @@ export class AutocompleteWidget {
                 break;
             default:
                 // remove result key when user is typing
-                this.result_key_elem.val('');
+                this.result_input.val('');
         }
     }
 
     select_suggestion(key, val) {
+        this.input_elem.val(val).trigger('blur');
         this.hide_dropdown();
-        this.input_elem.val(val);
         if (key) {
-            this.result_key_elem.val(key);
+            this.result_input.val(key);
+        } else {
+            this.result_input.val(val);
         }
     }
 
     unselect_all() {
-        this.result_key_elem.val('');
+        this.result_input.val('');
         for (let suggestion of this.suggestions) {
             suggestion.selected = false;
         }

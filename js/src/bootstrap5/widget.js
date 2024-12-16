@@ -63,7 +63,7 @@ export class AutocompleteWidget extends BaseAutocomplete {
      * Compiles the necessary HTML structure.
      */
     compile() {
-        this.input_elem = $('input.autocomplete', this.elem)
+        this.input_elem
             .attr('spellcheck', false)
             .attr('autocomplete', 'off');
         this.dd_elem = $('<div />')

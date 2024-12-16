@@ -214,7 +214,6 @@ Now initialize your widget:
 def get_example():
     static_ac = factory('#field:autocomplete', name='static', props={
         'label': 'Enter some text (local, lorem ipsum)',
-        'value': '',
         'source': lipsum,
     })
     json_ac = factory('#field:autocomplete', name='json', props={

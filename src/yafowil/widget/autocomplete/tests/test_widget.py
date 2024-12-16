@@ -35,10 +35,8 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
-          <div class="autocomplete-source hiddenStructure">http://www.foo.bar/baz</div>
-          <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
-          <input class="autocomplete-result-key hiddenStructure" name="result_key" type="hidden" value=""/>
+          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="http://www.foo.bar/baz" data-type="remote" type="text"/>
+          <input class="autocomplete-result-input" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -52,10 +50,8 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
-          <div class="autocomplete-source hiddenStructure">foo|bar</div>
-          <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,local</div>
-          <input class="autocomplete-result-key hiddenStructure" name="result_key" type="hidden" value=""/>
+          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="foo|bar" data-type="local" type="text"/>
+          <input class="autocomplete-result-input" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -72,11 +68,10 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
-          <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
-          <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
-          <input class="autocomplete-result-key hiddenStructure" name="result_key" type="hidden" value=""/>
-        </div>""", fxml(widget()))
+          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" type="text"/>
+          <input class="autocomplete-result-input" id="input-root" name="root" type="hidden" value=""/>
+        </div>
+        """, fxml(widget()))
 
     def test_extraction(self):
         def test_source(widget, data):
@@ -91,7 +86,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         data = widget.extract({'root': 'abc'})
         self.assertEqual(
             [data.name, data.value, data.extracted, data.errors],
-            ['root', UNSET, {'key': None, 'value': 'abc'}, []]
+            ['root', UNSET, {'value': 'abc'}, []]
         )
 
         widget = factory(
@@ -112,11 +107,8 @@ class TestAutocompleteWidget(YafowilTestCase):
         <div class="error">
           <div class="errormessage">Autocomplete widget is required</div>
           <div class="yafowil-widget-autocomplete">
-            <input class="autocomplete required" id="input-root" name="root"
-                   required="required" type="text" value=""/>
-            <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
-            <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
-            <input class="autocomplete-result-key hiddenStructure" name="result_key" type="hidden" value=""/>
+            <input class="autocomplete required" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" required="required" type="text" value=""/>
+            <input class="autocomplete-result-input" id="input-root" name="root" type="hidden" value=""/>
           </div>
         </div>
         """, fxml(widget(data)))
