@@ -148,6 +148,13 @@ export class AutocompleteWidget extends BaseAutocomplete {
             this.timeout = setTimeout(this.autocomplete, this.delay);
         }
     }
+
+
+    hide_dropdown() {
+        this.dd_elem.hide();
+        const evt = new $.Event('dropdown.hidden');
+        this.elem.trigger(evt);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

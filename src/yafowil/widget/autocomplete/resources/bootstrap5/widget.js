@@ -438,6 +438,11 @@ var yafowil_autocomplete = (function (exports, $) {
                 this.timeout = setTimeout(this.autocomplete, this.delay);
             }
         }
+        hide_dropdown() {
+            this.dd_elem.hide();
+            const evt = new $.Event('dropdown.hidden');
+            this.elem.trigger(evt);
+        }
     }
     function autocomplete_on_array_add(inst, context) {
         AutocompleteWidget.initialize(context);
