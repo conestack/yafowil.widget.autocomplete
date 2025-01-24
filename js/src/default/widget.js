@@ -199,7 +199,7 @@ export class AutocompleteWidget {
                 dd_height = this.dd_elem.outerHeight(),
                 top;
 
-            let viewport_edge = scrolltop + $(window).outerHeight()
+            let viewport_edge = scrolltop + $(window).outerHeight();
             let dd_bottom = input_top + input_height + dd_height;
 
             if (dd_bottom >= viewport_edge) {
