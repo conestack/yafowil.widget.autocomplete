@@ -36,7 +36,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" data-delay="300" data-min-length="1" data-source="http://www.foo.bar/baz" data-type="remote" type="text"/>
-          <input class="autocomplete-result-input" id="input-root" name="root" type="hidden" value=""/>
+          <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -51,7 +51,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" data-delay="300" data-min-length="1" data-source="foo|bar" data-type="local" type="text"/>
-          <input class="autocomplete-result-input" id="input-root" name="root" type="hidden" value=""/>
+          <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -69,7 +69,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" type="text"/>
-          <input class="autocomplete-result-input" id="input-root" name="root" type="hidden" value=""/>
+          <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -108,7 +108,7 @@ class TestAutocompleteWidget(YafowilTestCase):
           <div class="errormessage">Autocomplete widget is required</div>
           <div class="yafowil-widget-autocomplete">
             <input class="autocomplete required" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" required="required" type="text" value=""/>
-            <input class="autocomplete-result-input" id="input-root" name="root" type="hidden" value=""/>
+            <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
           </div>
         </div>
         """, fxml(widget(data)))
