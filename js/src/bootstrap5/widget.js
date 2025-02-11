@@ -127,11 +127,6 @@ export class AutocompleteWidget extends BaseAutocomplete {
         });
     }
 
-    destroy() {
-        this.unload();
-        this.dd_elem.remove();
-    }
-
     /**
      * Handles input events, resets suggestions, and triggers autocomplete.
      * 

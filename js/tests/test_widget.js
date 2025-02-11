@@ -26,7 +26,10 @@ QUnit.module('AutocompleteWidget', hooks => {
     });
     hooks.afterEach(() => {
         container.empty();
-        widget = null;
+        if (widget) {
+            widget.destroy();
+        }
+        
     });
     hooks.after(() => {
         // remove required css styles after test run has finished
@@ -252,7 +255,7 @@ QUnit.module('AutocompleteWidget', hooks => {
         );
     });
 
-    QUnit.test('unload', assert => {
+    QUnit.test('destroy', assert => {
         // initialize widget
         AutocompleteWidget.initialize();
         widget = elem.data('yafowil-autocomplete');
@@ -276,8 +279,8 @@ QUnit.module('AutocompleteWidget', hooks => {
             // trigger hiding of dropdown
             widget.hide_dropdown();
 
-            // unload widget
-            widget.unload();
+            // destroy (unload) widget
+            widget.destroy();
 
             // trigger focus event
             widget.input_elem.trigger('focus');
@@ -296,6 +299,7 @@ QUnit.module('AutocompleteWidget', hooks => {
             widget.input_elem.trigger(keydown);
             assert.strictEqual(widget.dd_elem.css('display'), 'none');
 
+            assert.strictEqual($('.autocomplete-dropdown').length, 0);
             done();
         }, 10);
     });
@@ -427,7 +431,9 @@ QUnit.module('AutocompleteWidget', hooks => {
         });
         hooks.afterEach(() => {
             container.empty();
-            widget = null;
+            if (widget) {
+                widget.destroy();
+            }
         });
 
         QUnit.test('ArrowDown', assert => {
@@ -638,7 +644,9 @@ QUnit.module('AutocompleteSuggestion', hooks => {
     });
     hooks.afterEach(() => {
         container.empty();
-        widget = null;
+        if (widget) {
+            widget.destroy();
+        }
         sug = null;
     });
 

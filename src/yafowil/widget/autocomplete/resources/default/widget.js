@@ -84,6 +84,9 @@ var yafowil_autocomplete = (function (exports, $) {
                 .on('focus input', this.on_input)
                 .on('keydown', this.on_keydown);
             this.autocomplete = this.autocomplete.bind(this);
+            if (window.ts !== undefined) {
+                window.ts.ajax.attach(this, elem);
+            }
         }
         compile() {
             this.input_elem
@@ -94,7 +97,18 @@ var yafowil_autocomplete = (function (exports, $) {
                 .appendTo('body');
         }
         unload() {
+            if (window.ts !== undefined) {
+                ts.deprecate(
+                    'yafowil.widget.autocomplete.unload',
+                    'yafowil.widget.autocomplete.destroy',
+                    'yafowil 2.1'
+                );
+            }
+            this.destroy();
+        }
+        destroy() {
             clearTimeout(this.timeout);
+            this.dd_elem.remove();
             this.input_elem
                 .off('focusout', this.hide_dropdown)
                 .off('focus input', this.on_input)
@@ -108,6 +122,7 @@ var yafowil_autocomplete = (function (exports, $) {
                 for (let part of src) {
                     window_src = window_src[part];
                     if (window_src === undefined) {
+                        this.destroy();
                         throw new Error('Cannot locate source function: ' + source);
                     }
                 }
@@ -116,6 +131,7 @@ var yafowil_autocomplete = (function (exports, $) {
                 };
             } else if (this.sourcetype === 'local') {
                 if (source === '') {
+                    this.destroy();
                     throw new Error('Local source is empty');
                 }
                 this.source = function(request, response) {
