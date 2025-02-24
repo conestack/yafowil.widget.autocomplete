@@ -51,6 +51,9 @@ var yafowil_autocomplete = (function (exports, $) {
             this.selected = true;
             this.widget.select_suggestion(this.id, this.value);
         }
+        destroy() {
+            this.elem.off('mousedown', this.select);
+        }
     }
     class AutocompleteWidget$1 {
         static initialize(context) {
@@ -108,11 +111,14 @@ var yafowil_autocomplete = (function (exports, $) {
         }
         destroy() {
             clearTimeout(this.timeout);
-            this.dd_elem.remove();
+            for (let suggestion of this.suggestions) {
+                suggestion.destroy();
+            }
             this.input_elem
                 .off('focusout', this.hide_dropdown)
                 .off('focus input', this.on_input)
                 .off('keydown', this.on_keydown);
+            this.dd_elem.off().empty().remove();
         }
         parse_source() {
             const source = this.input_elem.data('source');
