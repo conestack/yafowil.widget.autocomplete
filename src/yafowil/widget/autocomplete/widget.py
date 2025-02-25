@@ -49,9 +49,7 @@ def autocomplete_renderer(widget, data):
 
 
 def autocomplete_extractor(widget, data):
-    # result_key = data.request.get('result_key')
     return {
-        # 'key': result_key,
         'value': data.extracted
     }
 
