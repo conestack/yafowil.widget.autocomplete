@@ -10,6 +10,7 @@ from yafowil.utils import data_attrs_helper
 from yafowil.utils import managedprops
 from yafowil.utils import cssid
 from yafowil.utils import as_data_attrs
+from yafowil.utils import cssclasses
 
 
 autocomplete_options = ['source', 'delay', 'minLength']
@@ -45,7 +46,7 @@ def autocomplete_renderer(widget, data):
         'class_': 'autocomplete-result'
     }
     value_tag = tag('input', **value_attrs)
-    return tag('div', input_tag, value_tag, **{'class': 'yafowil-widget-autocomplete'})
+    return tag('div', input_tag, value_tag, **{'class': cssclasses(widget, data, classattr='wrapper_class')})
 
 
 def autocomplete_extractor(widget, data):
@@ -75,6 +76,8 @@ given so far.
 """
 
 factory.defaults['autocomplete.type'] = 'text'
+
+factory.defaults['wrapper_class'] = 'yafowil-widget-autocomplete'
 
 factory.defaults['autocomplete.class'] = 'autocomplete'
 
