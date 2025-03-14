@@ -106,7 +106,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.checkOutput("""
         <div class="error">
           <div class="errormessage">Autocomplete widget is required</div>
-          <div class="yafowil-widget-autocomplete">
+          <div class="required yafowil-widget-autocomplete">
             <input class="autocomplete required" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" required="required" type="text" value=""/>
             <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
           </div>
