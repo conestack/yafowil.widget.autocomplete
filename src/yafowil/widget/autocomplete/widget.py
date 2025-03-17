@@ -1,6 +1,7 @@
 from yafowil.base import factory
 from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
+from yafowil.common import generic_display_renderer
 from yafowil.common import input_generic_renderer
 from yafowil.compat import STR_TYPE
 from yafowil.utils import attr_value
@@ -65,6 +66,9 @@ factory.register(
     edit_renderers=[
         input_generic_renderer,
         autocomplete_renderer
+    ],
+    display_renderers=[
+        generic_display_renderer
     ]
 )
 
