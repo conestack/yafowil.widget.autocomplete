@@ -209,6 +209,24 @@ Now initialize your widget:
 
 """
 
+DOC_DISPLAY = """\
+Display Mode
+------------
+
+The widget's display mode renders the widget value inside an uneditable div.
+
+The wrapper div can receive additional classes via the ``display_class``
+widget attribute.
+
+.. code-block:: python
+
+    field = factory('#field:autocomplete', mode='display', value='Lorem', props={
+        'label': 'Display Mode',
+        'source': lipsum,
+        # 'display_class': 'my_additional_class'
+    })
+"""
+
 
 
 def get_example():
@@ -228,6 +246,11 @@ def get_example():
         'source': 'yafowil.widget.autocomplete_actions.json',
         'minLength': 1,
     })
+    display_ac = factory('#field:autocomplete', name='display', mode='display',
+                         value='Lorem', props={
+        'label': 'Display Mode',
+        'source': lipsum,
+    })
     routes = {
         'yafowil.widget.autocomplete.json': json_response,
         'yafowil.widget.autocomplete_actions.json': json_response_actions,
@@ -245,4 +268,8 @@ def get_example():
         'widget': actions_ac,
         'doc': DOC_ACTIONS,
         'title': 'Suggestion Factories and Data types',
+    }, {
+        'widget': display_ac,
+        'doc': DOC_DISPLAY,
+        'title': 'Display Mode',
     }]
