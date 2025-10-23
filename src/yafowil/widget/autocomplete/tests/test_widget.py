@@ -35,9 +35,8 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
-          <div class="autocomplete-source hiddenStructure">http://www.foo.bar/baz</div>
-          <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
+          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="http://www.foo.bar/baz" data-type="remote" type="text"/>
+          <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -51,9 +50,8 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
-          <div class="autocomplete-source hiddenStructure">foo|bar</div>
-          <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,local</div>
+          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="foo|bar" data-type="local" type="text"/>
+          <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
 
@@ -70,10 +68,10 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" id="input-root" name="root" type="text"/>
-          <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
-          <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
-        </div>""", fxml(widget()))
+          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" type="text"/>
+          <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
+        </div>
+        """, fxml(widget()))
 
     def test_extraction(self):
         def test_source(widget, data):
@@ -88,7 +86,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         data = widget.extract({'root': 'abc'})
         self.assertEqual(
             [data.name, data.value, data.extracted, data.errors],
-            ['root', UNSET, 'abc', []]
+            ['root', UNSET, {'value': 'abc'}, []]
         )
 
         widget = factory(
@@ -108,11 +106,9 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.checkOutput("""
         <div class="error">
           <div class="errormessage">Autocomplete widget is required</div>
-          <div class="yafowil-widget-autocomplete">
-            <input class="autocomplete required" id="input-root" name="root"
-                   required="required" type="text" value=""/>
-            <div class="autocomplete-source hiddenStructure">http://from.callable/</div>
-            <div class="autocomplete-params hiddenStructure">delay,300|minLength,1|type,remote</div>
+          <div class="required yafowil-widget-autocomplete">
+            <input class="autocomplete required" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" required="required" type="text" value=""/>
+            <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
           </div>
         </div>
         """, fxml(widget(data)))
@@ -144,9 +140,9 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.assertEqual(len(scripts), 1)
 
         self.assertTrue(
-            scripts[0].directory.endswith(np('/autocomplete/resources'))
+            scripts[0].directory.endswith(np('/autocomplete/resources/default'))
         )
-        self.assertEqual(scripts[0].path, 'yafowil-autocomplete')
+        self.assertEqual(scripts[0].path, 'yafowil-autocomplete/default')
         self.assertEqual(scripts[0].file_name, 'widget.min.js')
         self.assertTrue(os.path.exists(scripts[0].file_path))
 
@@ -154,8 +150,12 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.assertEqual(len(styles), 1)
 
         self.assertTrue(
-            styles[0].directory.endswith(np('/autocomplete/resources'))
+            styles[0].directory.endswith(np('/autocomplete/resources/default'))
         )
-        self.assertEqual(styles[0].path, 'yafowil-autocomplete')
-        self.assertEqual(styles[0].file_name, 'widget.css')
+        self.assertEqual(styles[0].path, 'yafowil-autocomplete/default')
+        self.assertEqual(styles[0].file_name, 'widget.min.css')
         self.assertTrue(os.path.exists(styles[0].file_path))
+
+
+if __name__ == '__main__':
+    unittest.main()

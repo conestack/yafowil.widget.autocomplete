@@ -10,14 +10,20 @@ window.yafowil.autocomplete = exports;
 `;
 
 export default args => {
-    let conf = {
-        input: 'js/src/bundle.js',
+    let conf = [];
+
+    ////////////////////////////////////////////////////////////////////////////
+    // DEFAULT
+    ////////////////////////////////////////////////////////////////////////////
+
+    let bundle_default = {
+        input: 'js/src/default/bundle.js',
         plugins: [
             cleanup()
         ],
         output: [{
             name: 'yafowil_autocomplete',
-            file: `${out_dir}/widget.js`,
+            file: `${out_dir}/default/widget.js`,
             format: 'iife',
             outro: outro,
             globals: {
@@ -30,9 +36,9 @@ export default args => {
         ]
     };
     if (args.configDebug !== true) {
-        conf.output.push({
+        bundle_default.output.push({
             name: 'yafowil_autocomplete',
-            file: `${out_dir}/widget.min.js`,
+            file: `${out_dir}/default/widget.min.js`,
             format: 'iife',
             plugins: [
                 terser()
@@ -44,10 +50,67 @@ export default args => {
             interop: 'default'
         });
     }
-    let scss = {
-        input: ['scss/styles.scss'],
+    let scss_default = {
+        input: ['scss/default/widget.scss'],
         output: [{
-            file: `${out_dir}/widget.css`,
+            file: `${out_dir}/default/widget.min.css`,
+            format: 'es',
+            plugins: [terser()], // Optional: Minify the output
+        }],
+        plugins: [
+            postcss({
+                extract: true,
+                minimize: true,
+                use: [
+                    ['sass', { outputStyle: 'compressed' }],
+                ],
+            }),
+        ],
+    };
+    conf.push(bundle_default, scss_default);
+
+    ////////////////////////////////////////////////////////////////////////////
+    // BOOTSTRAP5
+    ////////////////////////////////////////////////////////////////////////////
+
+    let bundle_bs5 = {
+        input: 'js/src/bootstrap5/bundle.js',
+        plugins: [
+            cleanup()
+        ],
+        output: [{
+            name: 'yafowil_autocomplete',
+            file: `${out_dir}/bootstrap5/widget.js`,
+            format: 'iife',
+            outro: outro,
+            globals: {
+                jquery: 'jQuery'
+            },
+            interop: 'default'
+        }],
+        external: [
+            'jquery'
+        ]
+    };
+    if (args.configDebug !== true) {
+        bundle_bs5.output.push({
+            name: 'yafowil_autocomplete',
+            file: `${out_dir}/bootstrap5/widget.min.js`,
+            format: 'iife',
+            plugins: [
+                terser()
+            ],
+            outro: outro,
+            globals: {
+                jquery: 'jQuery'
+            },
+            interop: 'default'
+        });
+    }
+    let scss_bs5 = {
+        input: ['scss/bootstrap5/widget.scss'],
+        output: [{
+            file: `${out_dir}/bootstrap5/widget.min.css`,
             format: 'es',
             plugins: [terser()],
         }],
@@ -61,5 +124,7 @@ export default args => {
             }),
         ],
     };
-    return [conf, scss];
+    conf.push(bundle_bs5, scss_bs5);
+
+    return conf;
 };
