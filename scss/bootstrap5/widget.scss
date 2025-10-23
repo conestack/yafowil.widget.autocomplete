@@ -1,0 +1,29 @@
+div.yafowil-widget-autocomplete .hiddenStructure {
+    display: none;
+}
+
+div.autocomplete-dropdown {
+    position: absolute;
+    z-index: 2000;
+    min-width: 200px;
+    max-height: 320px;
+    overflow: hidden;
+    overflow-y: auto;
+
+    .no-results {
+        background-color: var(--bs-secondary-bg);
+        color: var(--bs-secondary-color);
+        font-size: 14px;
+    }
+}
+
+.autocomplete-suggestion {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    cursor: pointer;
+}
+
+.autocomplete-suggestion.selected {
+    background: var(--yafowil-accent-color, #0d6efd);
+    color: var(--yafowil-accent-font-color, #fff);
+}

@@ -1,16 +1,26 @@
 from yafowil.base import factory
 from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
+from yafowil.common import generic_display_renderer
 from yafowil.common import input_generic_renderer
 from yafowil.compat import STR_TYPE
 from yafowil.utils import attr_value
 from yafowil.utils import managedprops
+from yafowil.common import input_attributes_common
+from yafowil.utils import data_attrs_helper
+from yafowil.utils import managedprops
+from yafowil.utils import cssid
+from yafowil.utils import as_data_attrs
+from yafowil.utils import cssclasses
 
 
-@managedprops('source', 'delay', 'minLength')
+autocomplete_options = ['source', 'delay', 'minLength']
+
+@managedprops(*autocomplete_options)
 def autocomplete_renderer(widget, data):
-    result = data.rendered
     tag = data.tag
+    input_attrs = input_attributes_common(widget, data, excludes=['name_', 'id'])
+
     source = attr_value('source', widget, data)
     if isinstance(source, (list, tuple)):
         source = '|'.join(source)
@@ -19,22 +29,31 @@ def autocomplete_renderer(widget, data):
         source_type = 'remote'
     else:
         raise ValueError('resulting source must be tuple/list or string')
-    result += tag('div', source, **{
-        'class': 'autocomplete-source hiddenStructure'
-    })
-    params = [
-        ('%s,%s' % (_, attr_value(_, widget, data)))
-        for _ in ['delay', 'minLength']
-    ]
-    params.append('type,%s' % source_type)
-    result += tag('div', '|'.join(params), **{
-        'class': 'autocomplete-params hiddenStructure'
-    })
-    return tag('div', result, **{'class': 'yafowil-widget-autocomplete'})
+
+    custom_attrs = data_attrs_helper(widget, data, autocomplete_options)
+    custom_attrs.update(as_data_attrs({
+        'source': source,
+        'type': source_type
+    }))
+
+    input_attrs.update(custom_attrs)
+    input_attrs['type'] = 'text'
+    input_tag = tag('input', **input_attrs)
+    value_attrs = {
+        'type': 'hidden',
+        'value': '',
+        'name_': widget.dottedpath,
+        'id': cssid(widget, 'input'),
+        'class_': 'autocomplete-result'
+    }
+    value_tag = tag('input', **value_attrs)
+    return tag('div', input_tag, value_tag, **{'class': cssclasses(widget, data, classattr='wrapper_class')})
 
 
 def autocomplete_extractor(widget, data):
-    return data.extracted
+    return {
+        'value': data.extracted
+    }
 
 
 factory.register(
@@ -47,6 +66,9 @@ factory.register(
     edit_renderers=[
         input_generic_renderer,
         autocomplete_renderer
+    ],
+    display_renderers=[
+        generic_display_renderer
     ]
 )
 
@@ -58,6 +80,8 @@ given so far.
 """
 
 factory.defaults['autocomplete.type'] = 'text'
+
+factory.defaults['wrapper_class'] = 'yafowil-widget-autocomplete'
 
 factory.defaults['autocomplete.class'] = 'autocomplete'
 
