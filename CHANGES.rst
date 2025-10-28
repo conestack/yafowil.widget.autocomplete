@@ -4,7 +4,8 @@ Changes
 1.8 (unreleased)
 ----------------
 
-- No changes yet.
+- Pin upper versions of dependencies.
+  [lenadax]
 
 
 1.7 (2018-07-16)
