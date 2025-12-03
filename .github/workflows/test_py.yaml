@@ -1,4 +1,4 @@
-name: Test yafowil.widget.autocomplete
+name: Python Tests
 
 on: [push]
 
