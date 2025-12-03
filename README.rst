@@ -1,3 +1,19 @@
+.. image:: https://img.shields.io/pypi/v/yafowil.widget.autocomplete.svg
+    :target: https://pypi.python.org/pypi/yafowil.widget.autocomplete
+    :alt: Latest PyPI version
+
+.. image:: https://img.shields.io/pypi/dm/yafowil.widget.autocomplete.svg
+    :target: https://pypi.python.org/pypi/yafowil.widget.autocomplete
+    :alt: Number of PyPI downloads
+
+.. image:: https://github.com/conestack/yafowil.widget.autocomplete/actions/workflows/test_py.yaml/badge.svg
+    :target: https://github.com/conestack/yafowil.widget.autocomplete/actions/workflows/test_py.yaml
+    :alt: Test yafowil.widget.autocomplete Python
+
+.. image:: https://github.com/conestack/yafowil.widget.autocomplete/actions/workflows/test_js.yaml/badge.svg
+    :target: https://github.com/conestack/yafowil.widget.autocomplete/actions/workflows/test_js.yaml
+    :alt: Test yafowil.widget.autocomplete JS
+
 This is a **autocomplete widget** for for `YAFOWIL
 <http://pypi.python.org/pypi/yafowil>`_ - Yet Another Form WIdget Library.
 
