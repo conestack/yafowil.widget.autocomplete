@@ -1,10 +1,33 @@
 Changes
 =======
 
-2.0.1 (unreleased)
+2.1.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- The hidden input carrying the form value renders that value instead of an
+  empty string. No preset ever reached the browser before: an edit form showed
+  an empty field and a failed validation dropped what had been selected.
+  [rnix]
+
+- The visible input no longer renders the extractor's dict after a failed
+  validation.
+  [rnix]
+
+- Add ``keys`` property for key/label pairs in value, source and extracted
+  data. In that mode the visible input is named ``<dotted>.label`` and carries
+  the label while the hidden one carries the key, mirroring the reference
+  browser of ``cone.app``. Inferred for a local source of pairs, explicit for a
+  remote source - the server cannot know what the endpoint answers.
+  [rnix]
+
+- Add ``lookup`` property, a callback resolving a key to its label, for the
+  first render of an edit form where only the identity was stored. Same name
+  and signature as ``reference.lookup``.
+  [rnix]
+
+- In value mode the hidden field now follows the typed text. Free input without
+  a selection was lost, the visible input has no name there.
+  [rnix]
 
 
 2.0.0 (2026-02-03)

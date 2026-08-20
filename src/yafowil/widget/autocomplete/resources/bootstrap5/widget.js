@@ -74,6 +74,7 @@ var yafowil_autocomplete = (function (exports, $) {
             this.delay = this.input_elem.data('delay');
             this.sourcetype = this.input_elem.data('type');
             this.min_length = this.input_elem.data('minLength');
+            this.keys = this.input_elem.data('keys') === true;
             this.Suggestion = AutocompleteSuggestion$1;
             this.compile();
             this.suggestions = [];
@@ -82,9 +83,11 @@ var yafowil_autocomplete = (function (exports, $) {
             this.on_input = this.on_input.bind(this);
             this.hide_dropdown = this.hide_dropdown.bind(this);
             this.on_keydown = this.on_keydown.bind(this);
+            this.sync_value = this.sync_value.bind(this);
             this.input_elem
                 .on('focusout', this.hide_dropdown)
                 .on('focus input', this.on_input)
+                .on('input', this.sync_value)
                 .on('keydown', this.on_keydown);
             this.autocomplete = this.autocomplete.bind(this);
             if (window.ts !== undefined) {
@@ -117,6 +120,7 @@ var yafowil_autocomplete = (function (exports, $) {
             this.input_elem
                 .off('focusout', this.hide_dropdown)
                 .off('focus input', this.on_input)
+                .off('input', this.sync_value)
                 .off('keydown', this.on_keydown);
             this.dd_elem.off().empty().remove();
         }
@@ -166,6 +170,11 @@ var yafowil_autocomplete = (function (exports, $) {
                         }
                     });
                 };
+            }
+        }
+        sync_value(e) {
+            if (!this.keys) {
+                this.result_input.val(this.input_elem.val());
             }
         }
         on_input(e) {
@@ -276,7 +285,9 @@ var yafowil_autocomplete = (function (exports, $) {
                     }
                     break;
                 default:
-                    this.result_input.val('');
+                    if (this.keys) {
+                        this.result_input.val('');
+                    }
             }
         }
         select_suggestion(key, val) {
@@ -289,7 +300,9 @@ var yafowil_autocomplete = (function (exports, $) {
             }
         }
         unselect_all() {
-            this.result_input.val('');
+            if (this.keys) {
+                this.result_input.val('');
+            }
             for (let suggestion of this.suggestions) {
                 suggestion.selected = false;
             }

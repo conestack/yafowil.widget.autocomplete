@@ -35,7 +35,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="http://www.foo.bar/baz" data-type="remote" type="text"/>
+          <input class="autocomplete" data-delay="300" data-keys="false" data-min-length="1" data-source="http://www.foo.bar/baz" data-type="remote" type="text"/>
           <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
@@ -50,7 +50,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="foo|bar" data-type="local" type="text"/>
+          <input class="autocomplete" data-delay="300" data-keys="false" data-min-length="1" data-source="foo|bar" data-type="local" type="text"/>
           <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
@@ -68,7 +68,7 @@ class TestAutocompleteWidget(YafowilTestCase):
             })
         self.checkOutput("""
         <div class="yafowil-widget-autocomplete">
-          <input class="autocomplete" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" type="text"/>
+          <input class="autocomplete" data-delay="300" data-keys="false" data-min-length="1" data-source="http://from.callable/" data-type="remote" type="text"/>
           <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
         </div>
         """, fxml(widget()))
@@ -107,7 +107,7 @@ class TestAutocompleteWidget(YafowilTestCase):
         <div class="error">
           <div class="errormessage">Autocomplete widget is required</div>
           <div class="required yafowil-widget-autocomplete">
-            <input class="autocomplete required" data-delay="300" data-min-length="1" data-source="http://from.callable/" data-type="remote" required="required" type="text" value=""/>
+            <input class="autocomplete required" data-delay="300" data-keys="false" data-min-length="1" data-source="http://from.callable/" data-type="remote" required="required" type="text" value=""/>
             <input class="autocomplete-result" id="input-root" name="root" type="hidden" value=""/>
           </div>
         </div>
@@ -156,6 +156,101 @@ class TestAutocompleteWidget(YafowilTestCase):
         self.assertEqual(styles[0].file_name, 'widget.min.css')
         self.assertTrue(os.path.exists(styles[0].file_path))
 
+
+class TestAutocompleteValueRoundtrip(YafowilTestCase):
+    """A value has to survive rendering, submitting and rendering again.
+
+    The hidden input carrying the form value was rendered with ``value=""``
+    unconditionally, so no preset ever reached the browser: an edit form showed
+    an empty field, and a failed validation dropped what had been selected. The
+    visible input meanwhile received ``str(data.value)``, which after an
+    extraction is the extractor's own dict - the user saw its repr.
+    """
+
+    def setUp(self):
+        super(TestAutocompleteValueRoundtrip, self).setUp()
+        from yafowil.widget import autocomplete
+        from yafowil.widget.autocomplete import widget
+        reload(widget)
+        autocomplete.register()
+
+    def _widget(self, **kw):
+        props = {'source': 'http://x/'}
+        props.update(kw.pop('props', {}))
+        return factory('autocomplete', name='root', props=props, **kw)
+
+    def test_plain_value_reaches_the_hidden_field(self):
+        rendered = self._widget(value='freitext')()
+        self.assertIn('name="root" type="hidden" value="freitext"', rendered)
+        self.assertIn('type="text" value="freitext"', rendered)
+
+    def test_keyed_value_splits_into_label_and_key(self):
+        rendered = self._widget(
+            value=('abc', 'Omega GmbH'), props={'keys': True}
+        )()
+        self.assertIn('name="root.label" type="text" value="Omega GmbH"', rendered)
+        self.assertIn('name="root" type="hidden" value="abc"', rendered)
+
+    def test_the_visible_input_is_named_only_in_keyed_mode(self):
+        """In value mode the hidden field already carries the text.
+
+        A second named field would post the same string twice, and it would
+        change the markup of every existing consumer.
+        """
+        self.assertNotIn('name="root.label"', self._widget(value='x')())
+
+    def test_a_lookup_resolves_the_label_of_a_bare_key(self):
+        """The first render of an edit form: the application stored the id."""
+        rendered = self._widget(
+            value='abc',
+            props={'keys': True, 'lookup': lambda key: f'Label of {key}'},
+        )()
+        self.assertIn('value="Label of abc"', rendered)
+        self.assertIn('name="root" type="hidden" value="abc"', rendered)
+
+    def test_without_a_lookup_the_key_is_shown_rather_than_nothing(self):
+        """Degraded, and visibly so - an empty field would look like no value."""
+        rendered = self._widget(value='abc', props={'keys': True})()
+        self.assertIn('name="root.label" type="text" value="abc"', rendered)
+
+    def test_a_local_source_of_pairs_is_keyed_without_saying_so(self):
+        rendered = self._widget(
+            value=('a', 'Anton'), props={'source': [('a', 'Anton'), ('b', 'Berta')]}
+        )()
+        self.assertIn('name="root.label" type="text" value="Anton"', rendered)
+        self.assertIn("data-source='a|b'", rendered)
+
+    def test_the_extracted_dict_keeps_its_shape(self):
+        widget = self._widget()
+        data = widget.extract({'root': 'abc'})
+        self.assertEqual(data.extracted, {'value': 'abc'})
+
+    def test_keyed_extraction_adds_the_label(self):
+        widget = self._widget(props={'keys': True})
+        data = widget.extract({'root': 'abc', 'root.label': 'Omega GmbH'})
+        self.assertEqual(
+            data.extracted, {'value': 'abc', 'label': 'Omega GmbH'}
+        )
+
+    def test_a_failed_validation_shows_the_typed_text_again(self):
+        """Not the extractor's dict, and not the key either.
+
+        Half typed input is the normal state of an autocomplete, and throwing
+        it away on every validation error is what makes a form tiring.
+        """
+        widget = self._widget(props={'keys': True, 'required': True})
+        request = {'root': '', 'root.label': 'Ome'}
+        # Extract first, then render the very data - passing the request to the
+        # renderer alone does not extract, it only makes the request available.
+        rendered = widget(data=widget.extract(request))
+        self.assertIn('value="Ome"', rendered)
+        self.assertNotIn("{'value'", rendered)
+
+    def test_a_failed_validation_keeps_a_plain_value(self):
+        widget = self._widget()
+        rendered = widget(data=widget.extract({'root': 'freitext'}))
+        self.assertIn('value="freitext"', rendered)
+        self.assertNotIn("{'value'", rendered)
 
 if __name__ == '__main__':
     unittest.main()

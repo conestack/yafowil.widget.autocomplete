@@ -686,7 +686,89 @@ QUnit.module('AutocompleteSuggestion', hooks => {
     });
 });
 
-function create_elem(delay, minLength, source, type) {
+QUnit.module('AutocompleteValueMode', hooks => {
+    // The hidden input is the only named field, so whatever the server is
+    // supposed to receive has to end up in it. Which of the two inputs holds
+    // the value depends on the mode, and getting that wrong loses the entry
+    // silently - the form posts an empty string and the page just comes back.
+    let elem, widget;
+
+    hooks.beforeEach(() => {
+        $('body').append(container);
+    });
+    hooks.afterEach(() => {
+        container.empty();
+        if (widget) {
+            widget.destroy();
+            widget = null;
+        }
+    });
+
+    function setup(keys) {
+        elem = create_elem(0, 0, '|one|two|three|', 'local', keys);
+        container.append(elem);
+        widget = new AutocompleteWidget(elem);
+        return widget;
+    }
+
+    QUnit.test('typed text reaches the hidden field in value mode', assert => {
+        setup(false);
+        widget.input_elem.val('freitext').trigger('input');
+        assert.strictEqual(widget.result_input.val(), 'freitext');
+    });
+
+    QUnit.test('typing clears the key in keyed mode', assert => {
+        setup(true);
+        widget.result_input.val('abc');
+        widget.input_elem.val('Ome').trigger('input');
+        widget.on_keydown(new $.Event('keydown', {key: 'e'}));
+        assert.strictEqual(widget.result_input.val(), '');
+    });
+
+    QUnit.test('typing does not clear the value in value mode', assert => {
+        setup(false);
+        widget.input_elem.val('frei').trigger('input');
+        widget.on_keydown(new $.Event('keydown', {key: 'i'}));
+        assert.strictEqual(widget.result_input.val(), 'frei');
+    });
+
+    QUnit.test('a selection writes key and label apart in keyed mode', assert => {
+        setup(true);
+        widget.select_suggestion('abc', 'Omega GmbH');
+        assert.strictEqual(widget.result_input.val(), 'abc');
+        assert.strictEqual(widget.input_elem.val(), 'Omega GmbH');
+    });
+
+    QUnit.test('a selection writes the label twice in value mode', assert => {
+        setup(false);
+        widget.select_suggestion(null, 'one');
+        assert.strictEqual(widget.result_input.val(), 'one');
+        assert.strictEqual(widget.input_elem.val(), 'one');
+    });
+
+    QUnit.test('arrow navigation keeps the typed value in value mode', assert => {
+        // ``unselect_all`` used to wipe the hidden field on every arrow key.
+        setup(false);
+        widget.input_elem.val('on').trigger('input');
+        widget.unselect_all();
+        assert.strictEqual(widget.result_input.val(), 'on');
+    });
+
+    QUnit.test('the mode defaults to value when nothing is declared', assert => {
+        elem = $(`
+            <div class="yafowil-widget-autocomplete">
+              <input class="autocomplete" type="text" data-delay="0"
+                     data-min-length="0" data-source="|one|" data-type="local" />
+              <input class="autocomplete-result" type="hidden" />
+            </div>
+        `);
+        container.append(elem);
+        widget = new AutocompleteWidget(elem);
+        assert.strictEqual(widget.keys, false);
+    });
+});
+
+function create_elem(delay, minLength, source, type, keys) {
     let widget_html = $(`
         <div class="yafowil-widget-autocomplete">
           <input class="autocomplete"
@@ -694,7 +776,8 @@ function create_elem(delay, minLength, source, type) {
                  data-delay="${delay}"
                  data-min-length="${minLength}"
                  data-source="${source}"
-                 data-type="${type}" />
+                 data-type="${type}"
+                 data-keys="${keys === true}" />
           <input class="autocomplete-result" type="hidden" />
         </div>
     `);
