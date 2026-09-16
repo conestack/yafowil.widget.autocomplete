@@ -53,6 +53,24 @@ QUnit.module('AutocompleteWidget', hooks => {
         assert.ok(widget.autocomplete);
     });
 
+    QUnit.test('initialize twice binds once', assert => {
+        // ``initialize`` takes a context, and a context is commonly a parent:
+        // an ajax reload that replaces one element re-binds its parent, so
+        // every widget beside the replaced one arrives here again. A second
+        // widget on the same element binds its handlers twice and leaves the
+        // first one unreachable.
+        AutocompleteWidget.initialize();
+        widget = elem.data('yafowil-autocomplete');
+
+        AutocompleteWidget.initialize();
+
+        assert.strictEqual(elem.data('yafowil-autocomplete'), widget);
+        // The dropdown hangs on ``body``, not inside the widget - a second
+        // construction leaves a second one behind, orphaned, because only the
+        // last widget is reachable through the data key to destroy it.
+        assert.strictEqual($('body > div.autocomplete-dropdown').length, 1);
+    });
+
     QUnit.test('register_array_subscribers', assert => {
         container.empty();
         // patch window.yafowil

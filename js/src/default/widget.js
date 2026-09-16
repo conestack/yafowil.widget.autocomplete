@@ -72,6 +72,15 @@ export class AutocompleteWidget {
                 window.yafowil_array.inside_template(elem)) {
                 return;
             }
+            // Already initialized on this element. ``initialize`` is
+            // called with a context, and a context is commonly a parent: an
+            // ajax reload that replaces one element re-binds its parent, so
+            // every widget beside the replaced one arrives here again. A
+            // second widget on the same element binds its handlers a second
+            // time and leaves the first one unreachable.
+            if (elem.data('yafowil-autocomplete') !== undefined) {
+                return;
+            }
             new AutocompleteWidget(elem);
         });
     }

@@ -63,6 +63,9 @@ var yafowil_autocomplete = (function (exports, $) {
                     window.yafowil_array.inside_template(elem)) {
                     return;
                 }
+                if (elem.data('yafowil-autocomplete') !== undefined) {
+                    return;
+                }
                 new AutocompleteWidget(elem);
             });
         }

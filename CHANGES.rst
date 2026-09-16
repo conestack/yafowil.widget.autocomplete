@@ -4,6 +4,15 @@ Changes
 2.1.0 (unreleased)
 ------------------
 
+- Ignore a second ``initialize`` on an element that already carries a widget.
+  ``initialize`` takes a context, and a context is commonly a parent - an ajax
+  reload that replaces one element re-binds its parent, so every widget beside
+  the replaced one arrives a second time. The widget stored itself under
+  ``elem.data('yafowil-autocomplete')`` already; only the check was missing.
+  Without it the handlers are bound twice, the first widget becomes
+  unreachable through the data key, and its dropdown stays behind on ``body``.
+  [rnix]
+
 - The hidden input carrying the form value renders that value instead of an
   empty string. No preset ever reached the browser before: an edit form showed
   an empty field and a failed validation dropped what had been selected.
