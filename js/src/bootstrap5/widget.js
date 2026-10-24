@@ -1,29 +1,19 @@
 import $ from 'jquery';
-import { AutocompleteWidget as BaseAutocomplete } from '../default/widget.js';
-import { AutocompleteSuggestion as BaseAutocompleteSuggestion } from '../default/widget.js';
+import {
+    AutocompleteWidget as BaseAutocomplete,
+    AutocompleteSuggestion as BaseAutocompleteSuggestion,
+} from '../default/widget.js';
 
 export class AutocompleteSuggestion extends BaseAutocompleteSuggestion {
-
-    /**
-     * @param {AutocompleteWidget} widget - The parent widget instance.
-     * @param {string} source - The suggestion source text.
-     * @param {string} val - The current input value to match.
-     */
-    constructor(widget, source, val) {
-        super(widget, source, val);
-    }
-
     /**
      * Compiles and renders the suggestion element with highlighted match.
      */
     compile() {
-        let index = this.value.toUpperCase().indexOf(this.val.toUpperCase());
+        const index = this.value.toUpperCase().indexOf(this.val.toUpperCase());
         this.elem = $('<div />')
             .addClass('autocomplete-suggestion list-group-item')
             .appendTo(this.widget.ul_elem);
-        $('<span />')
-            .text(this.value.substring(0, index))
-            .appendTo(this.elem);
+        $('<span />').text(this.value.substring(0, index)).appendTo(this.elem);
         $('<strong />')
             .text(this.value.substring(index, index + this.val.length))
             .appendTo(this.elem);
@@ -34,17 +24,15 @@ export class AutocompleteSuggestion extends BaseAutocompleteSuggestion {
 }
 
 export class AutocompleteWidget extends BaseAutocomplete {
-
     /**
      * Initializes each widget in the given DOM context.
-     * 
+     *
      * @param {HTMLElement} context - DOM context for initialization.
      */
     static initialize(context) {
-        $('div.yafowil-widget-autocomplete', context).each(function() {
-            let elem = $(this);
-            if (window.yafowil_array !== undefined &&
-                window.yafowil_array.inside_template(elem)) {
+        $('div.yafowil-widget-autocomplete', context).each(function () {
+            const elem = $(this);
+            if (window.yafowil_array?.inside_template(elem)) {
                 return;
             }
             // Already initialized on this element. ``initialize`` is
@@ -72,15 +60,9 @@ export class AutocompleteWidget extends BaseAutocomplete {
      * Compiles the necessary HTML structure.
      */
     compile() {
-        this.input_elem
-            .attr('spellcheck', false)
-            .attr('autocomplete', 'off');
-        this.dd_elem = $('<div />')
-            .addClass('autocomplete-dropdown card shadow')
-            .appendTo('body');
-        this.ul_elem = $('<ul />')
-            .addClass('list-group list-group-flush')
-            .appendTo(this.dd_elem);
+        this.input_elem.attr('spellcheck', false).attr('autocomplete', 'off');
+        this.dd_elem = $('<div />').addClass('autocomplete-dropdown card shadow').appendTo('body');
+        this.ul_elem = $('<ul />').addClass('list-group list-group-flush').appendTo(this.dd_elem);
         this.no_results = $('<div />')
             .hide()
             .addClass('no-results px-3 py-2')
@@ -90,20 +72,22 @@ export class AutocompleteWidget extends BaseAutocomplete {
 
     autocomplete() {
         this.no_results.hide();
-        let val = this.input_elem.val();
-        this.source({term: val}, (data) => {
+        const val = this.input_elem.val();
+        this.source({ term: val }, (data) => {
             if (!Array.isArray(data)) {
-                throw 'yafowil.widget.autocomplete: invalid datatype, data must ' +
-                      'be array of strings or objects'
+                throw (
+                    'yafowil.widget.autocomplete: invalid datatype, data must ' +
+                    'be array of strings or objects'
+                );
             }
             if (!data.length) {
                 this.no_results.show();
             } else {
-                const ignored = data.filter(item => item.ignore_filter === true);
+                const ignored = data.filter((item) => item.ignore_filter === true);
                 if (ignored.length === data.length) {
                     this.no_results.show();
                 }
-                for (let item of data) {
+                for (const item of data) {
                     if (item.factory !== undefined) {
                         const factory = ts.object_by_path(item.factory);
                         this.suggestions.push(new factory(this, item, val));
@@ -119,8 +103,8 @@ export class AutocompleteWidget extends BaseAutocomplete {
                 dd_height = this.dd_elem.outerHeight(),
                 top;
 
-            let viewport_edge = scrolltop + $(window).outerHeight();
-            let dd_bottom = input_top + input_height + dd_height;
+            const viewport_edge = scrolltop + $(window).outerHeight();
+            const dd_bottom = input_top + input_height + dd_height;
 
             if (dd_bottom >= viewport_edge) {
                 top = input_top - dd_height;
@@ -130,7 +114,7 @@ export class AutocompleteWidget extends BaseAutocomplete {
 
             this.dd_elem.css({
                 top: `${top}px`,
-                left: `${input_left}px`
+                left: `${input_left}px`,
             });
             this.dd_elem.show();
         });
@@ -138,10 +122,10 @@ export class AutocompleteWidget extends BaseAutocomplete {
 
     /**
      * Handles input events, resets suggestions, and triggers autocomplete.
-     * 
+     *
      * @param {Event} e - Input event triggered by typing.
      */
-    on_input(e) {
+    on_input(_e) {
         clearTimeout(this.timeout);
         this.ul_elem.empty();
         this.dd_elem.hide();
@@ -152,7 +136,6 @@ export class AutocompleteWidget extends BaseAutocomplete {
             this.timeout = setTimeout(this.autocomplete, this.delay);
         }
     }
-
 
     hide_dropdown() {
         this.dd_elem.hide();
@@ -168,7 +151,7 @@ export class AutocompleteWidget extends BaseAutocomplete {
 /**
  * Re-initializes widget on array add event.
  */
-function autocomplete_on_array_add(inst, context) {
+function autocomplete_on_array_add(_inst, context) {
     AutocompleteWidget.initialize(context);
 }
 
@@ -180,7 +163,7 @@ export function register_array_subscribers() {
         window.yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
     } else if (yafowil.array !== undefined) {
         $.extend(yafowil.array.hooks.add, {
-            autocomplete_binder: AutocompleteWidget.initialize
+            autocomplete_binder: AutocompleteWidget.initialize,
         });
     }
 }
