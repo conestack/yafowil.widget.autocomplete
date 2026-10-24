@@ -4,7 +4,11 @@ Changes
 2.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Drop the Python 2 remnants: ``yafowil.compat`` usage and ``IS_PY2`` branches.
+  [rnix]
+
+- Declare ``requires-python = ">=3.10"``.
+  [rnix]
 
 
 2.1.0 (2026-10-24)

@@ -7,6 +7,7 @@ name = "yafowil.widget.autocomplete"
 version = "2.1.1.dev0"
 description = "Autocomplete Widget for YAFOWIL"
 readme = "README.rst"
+requires-python = ">=3.10"
 license = {text = "Simplified BSD"}
 authors = [{name = "Yafowil Contributors", email = "dev@conestack.org"}]
 keywords = ["jquery", "jquery.ui.autocomplete", "widget", "yafowil"]

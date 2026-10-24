@@ -3,7 +3,6 @@ from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
 from yafowil.common import generic_display_renderer
 from yafowil.common import input_generic_renderer
-from yafowil.compat import STR_TYPE
 from yafowil.utils import attr_value
 from yafowil.utils import managedprops
 from yafowil.common import input_attributes_common
@@ -109,7 +108,7 @@ def autocomplete_renderer(widget, data):
             for item in source
         )
         source_type = 'local'
-    elif isinstance(source, STR_TYPE):
+    elif isinstance(source, str):
         source_type = 'remote'
     else:
         raise ValueError('resulting source must be tuple/list or string')
