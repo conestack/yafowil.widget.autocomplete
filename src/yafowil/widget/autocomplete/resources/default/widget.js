@@ -12,8 +12,8 @@ var yafowil_autocomplete = (function (exports, $) {
                 this.value = source;
             } else {
                 throw (
-                    'yafowil.widget.autocomplete: Invalid Suggestion type. Suggestion' +
-                    'must be string or {key: value} object.'
+                    'yafowil.widget.autocomplete: Invalid Suggestion type. ' +
+                    'Suggestion must be string or {key: value} object.'
                 );
             }
             this.val = val;
@@ -95,7 +95,7 @@ var yafowil_autocomplete = (function (exports, $) {
             }
         }
         compile() {
-            this.input_elem.attr('spellcheck', false).attr('autocomplete', 'off');
+            this.input_elem.attr('spellcheck', 'false').attr('autocomplete', 'off');
             this.dd_elem = $(`<div />`).addClass('autocomplete-dropdown').appendTo('body');
         }
         unload() {

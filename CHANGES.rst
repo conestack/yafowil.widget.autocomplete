@@ -4,6 +4,15 @@ Changes
 2.1.1 (unreleased)
 ------------------
 
+- Fix spellchecking not being disabled on the autocomplete input. With jQuery 4
+  ``.attr('spellcheck', false)`` removes the attribute instead of setting
+  ``spellcheck="false"``.
+  [rnix]
+
+- Fix missing space in the error message thrown for an invalid suggestion type
+  (``Suggestionmust`` -> ``Suggestion must``).
+  [rnix]
+
 - Extend the JS tests to 100 % coverage, all modules including bundles are
   loaded by the tests now.
   [rnix]

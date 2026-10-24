@@ -40,6 +40,8 @@ QUnit.module('bootstrap5 AutocompleteWidget', (hooks) => {
         assert.strictEqual(widget.no_results.text(), 'No results found.');
         assert.strictEqual(widget.no_results.css('display'), 'none');
         assert.strictEqual(widget.input_elem.attr('autocomplete'), 'off');
+        // jQuery 4 removes an attribute set to boolean ``false``
+        assert.strictEqual(widget.input_elem.attr('spellcheck'), 'false');
     });
 
     QUnit.test('initialize twice binds once', (assert) => {

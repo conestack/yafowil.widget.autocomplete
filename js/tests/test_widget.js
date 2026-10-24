@@ -55,6 +55,15 @@ QUnit.module('AutocompleteWidget', (hooks) => {
         assert.ok(widget.autocomplete);
     });
 
+    QUnit.test('compile disables spellcheck and browser autocomplete', (assert) => {
+        AutocompleteWidget.initialize();
+        widget = elem.data('yafowil-autocomplete');
+
+        // jQuery 4 removes an attribute set to boolean ``false``
+        assert.strictEqual(widget.input_elem.attr('spellcheck'), 'false');
+        assert.strictEqual(widget.input_elem.attr('autocomplete'), 'off');
+    });
+
     QUnit.test('initialize twice binds once', (assert) => {
         // ``initialize`` takes a context, and a context is commonly a parent:
         // an ajax reload that replaces one element re-binds its parent, so
@@ -823,9 +832,15 @@ QUnit.module('AutocompleteSuggestion', (hooks) => {
         AutocompleteWidget.initialize();
         widget = elem.data('yafowil-autocomplete');
 
-        assert.throws(() => {
-            sug = new AutocompleteSuggestion(widget, 42, 'foo');
-        }, /Invalid Suggestion type/);
+        assert.throws(
+            () => {
+                sug = new AutocompleteSuggestion(widget, 42, 'foo');
+            },
+            (err) =>
+                err ===
+                'yafowil.widget.autocomplete: Invalid Suggestion type. ' +
+                    'Suggestion must be string or {key: value} object.',
+        );
     });
 
     QUnit.test('select()', (assert) => {

@@ -60,7 +60,7 @@ export class AutocompleteWidget extends BaseAutocomplete {
      * Compiles the necessary HTML structure.
      */
     compile() {
-        this.input_elem.attr('spellcheck', false).attr('autocomplete', 'off');
+        this.input_elem.attr('spellcheck', 'false').attr('autocomplete', 'off');
         this.dd_elem = $('<div />').addClass('autocomplete-dropdown card shadow').appendTo('body');
         this.ul_elem = $('<ul />').addClass('list-group list-group-flush').appendTo(this.dd_elem);
         this.no_results = $('<div />')
