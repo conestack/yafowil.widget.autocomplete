@@ -17,10 +17,7 @@ def json_response(url):
     purl = urlparse(url)
     qs = parse_qs(purl.query)
     data = json_data(qs.get('term', [''])[0])
-    return {
-        'body': json.dumps(data),
-        'header': [('Content-Type', 'application/json')]
-    }
+    return {'body': json.dumps(data), 'header': [('Content-Type', 'application/json')]}
 
 
 def json_data(term):
@@ -31,17 +28,14 @@ def json_data(term):
 
 
 actions_source = [
-    {
-        'id': 'default',
-        'title': 'Default Suggestion'
-    },
+    {'id': 'default', 'title': 'Default Suggestion'},
     {
         'id': 'custom',
         'title': 'Custom Alert Item',
         'ignore_filter': True,
-        'factory': 'yafowil_demo.CustomSuggestion'
+        'factory': 'yafowil_demo.CustomSuggestion',
     },
-    'String Suggestion'
+    'String Suggestion',
 ]
 
 
@@ -49,10 +43,7 @@ def json_response_actions(url):
     purl = urlparse(url)
     qs = parse_qs(purl.query)
     data = actions_json_data(qs.get('term', [''])[0])
-    return {
-        'body': json.dumps(data),
-        'header': [('Content-Type', 'application/json')]
-    }
+    return {'body': json.dumps(data), 'header': [('Content-Type', 'application/json')]}
 
 
 def actions_json_data(term):
@@ -61,14 +52,14 @@ def actions_json_data(term):
     for item in actions_source:
         if isinstance(item, dict):
             title = item['title']
-            if title.lower().startswith(term.lower()) or \
-               ('ignore_filter' in item and item['ignore_filter'] == True):
+            if title.lower().startswith(term.lower()) or (
+                'ignore_filter' in item and item['ignore_filter'] is True
+            ):
                 filtered_data.append(item)
         else:
             if item.lower().startswith(term.lower()):
                 filtered_data.append(item)
     return filtered_data
-
 
 
 DOC_STATIC = """\
@@ -221,48 +212,69 @@ widget attribute.
 """
 
 
-
 def get_example():
-    static_ac = factory('#field:autocomplete', name='static', props={
-        'label': 'Enter some text (local, lorem ipsum)',
-        'source': lipsum,
-    })
-    json_ac = factory('#field:autocomplete', name='json', props={
-        'label': 'Enter some text (remote listdir)',
-        'value': '',
-        'source': 'yafowil.widget.autocomplete.json',
-        'minLength': 1,
-    })
-    actions_ac = factory('#field:autocomplete', name='actions', props={
-        'label': 'Enter some text or select an Action',
-        'value': '',
-        'source': 'yafowil.widget.autocomplete_actions.json',
-        'minLength': 1,
-    })
-    display_ac = factory('#field:autocomplete', name='display', mode='display',
-                         value='Lorem', props={
-        'label': 'Display Mode',
-        'source': lipsum,
-    })
+    static_ac = factory(
+        '#field:autocomplete',
+        name='static',
+        props={
+            'label': 'Enter some text (local, lorem ipsum)',
+            'source': lipsum,
+        },
+    )
+    json_ac = factory(
+        '#field:autocomplete',
+        name='json',
+        props={
+            'label': 'Enter some text (remote listdir)',
+            'value': '',
+            'source': 'yafowil.widget.autocomplete.json',
+            'minLength': 1,
+        },
+    )
+    actions_ac = factory(
+        '#field:autocomplete',
+        name='actions',
+        props={
+            'label': 'Enter some text or select an Action',
+            'value': '',
+            'source': 'yafowil.widget.autocomplete_actions.json',
+            'minLength': 1,
+        },
+    )
+    display_ac = factory(
+        '#field:autocomplete',
+        name='display',
+        mode='display',
+        value='Lorem',
+        props={
+            'label': 'Display Mode',
+            'source': lipsum,
+        },
+    )
     routes = {
         'yafowil.widget.autocomplete.json': json_response,
         'yafowil.widget.autocomplete_actions.json': json_response_actions,
     }
-    return [{
-        'widget': static_ac,
-        'doc': DOC_STATIC,
-        'title': 'Static autocomplete',
-    }, {
-        'widget': json_ac,
-        'routes': routes,
-        'doc': DOC_JSON,
-        'title': 'JSON data autocomplete',
-    }, {
-        'widget': actions_ac,
-        'doc': DOC_ACTIONS,
-        'title': 'Suggestion Factories and Data types',
-    }, {
-        'widget': display_ac,
-        'doc': DOC_DISPLAY,
-        'title': 'Display Mode',
-    }]
+    return [
+        {
+            'widget': static_ac,
+            'doc': DOC_STATIC,
+            'title': 'Static autocomplete',
+        },
+        {
+            'widget': json_ac,
+            'routes': routes,
+            'doc': DOC_JSON,
+            'title': 'JSON data autocomplete',
+        },
+        {
+            'widget': actions_ac,
+            'doc': DOC_ACTIONS,
+            'title': 'Suggestion Factories and Data types',
+        },
+        {
+            'widget': display_ac,
+            'doc': DOC_DISPLAY,
+            'title': 'Display Mode',
+        },
+    ]

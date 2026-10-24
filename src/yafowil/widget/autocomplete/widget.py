@@ -1,17 +1,16 @@
+from node.utils import UNSET
 from yafowil.base import factory
+from yafowil.common import generic_display_renderer
 from yafowil.common import generic_extractor
 from yafowil.common import generic_required_extractor
-from yafowil.common import generic_display_renderer
-from yafowil.common import input_generic_renderer
-from yafowil.utils import attr_value
-from yafowil.utils import managedprops
 from yafowil.common import input_attributes_common
+from yafowil.common import input_generic_renderer
+from yafowil.utils import as_data_attrs
+from yafowil.utils import attr_value
+from yafowil.utils import cssclasses
+from yafowil.utils import cssid
 from yafowil.utils import data_attrs_helper
 from yafowil.utils import managedprops
-from yafowil.utils import cssid
-from yafowil.utils import as_data_attrs
-from node.utils import UNSET
-from yafowil.utils import cssclasses
 
 
 autocomplete_options = ['source', 'delay', 'minLength']
@@ -104,8 +103,7 @@ def autocomplete_renderer(widget, data):
     source = attr_value('source', widget, data)
     if isinstance(source, (list, tuple)):
         source = '|'.join(
-            item[0] if isinstance(item, (list, tuple)) else item
-            for item in source
+            item[0] if isinstance(item, (list, tuple)) else item for item in source
         )
         source_type = 'local'
     elif isinstance(source, str):
@@ -115,14 +113,18 @@ def autocomplete_renderer(widget, data):
 
     keyed = is_keyed(widget, data)
     custom_attrs = data_attrs_helper(widget, data, autocomplete_options)
-    custom_attrs.update(as_data_attrs({
-        'source': source,
-        'type': source_type,
-        # The browser has to know the mode too: in value mode the hidden field
-        # holds the typed text, in keyed mode it holds the key of a chosen
-        # suggestion and typing invalidates it.
-        'keys': keyed
-    }))
+    custom_attrs.update(
+        as_data_attrs(
+            {
+                'source': source,
+                'type': source_type,
+                # The browser has to know the mode too: in value mode the hidden field
+                # holds the typed text, in keyed mode it holds the key of a chosen
+                # suggestion and typing invalidates it.
+                'keys': keyed,
+            }
+        )
+    )
 
     input_attrs.update(custom_attrs)
     input_attrs['type'] = 'text'
@@ -151,10 +153,15 @@ def autocomplete_renderer(widget, data):
         'value': key,
         'name_': widget.dottedpath,
         'id': cssid(widget, 'input'),
-        'class_': 'autocomplete-result'
+        'class_': 'autocomplete-result',
     }
     value_tag = tag('input', **value_attrs)
-    return tag('div', input_tag, value_tag, **{'class': cssclasses(widget, data, classattr='wrapper_class')})
+    return tag(
+        'div',
+        input_tag,
+        value_tag,
+        **{'class': cssclasses(widget, data, classattr='wrapper_class')},
+    )
 
 
 def autocomplete_extractor(widget, data):
@@ -168,18 +175,9 @@ def autocomplete_extractor(widget, data):
 
 factory.register(
     'autocomplete',
-    extractors=[
-        generic_extractor,
-        generic_required_extractor,
-        autocomplete_extractor
-    ],
-    edit_renderers=[
-        input_generic_renderer,
-        autocomplete_renderer
-    ],
-    display_renderers=[
-        generic_display_renderer
-    ]
+    extractors=[generic_extractor, generic_required_extractor, autocomplete_extractor],
+    edit_renderers=[input_generic_renderer, autocomplete_renderer],
+    display_renderers=[generic_display_renderer],
 )
 
 factory.doc['blueprint']['autocomplete'] = """\
