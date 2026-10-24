@@ -5,7 +5,6 @@ from yafowil.base import factory
 from yafowil.tests import fxml
 from yafowil.tests import YafowilTestCase
 import os
-import unittest
 
 
 def np(path):
@@ -247,6 +246,3 @@ class TestAutocompleteValueRoundtrip(YafowilTestCase):
         rendered = widget(data=widget.extract({'root': 'freitext'}))
         self.assertIn('value="freitext"', rendered)
         self.assertNotIn("{'value'", rendered)
-
-if __name__ == '__main__':
-    unittest.main()
