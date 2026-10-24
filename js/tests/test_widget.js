@@ -141,6 +141,13 @@ QUnit.module('AutocompleteWidget', (hooks) => {
         delete window.yafowil;
     });
 
+    QUnit.test('register_array_subscribers without yafowil namespace', (assert) => {
+        // no global ``yafowil`` if the widget is used as ES module
+        register_array_subscribers();
+        assert.strictEqual(window.yafowil, undefined);
+        assert.strictEqual(window.yafowil_array, undefined);
+    });
+
     QUnit.module('ts integration', (hooks) => {
         let attached;
         let deprecated;

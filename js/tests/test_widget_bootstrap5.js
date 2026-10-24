@@ -262,6 +262,13 @@ QUnit.module('bootstrap5 AutocompleteWidget', (hooks) => {
             );
         });
 
+        QUnit.test('without yafowil namespace', (assert) => {
+            // no global ``yafowil`` if the widget is used as ES module
+            register_array_subscribers();
+            assert.strictEqual(window.yafowil, undefined);
+            assert.strictEqual(window.yafowil_array, undefined);
+        });
+
         QUnit.test('no array integration', (assert) => {
             window.yafowil = {
                 array: undefined,

@@ -4,6 +4,11 @@ Changes
 2.1.1 (unreleased)
 ------------------
 
+- Fix ``register_array_subscribers`` throwing a ``ReferenceError`` if neither
+  ``window.yafowil_array`` nor the global ``yafowil`` namespace exists, e.g.
+  when the widget is used as ES module.
+  [rnix]
+
 - Fix spellchecking not being disabled on the autocomplete input. With jQuery 4
   ``.attr('spellcheck', false)`` removes the attribute instead of setting
   ``spellcheck="false"``.

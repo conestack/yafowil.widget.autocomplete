@@ -346,8 +346,8 @@ var yafowil_autocomplete = (function (exports, $) {
     function register_array_subscribers() {
         if (window.yafowil_array !== undefined) {
             window.yafowil_array.on_array_event('on_add', autocomplete_on_array_add);
-        } else if (yafowil.array !== undefined) {
-            $.extend(yafowil.array.hooks.add, {
+        } else if (window.yafowil?.array !== undefined) {
+            $.extend(window.yafowil.array.hooks.add, {
                 autocomplete_binder: AutocompleteWidget.initialize,
             });
         }
