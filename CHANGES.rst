@@ -1,7 +1,7 @@
 Changes
 =======
 
-2.1.1 (unreleased)
+2.1.1 (2026-10-31)
 ------------------
 
 - Fix ``register_array_subscribers`` throwing a ``ReferenceError`` if neither
